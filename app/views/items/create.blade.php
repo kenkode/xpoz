@@ -78,9 +78,16 @@
             <input class="form-control" placeholder="" type="text" name="tag" id="tag" value="{{{ Input::old('tag') }}}">
         </div>
         
-        <div class="form-group">
-            <label for="username">Reorder Level:</label>
-            <input class="form-control" placeholder="" type="text" name="reorder" id="reorder" value="{{{ Input::old('reorder') }}}">
+         <div class="form-group">
+            <label for="username">Store <span style="color:red">*</span> :</label>
+            <select name="location_id" class="form-control" required>
+
+                @foreach($locations as $location)
+                <option value="{{$location->id}}">{{$location->name}}</option>
+                @endforeach
+                
+            </select>
+            
         </div>
 
         <div class="form-actions form-group">

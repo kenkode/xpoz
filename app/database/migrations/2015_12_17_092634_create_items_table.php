@@ -22,6 +22,7 @@ class CreateItemsTable extends Migration {
 			$table->string('sku')->nullable();
 			$table->string('tag_id')->nullable();
 			$table->integer('reorder_level')->nullable();
+			$table->integer('location_id')->nullable();
 			$table->timestamps();
 		});
 	}

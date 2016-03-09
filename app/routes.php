@@ -2534,6 +2534,17 @@ Route::get('itemcategories/delete/{id}', 'ItemcategoriesController@destroy');
 Route::post('itemcategories/update/{id}', 'ItemcategoriesController@update');
 
 
+Route::resource('tests', 'TestsController');
+Route::get('tests/edit/{id}', 'TestsController@edit');
+Route::get('tests/delete/{id}', 'TestsController@destroy');
+Route::post('tests/update/{id}', 'TestsController@update');
+
+Route::resource('maintenances', 'MaintenancesController');
+Route::get('maintenances/edit/{id}', 'MaintenancesController@edit');
+Route::get('maintenances/delete/{id}', 'MaintenancesController@destroy');
+Route::post('maintenances/update/{id}', 'MaintenancesController@update');
+
+
 Route::get('erpmigrate', function(){
 
   return View::make('erpmigrate');
