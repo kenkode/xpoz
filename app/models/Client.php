@@ -51,4 +51,17 @@ class Client extends \Eloquent {
 		return $this->hasMany('Leaseitem');
 	}
 
+
+	public function bookings(){
+		return $this->hasMany('Booking');
+	}
+
+
+	public static function getClientName($id){
+
+		$client = Client::find($id);
+
+		return $client->name;
+	}
+
 }

@@ -24,6 +24,11 @@
                     <li>
                         <a href="{{ URL::to('audits') }}"><i class="fa fa-list fa-fw"></i> Audit Trail</a>
                     </li>
+
+
+                     <li>
+                        <a href="{{ URL::to('mail') }}"><i class="fa fa-inbox fa-fw"></i> Mail Configuration</a>
+                    </li>
 <!--
                     <li>
                         <a href="{{ URL::to('backups') }}"><i class="fa fa-download fa-fw"></i> Backup & Restore</a>

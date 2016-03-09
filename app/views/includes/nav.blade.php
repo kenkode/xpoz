@@ -43,8 +43,8 @@
                     </a>
                     
                 </li>
--->
 
+-->
                 <li  >
                     <a  href="{{ URL::to('payrollmgmt')}}">
                         <i class="fa fa-file fa-fw"></i>  {{{ Lang::get('messages.nav.payroll') }}}
@@ -94,7 +94,7 @@
                 <!-- /.dropdown -->
 
 
-                <!-- 
+            <!--
 
                 <li  >
                     <a  href="{{ URL::to('erpmgmt')}}">

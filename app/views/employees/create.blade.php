@@ -215,7 +215,7 @@ $(document).ready(function() {
                     <div class="form-group">
                         <label for="username">Photo</label><br>
                         <div id="imagePreview"></div>
-                        <input class="form-control img" placeholder="" type="file" name="image" id="uploadFile" value="{{{ Input::old('image') }}}">
+                        <input class=" img" placeholder="" type="file" name="image" id="uploadFile" value="{{{ Input::old('image') }}}">
                     </div>
             
                 </fieldset>
@@ -327,12 +327,13 @@ $(document).ready(function() {
                         <input class="form-control" placeholder="" type="text" name="swift_code" id="swift_code" value="{{{ Input::old('swift_code') }}}">
                     </div>
                     <br><br><br>
+                    <!--
                     <div class="form-group">
                         <label for="username">Signature</label><br>
                         <div id="signPreview"></div>
-                        <input class="form-control img" placeholder="" type="file" name="signature" id="signFile" value="{{{ Input::old('signature') }}}">
+                        <input class=" img" placeholder="" type="file" name="signature" id="signFile" value="{{{ Input::old('signature') }}}">
                     </div>
-
+-->
               </fieldset>
 
             </div>
@@ -444,7 +445,7 @@ $(document).ready(function() {
                     <div style='margin-top:50px'></div>
 
                     </fieldset>
-                    <br><br><br> <br><br><br><br><br><br>
+                    
                         <div class="form-actions form-group">
         
                             <button type="submit" class="btn btn-primary btn-sm">Create Employee</button>

@@ -2,10 +2,12 @@
 
 use Zizaco\Entrust\EntrustRole;
 
+
 class Role extends EntrustRole
 {
 
 	
+
 
 public static function getRole($user){
 

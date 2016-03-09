@@ -365,7 +365,20 @@ public function license_key_validator($license_key, $license_code, $org_name){
 
 
 
+public static function checkInternet(){
 
+
+if(!$sock = @fsockopen('www.google.com', 80))
+{
+    echo 'Not Connected';
+}
+else
+{
+echo 'Connected';
+}
+
+
+}
 
 
 

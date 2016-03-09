@@ -36,4 +36,12 @@ class Item extends \Eloquent {
 		return $this->hasMany('Leaseitem');
 	}
 
+
+	public static function getItemName($id){
+
+		$item = Item::find($id);
+
+		return $item->name;
+	}
+
 }
