@@ -97,7 +97,7 @@ body {
     </table>
    </div>
 
-
+<br>
 
 <div class="footer">
      <p class="page">Page <?php $PAGE_NUM ?></p>
@@ -106,7 +106,7 @@ body {
 
 	<div class="content" style='margin-top:0px;'>
 
-
+<div align="center"><strong>Employee List Report </strong></div><br>
     <table class="table table-bordered" border='1' cellspacing='0' cellpadding='0'>
 
       <tr>
@@ -134,14 +134,14 @@ body {
         <td>{{$employee->personal_file_number}}</td>
         <td> {{$employee->last_name.' '.$employee->first_name.' '.$employee->middle_name}}</td>
 
-         @if($employee->branch_id != null)
+         @if($employee->branch_id != 0)
         <td> {{ $employee->branch->name}}</td>
         @else
         <td></td>
         @endif
        
 
-        @if($employee->department_id != null)
+        @if($employee->department_id != 0)
         <td> {{ $employee->department->department_name}}</td>
         @else
         <td></td>

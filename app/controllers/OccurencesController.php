@@ -9,11 +9,11 @@ class OccurencesController extends \BaseController {
 	 */
 	public function index()
 	{
-		$occurences = Occurence::all();
-
-		
-
-
+		$occurences = DB::table('employee')
+		          ->join('occurences', 'employee.id', '=', 'occurences.employee_id')
+		          ->where('in_employment','=','Y')
+		          ->get();
+        Audit::logaudit('Occurences', 'view', 'viewed occurences');
 
 		return View::make('occurences.index', compact('occurences'));
 	}
@@ -23,10 +23,13 @@ class OccurencesController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function create()
+	public function create($id)
 	{
-		$employees = Employee::all();
-		return View::make('occurences.create',compact('employees'));
+		$id=$id;
+		$employees = DB::table('employee')
+		          ->where('in_employment','=','Y')
+		          ->get();
+		return View::make('occurences.create',compact('employees','id'));
 	}
 
 	/**
@@ -59,10 +62,10 @@ class OccurencesController extends \BaseController {
 
 		$occurence->save();
 
-		Audit::logaudit('Occurences', 'create', 'created: '.$occurence->occurence_brief);
+		Audit::logaudit('Occurences', 'create', 'created: '.$occurence->occurence_brief.' for '.Employee::getEmployeeName(Input::get('employee')));
 
 
-		return Redirect::route('occurences.index');
+		return Redirect::to('occurences/view/'.$occurence->id)->withFlashMessage('Occurence successfully created!');
 	}
 
 	/**
@@ -112,8 +115,6 @@ class OccurencesController extends \BaseController {
 
 		$occurence->occurence_brief = Input::get('brief');
 
-		$occurence->employee_id = Input::get('employee');
-
 		$occurence->occurence_type = Input::get('type');
 
 		$occurence->narrative = Input::get('narrative');
@@ -122,9 +123,9 @@ class OccurencesController extends \BaseController {
 
 		$occurence->update();
 
-		Audit::logaudit('Occurences', 'update', 'updated: '.$occurence->occurence_brief);
+		Audit::logaudit('Occurences', 'update', 'updated: '.$occurence->occurence_brief.' for '.Employee::getEmployeeName(Input::get('employee')));
 
-		return Redirect::route('occurences.index');
+		return Redirect::to('occurences/view/'.$id)->withFlashMessage('Occurence successfully updated!');
 	}
 
 	/**
@@ -138,9 +139,19 @@ class OccurencesController extends \BaseController {
 		$occurence = Occurence::findOrFail($id);
 		Occurence::destroy($id);
 
-		Audit::logaudit('Occurences', 'delete', 'deleted: '.$occurence->occurence_brief);
+		Audit::logaudit('Occurences', 'delete', 'deleted: '.$occurence->occurence_brief.' for '.Employee::getEmployeeName($occurence->employee_id));
 
-		return Redirect::route('occurences.index');
+		return Redirect::to('employees/view/'.$occurence->employee_id)->withDeleteMessage('Occurence successfully deleted!');
+	}
+
+    public function view($id){
+
+		$occurence = Occurence::find($id);
+
+		$organization = Organization::find(1);
+
+		return View::make('occurences.view', compact('occurence'));
+		
 	}
 
 }

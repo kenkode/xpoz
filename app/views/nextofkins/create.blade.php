@@ -28,20 +28,13 @@
    
     <fieldset>
 
-        <div class="form-group">
-                        <label for="username">Employee <span style="color:red">*</span></label>
-                        <select name="employee_id" class="form-control">
-                           <option></option>
-                            @foreach($employees as $employee)
-                            <option value="{{ $employee->id }}"> {{ $employee->first_name.' '.$employee->last_name }}</option>
-                            @endforeach
-                        </select>
-                
-                    </div>        
+        <input class="form-control" placeholder="" type="hidden" readonly name="employee_id" id="employee_id" value="{{ $id }}">
+
         <div class="form-group">
             <label for="username">Kin Name</label>
             <input class="form-control" placeholder="" type="text" name="name" id="name" value="{{{ Input::old('name') }}}">
         </div>
+
 
         <div class="form-group">
             <label for="username">ID Number</label>
@@ -53,22 +46,11 @@
             <input class="form-control" placeholder="" type="text" name="rship" id="rship" value="{{{ Input::old('rship') }}}">
         </div>
 
-         <div class="form-group">
-            <label for="username">Goodwill % </label>
-            <input class="form-control" placeholder="" type="text" name="goodwill" id="goodwill" value="{{{ Input::old('goodwill') }}}">
+        <div class="form-group">
+            <label for="username">Contact </label>
+            <textarea class="form-control" name="contact" id="contact">{{{ Input::old('contact') }}}</textarea>
         </div>
         
-
-        
-
-
-
-
-
-
-
-        
-      
         
         <div class="form-actions form-group">
         
