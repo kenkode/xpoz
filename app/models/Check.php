@@ -1,6 +1,6 @@
 <?php
 
-class Maintenance extends \Eloquent {
+class Check extends \Eloquent {
 
 	// Add your validation rules here
 	public static $rules = [
@@ -14,12 +14,6 @@ class Maintenance extends \Eloquent {
 	public function item(){
 
 		return $this->belongsTo('Item');
-	}
-
-
-	public function tests(){
-
-		return $this->belongsToMany('Test');
 	}
 
 }

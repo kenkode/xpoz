@@ -21,7 +21,9 @@ class MaintenancesController extends \BaseController {
 	 */
 	public function create()
 	{
-		return View::make('maintenances.create');
+		$items = Item::all();
+		$tests = Test::all();
+		return View::make('maintenances.create', compact('items', 'tests'));
 	}
 
 	/**
@@ -38,7 +40,19 @@ class MaintenancesController extends \BaseController {
 			return Redirect::back()->withErrors($validator)->withInput();
 		}
 
-		Maintenance::create($data);
+		$item = Item::find(Input::get('item_id'));
+		$test = Input::get('test_id');
+
+		$maintenance = new Maintenance;
+
+		$maintenance->item()->associate($item);
+		$maintenance->test_id = Input::get('test_id');
+		$maintenance->outcome = Input::get('outcome');
+		$maintenance->remarks = Input::get('remarks');
+		$maintenance->tested_by = Confide::user()->username;
+		$maintenance->date_tested = date('Y-m-d');
+		$maintenance->save();
+
 
 		return Redirect::route('maintenances.index');
 	}
@@ -66,7 +80,9 @@ class MaintenancesController extends \BaseController {
 	{
 		$maintenance = Maintenance::find($id);
 
-		return View::make('maintenances.edit', compact('maintenance'));
+		$items = Item::all();
+		$tests = Test::all();
+		return View::make('maintenances.edit', compact('maintenance','items', 'tests'));
 	}
 
 	/**
@@ -86,7 +102,17 @@ class MaintenancesController extends \BaseController {
 			return Redirect::back()->withErrors($validator)->withInput();
 		}
 
-		$maintenance->update($data);
+		$item = Item::find(Input::get('item_id'));
+		$test = Input::get('test_id');
+
+		
+
+		$maintenance->item()->associate($item);
+		$maintenance->test_id = Input::get('test_id');
+		$maintenance->outcome = Input::get('outcome');
+		$maintenance->remarks = Input::get('remarks');
+		$maintenance->tested_by = Confide::user()->username;
+		$maintenance->update();
 
 		return Redirect::route('maintenances.index');
 	}

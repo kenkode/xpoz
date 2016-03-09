@@ -48,6 +48,18 @@ public function leaveapplications(){
 }
 
 
+public static function getLogo(){
+
+	//$organization_id = Confide::user()->organization_id;
+
+	$organization = Organization::find(1);
+
+	return $organization->logo;
+
+}
+
+
+
 public static function getOrganizationName(){
 
 	$organization_id = Confide::user()->organization_id;

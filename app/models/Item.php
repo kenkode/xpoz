@@ -30,6 +30,16 @@ class Item extends \Eloquent {
 		return $this->hasMany('Stock');
 	}
 
+	public function checks(){
+
+		return $this->hasMany('Check');
+	}
+
+	public function maintenances(){
+
+		return $this->hasMany('Maintenance');
+	}
+
 
 	public function leaseitems(){
 

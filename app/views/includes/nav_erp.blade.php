@@ -7,12 +7,10 @@
 
                 <ul class="nav" id="side-menu">
 
-                 <li>
-                    <a href="{{ URL::to('checks') }}"><i class="fa fa-sign-in fa-fw"></i>  Check In</a>
-                  </li>
+                
 
                    <li>
-                    <a href="{{ URL::to('checks') }}"><i class="fa fa-sign-out fa-fw"></i>  Check Out</a>
+                    <a href="{{ URL::to('checks') }}"><i class="fa fa-random fa-fw"></i>  Check Out / Check in</a>
                   </li>
 
                    <li>

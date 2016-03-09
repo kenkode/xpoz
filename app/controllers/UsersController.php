@@ -507,11 +507,13 @@ class UsersController extends Controller
 
     public function show($id){
 
-        
+        Confide::logout();
 
-         $user = User::findorfail($id);
+        return Redirect::to('/');
 
-         return View::make('users.show', compact('user'));
+         //$user = User::findorfail($id);
+
+         //return View::make('users.show', compact('user'));
     }
 
 

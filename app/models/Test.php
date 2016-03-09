@@ -10,4 +10,19 @@ class Test extends \Eloquent {
 	// Don't forget to fill this array
 	protected $fillable = [];
 
+
+	public function maintenances(){
+
+		return $this->belongsToMany('Maintenance');
+	}
+
+
+	public static function getName($id){
+
+		$test = Test::find($id);
+
+		return $test->name;
+
+	}
+
 }

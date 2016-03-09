@@ -2569,6 +2569,18 @@ Route::get('maintenances/delete/{id}', 'MaintenancesController@destroy');
 Route::post('maintenances/update/{id}', 'MaintenancesController@update');
 
 
+Route::resource('checks', 'ChecksController');
+Route::get('checks/edit/{id}', 'ChecksController@edit');
+Route::get('checks/delete/{id}', 'ChecksController@destroy');
+Route::post('checks/update/{id}', 'ChecksController@update');
+Route::get('checks/show/{id}', 'ChecksController@show');
+
+Route::get('checks/checkout', 'ChecksController@checkout');
+
+Route::get('checks/checkin/{id}', 'ChecksController@checkin');
+Route::post('checks/checkin/{id}', 'ChecksController@docheckin');
+
+
 Route::get('erpmigrate', function(){
 
   return View::make('erpmigrate');
