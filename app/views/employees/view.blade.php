@@ -308,6 +308,48 @@ function asMoney($value) {
 </div>
 </div>
 <div class="row">
+
+<div class="col-lg-4">
+<table class="table table-bordered table-hover">
+ <tr><td colspan="2"><strong><span style="color:green">Next of Kin Information</span></strong></td></tr>
+ <tr><td><strong>Name:</strong></td>
+        @if($employee->kin_name != null)
+        <td>{{$employee->kin_name}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+<tr><td><strong>ID Number:</strong></td>
+        @if($employee->kin_idno != null)
+        <td>{{$employee->kin_idno}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Email Address:</strong></td>
+        @if($employee->kin_email != null)
+        <td>{{$employee->kin_email}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Telephone Number:</strong></td>
+        @if($employee->kin_phone != null)
+        <td>{{$employee->kin_phone}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Relationship:</strong></td>
+        @if($employee->kin_relationship != null)
+        <td>{{$employee->kin_relationship}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+</table>
+</div>
+
  <div class="col-lg-4">
 <table class="table table-bordered table-hover">
  <tr><td colspan="2"><strong><span style="color:green">Contact Information</span></strong></td></tr>
@@ -398,7 +440,7 @@ function asMoney($value) {
 
     <div class="panel panel-default">
       <div class="panel-heading">
-          <a class="btn btn-info btn-sm" href="{{ URL::to('NextOfKins/create/'.$employee->id)}}">new kin</a>
+          <a class="btn btn-info btn-sm" href="{{ URL::to('EmergencyContacts/create/'.$employee->id)}}">new contact</a>
         </div>
         <div class="panel-body">
 
@@ -409,7 +451,7 @@ function asMoney($value) {
       <thead>
 
         <th>#</th>
-        <th>Kin Name</th>
+        <th>Contact Name</th>
          <th>ID Number</th>
          <th>Relationship</th>
         <th></th>
@@ -418,22 +460,23 @@ function asMoney($value) {
       <tbody>
 
         <?php $i = 1; ?>
-        @foreach($kins as $kin)
+        @foreach($contacts as $contact)
 
         <tr>
 
           <td> {{ $i }}</td>
-          <td>{{ $kin->name }}</td>
-          @if($kin->id_number!=' ' || $kin->id_number!=null)
-          <td>{{ $kin->id_number }}</td>
+          <td>{{ $contact->name }}</td>
+          @if($contact->id_number!=' ' || $contact->id_number!=null)
+          <td>{{ $contact->id_number }}</td>
           @else
           <td></td>
           @endif
-          @if($kin->id_number!=' ' || $kin->id_number!=null)
-          <td>{{ $kin->relationship }}</td>
+          @if($contact->id_number!=' ' || $contact->id_number!=null)
+          <td>{{ $contact->relationship }}</td>
            @else
           <td></td>
           @endif
+          
           <td>
 
                   <div class="btn-group">
@@ -442,11 +485,11 @@ function asMoney($value) {
                   </button>
           
                   <ul class="dropdown-menu" role="menu">
-                    <li><a href="{{URL::to('NextOfKins/view/'.$kin->id)}}">View</a></li>   
+                    <li><a href="{{URL::to('EmergencyContacts/view/'.$contact->id)}}">View</a></li>   
 
-                    <li><a href="{{URL::to('NextOfKins/edit/'.$kin->id)}}">Update</a></li>
+                    <li><a href="{{URL::to('EmergencyContacts/edit/'.$contact->id)}}">Update</a></li>
                    
-                    <li><a href="{{URL::to('NextOfKins/delete/'.$kin->id)}}" onclick="return (confirm('Are you sure you want to delete this employee`s kin?'))">Delete</a></li>
+                    <li><a href="{{URL::to('EmergencyContacts/delete/'.$contact->id)}}" onclick="return (confirm('Are you sure you want to delete this employee`s emergency contact?'))">Delete</a></li>
                      
 
                  

@@ -157,6 +157,13 @@ class EmployeesController extends \BaseController {
 	    $employee->department_id = Input::get('department_id');
 	    $employee->job_group_id = Input::get('jgroup_id');
 		$employee->type_id = Input::get('type_id');
+
+        $employee->kin_name = Input::get('kin_name');
+        $employee->kin_email = Input::get('kin_email');
+        $employee->kin_phone = Input::get('kin_phone');
+	    $employee->kin_idno = Input::get('kin_idno');
+	    $employee->kin_relationship = Input::get('relationship');
+
 		if(Input::get('i_tax') != null ){
 		$employee->income_tax_applicable = '1';
 	    }else{
@@ -306,6 +313,13 @@ class EmployeesController extends \BaseController {
         $employee->yob = Input::get('dob');
         $employee->citizenship = Input::get('citizenship');
         $employee->mode_of_payment = Input::get('modep');
+
+        $employee->kin_name = Input::get('kin_name');
+        $employee->kin_email = Input::get('kin_email');
+        $employee->kin_phone = Input::get('kin_phone');
+	    $employee->kin_idno = Input::get('kin_idno');
+	    $employee->kin_relationship = Input::get('relationship');
+
         if(Input::get('bank_account_number') != null ){
         $employee->bank_account_number = Input::get('bank_account_number');
         }else{
@@ -433,7 +447,7 @@ class EmployeesController extends \BaseController {
 
 		$appraisals = Appraisal::where('employee_id', $id)->get();
 
-        $kins = Nextofkin::where('employee_id', $id)->get();
+        $contacts = Emergencycontact::where('employee_id', $id)->get();
 
         $occurences = Occurence::where('employee_id', $id)->get();
 
@@ -443,7 +457,7 @@ class EmployeesController extends \BaseController {
 
 		$organization = Organization::find(1);
 
-		return View::make('employees.view', compact('employee','appraisals','kins','documents','occurences','properties'));
+		return View::make('employees.view', compact('employee','appraisals','contacts','documents','occurences','properties'));
 		
 	}
 

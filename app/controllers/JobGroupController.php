@@ -46,6 +46,8 @@ class JobGroupController extends \BaseController {
 
 		$c = count(Input::get('benefitid'));
 
+		$a = count(Input::get('amount'));
+
 		$ben = Input::get('benefitid');
 
         $amt = str_replace( ',', '', Input::get('amount'));
@@ -60,22 +62,13 @@ class JobGroupController extends \BaseController {
 
         $id = Jobgroup::orderBy('id','DESC')->first();
 
-        for ( $i=0; $i< $count; $i++) {
-
+        for ( $i=0; $i< $c; $i++) {
         $benefit = new Employeebenefit;
         $benefit->jobgroup_id=$id->id ;
-
-        if(filter_var($ben[$i], FILTER_VALIDATE_BOOLEAN)){
         $benefit->benefit_id = $ben[$i];
         $benefit->amount = $amt[$i];
 
-        }else{
-        $benefit->benefit_id = $ben[$i];
-        $benefit->amount = $amt[$i+1];
-        }
-
         $benefit->save();
-    
         }
 
 		

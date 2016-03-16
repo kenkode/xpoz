@@ -2529,6 +2529,13 @@ Route::get('NextOfKins/edit/{id}', 'NextOfKinsController@edit');
 Route::get('NextOfKins/view/{id}', 'NextOfKinsController@view');
 Route::get('NextOfKins/create/{id}', 'NextOfKinsController@create');
 
+Route::resource('EmergencyContacts', 'EmergencyContactsController');
+Route::post('EmergencyContacts/update/{id}', 'EmergencyContactsController@update');
+Route::get('EmergencyContacts/delete/{id}', 'EmergencyContactsController@destroy');
+Route::get('EmergencyContacts/edit/{id}', 'EmergencyContactsController@edit');
+Route::get('EmergencyContacts/view/{id}', 'EmergencyContactsController@view');
+Route::get('EmergencyContacts/create/{id}', 'EmergencyContactsController@create');
+
 Route::resource('Appraisals', 'AppraisalsController');
 Route::post('Appraisals/update/{id}', 'AppraisalsController@update');
 Route::get('Appraisals/delete/{id}', 'AppraisalsController@destroy');
