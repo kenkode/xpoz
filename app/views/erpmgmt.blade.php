@@ -71,7 +71,7 @@
 		
 
 		<br><br>
-		<img src="{{asset('images/logo.png')}}">
+		<img src="{{ asset('public/uploads/logos/'.Organization::getLogo()) }}" alt="LOGO" width="80%"/>
     
 	</div>
 

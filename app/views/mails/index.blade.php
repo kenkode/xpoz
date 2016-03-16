@@ -1,0 +1,1 @@
+/var/www/html/xpo/app/views/mails/index.blade.php

@@ -20,6 +20,40 @@
             <label for="email">{{{ Lang::get('confide::confide.e_mail') }}} <small>{{ Lang::get('confide::confide.signup.confirmation_required') }}</small></label>
             <input class="form-control" placeholder="{{{ Lang::get('confide::confide.e_mail') }}}" type="text" name="email" id="email" value="{{ $user->email }}">
         </div>
+
+
+         <div class="form-group">
+            <label>Assign Roles</label>
+            <table class="table table-condensed">
+
+          <tr>
+
+            @foreach($roles as $role)
+       
+
+
+         
+
+            <td>
+            @if($user->hasRole($role->name))
+              <input type="checkbox" name="role[]" value="{{ $role->id }}" checked> {{$role->name}}
+              @else
+              <input type="checkbox" name="role[]" value="{{ $role->id }}"> {{$role->name}}
+              @endif
+
+            </td>
+
+         
+
+
+       
+        @endforeach
+
+
+          </tr>
+
+        </table>
+        </div>
         
 
         @if (Session::get('error'))

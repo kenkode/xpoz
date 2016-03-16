@@ -1,0 +1,1 @@
+/var/www/html/xpo/app/views/bookingitems/index.blade.php

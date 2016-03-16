@@ -28,8 +28,9 @@ class UsersController extends Controller
     public function edit($user){
 
         $user = User::find($user);
+        $roles = Role::all();
 
-        return View::make('users.edit')->with('user', $user);
+        return View::make('users.edit', compact('user', 'roles'));
     }
 
 
@@ -44,7 +45,15 @@ class UsersController extends Controller
         $user->email = Input::get('email');
         $user->update();
 
-        return Redirect::to('users/profile/'.$user->id);
+        $user->detachRoles($user->roles);
+
+        $roles = Input::get('role');
+        foreach ($roles as $role) {
+
+                $user->attachRole($role);
+            }
+
+        return Redirect::to('users');
     }
 
 
@@ -498,11 +507,13 @@ class UsersController extends Controller
 
     public function show($id){
 
-        
-
-         Confide::logout();
+        Confide::logout();
 
         return Redirect::to('/');
+
+         //$user = User::findorfail($id);
+
+         //return View::make('users.show', compact('user'));
     }
 
 

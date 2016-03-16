@@ -111,6 +111,7 @@ Route::get('roles/create', 'RolesController@create');
 Route::get('roles/edit/{id}', 'RolesController@edit');
 Route::post('roles/update/{id}', 'RolesController@update');
 Route::get('roles/delete/{id}', 'RolesController@destroy');
+Route::get('roles/show/{id}', 'RolesController@show');
 
 });
 
@@ -2140,6 +2141,19 @@ Route::resource('items', 'ItemsController');
 Route::get('items/edit/{id}', 'ItemsController@edit');
 Route::post('items/update/{id}', 'ItemsController@update');
 Route::get('items/delete/{id}', 'ItemsController@destroy');
+Route::get('items/show/{id}', 'ItemsController@show');
+
+
+Route::resource('bookings', 'BookingsController');
+Route::get('bookings/edit/{id}', 'BookingsController@edit');
+Route::post('bookings/update/{id}', 'BookingsController@update');
+Route::get('bookings/delete/{id}', 'BookingsController@destroy');
+Route::get('bookings/show/{id}', 'BookingsController@show');
+Route::post('bookings/add', 'BookingsController@add');
+Route::post('bookings/additems', 'BookingsController@additems');
+Route::get('bookings/commit', 'BookingsController@commit');
+
+
 
 
 Route::resource('paymentmethods', 'PaymentmethodsController');
@@ -2562,6 +2576,29 @@ Route::get('itemcategories/delete/{id}', 'ItemcategoriesController@destroy');
 Route::post('itemcategories/update/{id}', 'ItemcategoriesController@update');
 
 
+Route::resource('tests', 'TestsController');
+Route::get('tests/edit/{id}', 'TestsController@edit');
+Route::get('tests/delete/{id}', 'TestsController@destroy');
+Route::post('tests/update/{id}', 'TestsController@update');
+
+Route::resource('maintenances', 'MaintenancesController');
+Route::get('maintenances/edit/{id}', 'MaintenancesController@edit');
+Route::get('maintenances/delete/{id}', 'MaintenancesController@destroy');
+Route::post('maintenances/update/{id}', 'MaintenancesController@update');
+
+
+Route::resource('checks', 'ChecksController');
+Route::get('checks/edit/{id}', 'ChecksController@edit');
+Route::get('checks/delete/{id}', 'ChecksController@destroy');
+Route::post('checks/update/{id}', 'ChecksController@update');
+Route::get('checks/show/{id}', 'ChecksController@show');
+
+Route::get('checks/checkout', 'ChecksController@checkout');
+
+Route::get('checks/checkin/{id}', 'ChecksController@checkin');
+Route::post('checks/checkin/{id}', 'ChecksController@docheckin');
+
+
 Route::get('erpmigrate', function(){
 
   return View::make('erpmigrate');
@@ -2638,9 +2675,28 @@ Route::post('import/categories', function(){
 });
 
 
+Route::resource('bookingitems', 'BookingitemsController');
 
 
 
 
 
+
+Route::get('connection', function(){
+
+  Organization::checkInternet();
+
+});
+
+Route::get('mail', function(){
+
+    $mail = Mailsender::find(1);
+
+    return View::make('system.mail', compact('mail'));
+
+});
+
+
+Route::resource('mails', 'MailsController');
+Route::get('mailtest', 'MailsController@test');
 

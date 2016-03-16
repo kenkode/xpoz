@@ -28,6 +28,7 @@ class UserRepository
         $organization->license_code = $lcode;
         $organization->update();
 
+       
 
         $user = new User;
 

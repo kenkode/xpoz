@@ -48,6 +48,18 @@ public function leaveapplications(){
 }
 
 
+public static function getLogo(){
+
+	//$organization_id = Confide::user()->organization_id;
+
+	$organization = Organization::find(1);
+
+	return $organization->logo;
+
+}
+
+
+
 public static function getOrganizationName(){
 
 	$organization_id = Confide::user()->organization_id;
@@ -365,7 +377,20 @@ public function license_key_validator($license_key, $license_code, $org_name){
 
 
 
+public static function checkInternet(){
 
+
+if(!$sock = @fsockopen('www.google.com', 80))
+{
+    echo 'Not Connected';
+}
+else
+{
+echo 'Connected';
+}
+
+
+}
 
 
 

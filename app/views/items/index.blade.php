@@ -51,8 +51,9 @@ function asMoney($value) {
         <th>#</th>
         <th>Name</th>
         <th>Description</th>
-        <th>Purchase Price</th>
-        <th>Selling Price</th>
+        <th>Category</th>
+        <th>SKU</th>
+        <th>Tag ID</th>
         <th></th>
 
       </thead>
@@ -66,8 +67,9 @@ function asMoney($value) {
           <td> {{ $i }}</td>
           <td>{{ $item->name }}</td>
           <td>{{ $item->description }}</td>
-          <td align="right">{{ asMoney($item->purchase_price) }}</td>
-          <td align="right">{{ asMoney($item->selling_price) }}</td>
+          <td >{{ $item->category}}</td>
+          <td >{{$item->sku}}</td>
+          <td >{{$item->tag_id}}</td>
           <td>
 
                   <div class="btn-group">
@@ -76,6 +78,7 @@ function asMoney($value) {
                   </button>
           
                   <ul class="dropdown-menu" role="menu">
+                     <li><a href="{{URL::to('items/show/'.$item->id)}}">View</a></li>
                     <li><a href="{{URL::to('items/edit/'.$item->id)}}">Update</a></li>
                    
                     <li><a href="{{URL::to('items/delete/'.$item->id)}}" onclick="return (confirm('Are you sure you want to delete this item?'))">Delete</a></li>

@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'driver' => 'smtp',
+	'driver' => Mailsender::driver(),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'host' => 'mail.lixnet.net',
+	'host' => Mailsender::host(),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ return array(
 	|
 	*/
 
-	'port' => 25,
+	'port' => Mailsender::port(),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => 'info@lixnet.net', 'name' => 'Xpose Limited'), 
+	'from' => array('address' => Mailsender::username(), 'name' => 'Xpose Limited'), 
 
 	/*
 	|--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ return array(
 	|
 	*/
 
-	'encryption' => '',
+	'encryption' => Mailsender::encryption(),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return array(
 	|
 	*/
 
-	'username' => 'info@lixnet.net',
+	'username' => Mailsender::username(),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ return array(
 	|
 	*/
 
-	'password' => 'lixnetco2015',
+	'password' => Mailsender::password(),
 
 	/*
 	|--------------------------------------------------------------------------

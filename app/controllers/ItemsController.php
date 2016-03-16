@@ -24,8 +24,9 @@ class ItemsController extends \BaseController {
 	public function create()
 	{
 		$itemcategories = Itemcategory::all();
+		$locations = Location::all();
 
-		return View::make('items.create', compact('itemcategories'));
+		return View::make('items.create', compact('itemcategories', 'locations'));
 	}
 
 	/**
@@ -53,6 +54,7 @@ class ItemsController extends \BaseController {
 		$item->tag_id = Input::get('tag');
 		$item->reorder_level = Input::get('reorder');
 		$item->duration = Input::get('duration');
+		$item->location_id = Input::get('location_id');
 		$item->save();
 
 		Audit::logaudit('Items', 'create', 'created: '.$item->name);
@@ -84,8 +86,9 @@ class ItemsController extends \BaseController {
 		$item = Item::find($id);
 
 		$itemcategories = Itemcategory::all();
+		$locations = Location::all();
 
-		return View::make('items.edit', compact('item', 'itemcategories'));
+		return View::make('items.edit', compact('item', 'itemcategories', 'locations'));
 	}
 
 	/**
@@ -114,6 +117,7 @@ class ItemsController extends \BaseController {
 		$item->tag_id = Input::get('tag');
 		$item->reorder_level = Input::get('reorder');
 		$item->duration = Input::get('duration');
+		$item->location_id = Input::get('location_id');
 		$item->update();
 
         Audit::logaudit('Items', 'update', 'updated: '.$item->name);
