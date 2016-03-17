@@ -21,6 +21,7 @@ class CreateBookingsTable extends Migration {
 			$table->date('start_date')->nullable();
 			$table->date('end_date')->nullable();
 			$table->text('remarks')->nullable();
+			$table->boolean('is_cancelled')->nullable();
 			$table->timestamps();
 		});
 	}

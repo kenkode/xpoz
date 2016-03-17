@@ -54,4 +54,28 @@ class Item extends \Eloquent {
 		return $item->name;
 	}
 
+
+	public static function getItemTag($id){
+
+		$item = Item::find($id);
+
+		return $item->tag_id;
+	}
+
+	public static function getItemDescription($id){
+
+		$item = Item::find($id);
+
+		return $item->description;
+	}
+
+	public static function getItemSku($id){
+
+		$item = Item::find($id);
+
+		return $item->sku;
+	}
+
+	
+
 }

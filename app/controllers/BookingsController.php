@@ -100,7 +100,10 @@ class BookingsController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		Booking::destroy($id);
+		$bk = Booking::find($id);
+		$bk->is_cancelled = true;
+		$bk->update();
+
 
 		return Redirect::route('bookings.index');
 	}

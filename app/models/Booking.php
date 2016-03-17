@@ -32,4 +32,13 @@ class Booking extends \Eloquent {
 		$booking->save();
 	}
 
+
+	public static function getItems($id){
+
+		//$items = array();
+		$items = DB::table('bookingitems')->where('booking_id', '=', $id)->get();
+
+		return $items;
+	}
+
 }

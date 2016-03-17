@@ -2151,7 +2151,38 @@ Route::get('bookings/delete/{id}', 'BookingsController@destroy');
 Route::get('bookings/show/{id}', 'BookingsController@show');
 Route::post('bookings/add', 'BookingsController@add');
 Route::post('bookings/additems', 'BookingsController@additems');
-Route::get('bookings/commit', 'BookingsController@commit');
+Route::get('bookingscommit', function(){
+
+    $bookingitems =Session::get('bookingitems');
+      $bking =Session::get('booking');
+
+      $client = Client::findOrFail($bking['client_id']);
+
+     
+
+      
+      $booking = new Booking;
+      $booking->client()->associate($client);
+      $booking->event = $bking['event'];
+      $booking->start_date = $bking['start_date'];
+      $booking->end_date = $bking['end_date'];
+      $booking->save();
+
+      foreach($bookingitems as $bookingitem){
+        
+          $item = Item::findOrFail($bookingitem['item']);
+          $bookingitem = new Bookingitem;
+          $bookingitem->item()->associate($item);
+          $bookingitem->booking()->associate($booking);
+          $bookingitem->save();
+      }
+      
+
+  return Redirect::to('bookings');
+
+  
+
+});
 
 
 
