@@ -32,7 +32,7 @@
 
     <div class="form-group">
                         <label for="username">Current Document</label><span style="color:red">*</span><br>
-                        <input class="form-control" placeholder="" type="text" name="curpath" value="{{ $document->document_path }}">
+                        <input class="form-control" readonly placeholder="" type="text" name="curpath" value="{{ $document->document_path }}">
                     </div>
 
        <div class="form-group">

@@ -23,9 +23,15 @@ public static $rules = [
 	protected $fillable = [];
 
 
-	public function employees(){
+	public function employeebenefits(){
 
-		return $this->hasMany('Employee');
+		return $this->hasMany('Employeebenefit');
+	}
+
+	public static function getBenefit($id){
+
+		$benefit = Benefitsetting::find($id);
+        return $benefit->benefit_name;
 	}
 
 }

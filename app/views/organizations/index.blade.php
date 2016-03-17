@@ -23,7 +23,7 @@
 
 <div class="col-lg-3">
 
-{{ HTML::image("images/ourlogo.png", "Logo") }}
+<img src="{{ asset('public/uploads/logos/'.$organization->logo) }}" alt="LOGO" width="80%"/>
 
 
 </div>	

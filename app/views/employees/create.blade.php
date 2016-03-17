@@ -212,7 +212,10 @@ $(document).ready(function() {
                     <div class="form-group">
                         <label for="username">Photo</label><br>
                         <div id="imagePreview"></div>
-                        <input class="img" placeholder="" type="file" name="image" id="uploadFile" value="{{{ Input::old('image') }}}">
+
+                        <input class=" img" placeholder="" type="file" name="image" id="uploadFile" value="{{{ Input::old('image') }}}">
+
+                        
                     </div>
             
                      <div class="form-group">
@@ -327,7 +330,8 @@ $(document).ready(function() {
                         <label for="username">Swift Code</label>
                         <input class="form-control" placeholder="" type="text" name="swift_code" id="swift_code" value="{{{ Input::old('swift_code') }}}">
                     </div>
-                     
+
+                   
 
               </fieldset>
 
@@ -401,7 +405,7 @@ $(document).ready(function() {
                     </div>
 
                      <div class="form-group">
-                        <label for="username">Job Group</label>
+                        <label for="username">Job Group <span style="color:red">*</span></label>
                         <select name="jgroup_id" class="form-control">
                             <option></option>
                             @foreach($jgroups as $jgroup)

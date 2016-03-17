@@ -21,4 +21,9 @@ class Employeebenefit extends \Eloquent {
 		return $this->belongsTo('Jobgroup');
 	}
 
+	public function benefitsetting(){
+
+		return $this->belongsTo('Benefitsetting');
+	}
+
 }

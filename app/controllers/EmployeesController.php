@@ -455,9 +455,13 @@ class EmployeesController extends \BaseController {
 
         $documents = Document::where('employee_id', $id)->get();
 
+        $benefits = EmployeeBenefit::where('jobgroup_id', $employee->job_group_id)->get();
+
+        $count = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->count();
+
 		$organization = Organization::find(1);
 
-		return View::make('employees.view', compact('employee','appraisals','contacts','documents','occurences','properties'));
+		return View::make('employees.view', compact('employee','appraisals','contacts','documents','occurences','properties','benefits','count'));
 		
 	}
 
@@ -475,9 +479,13 @@ class EmployeesController extends \BaseController {
 
         $documents = Document::where('employee_id', $id)->get();
 
+        $benefits = EmployeeBenefit::where('jobgroup_id', $employee->job_group_id)->get();
+
+        $count = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->count();
+     
 		$organization = Organization::find(1);
 
-		return View::make('employees.viewdeactive', compact('employee','appraisals','kins','documents','occurences','properties'));
+		return View::make('employees.viewdeactive', compact('employee','appraisals','kins','documents','occurences','properties','benefits','count'));
 		
 	}
 

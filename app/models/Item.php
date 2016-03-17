@@ -30,10 +30,28 @@ class Item extends \Eloquent {
 		return $this->hasMany('Stock');
 	}
 
+	public function checks(){
+
+		return $this->hasMany('Check');
+	}
+
+	public function maintenances(){
+
+		return $this->hasMany('Maintenance');
+	}
+
 
 	public function leaseitems(){
 
 		return $this->hasMany('Leaseitem');
+	}
+
+
+	public static function getItemName($id){
+
+		$item = Item::find($id);
+
+		return $item->name;
 	}
 
 }

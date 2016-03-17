@@ -91,6 +91,7 @@ class EarningsController extends \BaseController {
 		$earning = DB::table('employee')
 		          ->join('earnings', 'employee.id', '=', 'earnings.employee_id')
 		          ->where('in_employment','=','Y')
+		          ->where('earnings.id','=',$id)
 		          ->first();
 
 		return View::make('other_earnings.edit', compact('earning','employees'));

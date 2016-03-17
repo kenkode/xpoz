@@ -331,7 +331,7 @@ $name = $employee->first_name.' '.$employee->last_name;
 
 
 
-	Mail::send( 'emails.password', array('password'=>$password, 'name'=>$name), function( $message ) use ($employee)
+	Mail::queue( 'emails.password', array('password'=>$password, 'name'=>$name), function( $message ) use ($employee)
 {
     $message->to($employee->email_office )->subject( 'Self Service Portal Credentials' );
 });
