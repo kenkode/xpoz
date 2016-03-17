@@ -455,7 +455,7 @@ class EmployeesController extends \BaseController {
 
         $documents = Document::where('employee_id', $id)->get();
 
-        $benefits = EmployeeBenefit::where('jobgroup_id', $employee->job_group_id)->get();
+        $benefits = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->get();
 
         $count = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->count();
 
@@ -479,7 +479,7 @@ class EmployeesController extends \BaseController {
 
         $documents = Document::where('employee_id', $id)->get();
 
-        $benefits = EmployeeBenefit::where('jobgroup_id', $employee->job_group_id)->get();
+        $benefits = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->get();
 
         $count = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->count();
      
