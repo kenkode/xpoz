@@ -16,4 +16,9 @@ class Bookingitem extends \Eloquent {
 		return $this->belongsTo('Booking');
 	}
 
+	public function item(){
+
+		return $this->belongsTo('Item');
+	}
+
 }

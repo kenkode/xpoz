@@ -103,7 +103,7 @@
 
     <hr>
 
-    <a href="{{URL::to('bookings/commit')}}" class="btn btn-primary pull-right">Create</a>
+    <a href="{{URL::to('bookingscommit')}}" class="btn btn-primary pull-right">Create</a>
     </div>
 </div>
 

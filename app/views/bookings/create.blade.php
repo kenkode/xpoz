@@ -29,14 +29,14 @@
         
          <div class="form-group">
             <label for="username">Event:</label>
-            <input type="text" name="event" value="" class="form-control" >
+            <input type="text" name="event"  class="form-control" >
         </div>
 
         <div class="form-group">
                         <label for="username">Start Date</label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
-                        <input class="form-control datepicker21"  readonly="readonly" placeholder="" type="text" name="start_date" id="start_date" value="">
+                        <input class="form-control datepicker21"  readonly="readonly" placeholder="" type="text" name="start_date" id="start_date" >
                         </div>
           </div>
 
@@ -45,7 +45,7 @@
                         <label for="username">End Date</label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
-                        <input class="form-control datepicker21"  readonly="readonly" placeholder="" type="text" name="end_date" id="end_date" value="">
+                        <input class="form-control datepicker21"  readonly="readonly" placeholder="" type="text" name="end_date" id="end_date" >
                         </div>
           </div>
 

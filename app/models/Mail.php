@@ -12,13 +12,7 @@ class Mailsender extends \Eloquent {
 	protected $fillable = [];
 
 
-	public static function init(){
-
-		$mail = new Mail;
-
-		$mail->driver = 'smtp';
-		$mail->save();
-	}
+	
 
 
 	public static function host(){
