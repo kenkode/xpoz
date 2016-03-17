@@ -139,6 +139,7 @@ function asMoney($value) {
     <li role="presentation"><a href="#appraisals" aria-controls="appraisals" role="tab" data-toggle="tab">Appraisal</a></li>
     <li role="presentation"><a href="#properties" aria-controls="properties" role="tab" data-toggle="tab">Company Property</a></li>
     <li role="presentation"><a href="#occurences" aria-controls="occurences" role="tab" data-toggle="tab">Occurence</a></li>
+    <li role="presentation"><a href="#benefits" aria-controls="benefits" role="tab" data-toggle="tab">Benefits</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -799,6 +800,8 @@ function asMoney($value) {
                   <ul class="dropdown-menu" role="menu">
                     <li><a href="{{URL::to('occurences/view/'.$occurence->id)}}">View</a></li>
 
+                    <li><a href="{{URL::to('occurences/download/'.$occurence->id)}}">Download</a></li>
+
                     <li><a href="{{URL::to('occurences/edit/'.$occurence->id)}}">Update</a></li>
                    
                     <li><a href="{{URL::to('occurences/delete/'.$occurence->id)}}" onclick="return (confirm('Are you sure you want to delete this employee`s occurence?'))">Delete</a></li>
@@ -830,6 +833,47 @@ function asMoney($value) {
 
 
 	</div>
+
+
+<div role="tabpanel" class="tab-pane" id="benefits">
+
+        <br>
+
+     <div class="row">
+          <div class="col-lg-12">
+
+    
+
+          <div class="row">
+
+
+           <div class="col-lg-6">
+
+             <table class="table table-bordered table-hover">
+           
+      <tr><td><strong>Name: </strong></td><td><strong>Amount</strong></td></tr>
+      @if($count>0)
+      @foreach($benefits as $benefit)
+      <tr><td>{{Benefitsetting::getBenefit($benefit->benefit_id)}}</td>
+      <td>{{asMoney($benefit->amount)}}</td></tr>
+      @endforeach
+
+      @else
+      <tr><td colspan="2" align="center">Not found</td></tr>
+      @endif
+</table>
+</div>
+
+</div>
+   
+
+        
+    </div>
+
+</div>
+</div>
+
+
 
 </div>
 </div>

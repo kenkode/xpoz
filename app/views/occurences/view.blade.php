@@ -58,6 +58,11 @@ function asMoney($value) {
       <tr><td><strong>Occurence Brief: </strong></td><td>{{$occurence->occurence_brief}}</td></tr>
       <tr><td><strong>Occurence Type: </strong></td><td>{{$occurence->occurence_type}}</td></tr>
       <tr><td><strong>Narrative: </strong></td><td>{{$occurence->narrative}}</td></tr>
+      @if($occurence->doc_path!=null || $occurence->doc_path!='')
+      <tr><td><strong>Attached Document: </strong></td><td>{{$occurence->doc_path}}</td></tr>
+      @else
+      <tr><td><strong>Attached Document: </strong></td><td>None</td></tr>
+      @endif
       <?php
        $d=strtotime($occurence->occurence_date);
       ?>

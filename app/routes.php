@@ -1399,7 +1399,7 @@ Route::get('occurences/delete/{id}', 'OccurencesController@destroy');
 Route::get('occurences/edit/{id}', 'OccurencesController@edit');
 Route::get('occurences/view/{id}', 'OccurencesController@view');
 Route::get('occurences/create/{id}', 'OccurencesController@create');
-
+Route::get('occurences/download/{id}', 'OccurencesController@getDownload');
 
 /*
 * employee earnings routes
