@@ -15,7 +15,7 @@ class CreateEmployeeBenefitsTable extends Migration {
 		Schema::create('employeebenefits', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('job_group_id')->unsigned()->index('employeebenefits_job_group_id_foreign');
+			$table->integer('jobgroup_id')->unsigned()->index('employeebenefits_jobgroup_id_foreign');
 			$table->integer('benefit_id')->unsigned()->index('employeebenefits_benefit_id_foreign');
 			$table->string('amount')->default('0.00');
 			$table->timestamps();
