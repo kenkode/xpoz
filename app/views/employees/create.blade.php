@@ -247,7 +247,6 @@ $(document).ready(function() {
                         <input class="form-control" placeholder="" type="text" name="hospital_insurance_number" id="hospital_insurance_number" value="{{{ Input::old('hospital_insurance_number') }}}">
                     </div>
                      </fieldset>
-                     <br><br><br><br>
                      <fieldset>
                       
                       <div class="form-group"><h3 style='color:Green;strong;margin-top:15px'>Deductions Applicable</h3></div>
@@ -280,7 +279,6 @@ $(document).ready(function() {
                         </label>
                     </div>
                      </fieldset>
-                     <br><br><br><br>
 
                      <fieldset>
                     <div class="form-group"><h3 style='color:Green;strong'>Payment Information</h3></div>
@@ -336,6 +334,44 @@ $(document).ready(function() {
                    
 
               </fieldset>
+
+              
+              <fieldset>
+                    <div class="form-group"><h3 style='color:Green;strong'>Next of Kin</h3></div>
+
+                    <div class="form-group">
+                        <label for="username">Kin name</label>
+                        <input class="form-control" placeholder="" type="text" name="kin_name" id="kin_name" value="{{{ Input::old('kin_name') }}}">
+                
+                    </div>                    
+
+                    <div class="form-group">
+                        <label for="username">ID Number</label>
+                       <input class="form-control" placeholder="" type="text" name="kin_idno" id="kin_idno" value="{{{ Input::old('kin_idno') }}}">
+                
+                    </div>
+
+                      
+                     <div class="form-group">
+                        <label for="username">Email Address</label>
+                        <input class="form-control" placeholder="" type="text" name="kin_email" id="kin_email" value="{{{ Input::old('kin_email') }}}">
+                
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Telephone Number</label>
+                        <input class="form-control" placeholder="" type="text" name="kin_phone" id="kin_phone" value="{{{ Input::old('kin_phone') }}}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Relationship</label>
+                        <input class="form-control" placeholder="" type="text" name="relationship" id="relationship" value="{{{ Input::old('relationship') }}}">
+                    </div>
+                     
+
+              </fieldset>
+
+
 
             </div>
 
@@ -466,11 +502,11 @@ $(document).ready(function() {
                       
                     </fieldset>
 
-                    <div style='margin-top:80px'></div>
+                    <div style='margin-top:170px'></div>
 
                     </fieldset>
                     
-                        <div class="form-actions form-group">
+                        <div  align='right' class="form-actions form-group">
         
                             <button type="submit" class="btn btn-primary btn-sm">Create Employee</button>
                         </div>

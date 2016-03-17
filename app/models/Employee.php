@@ -27,7 +27,7 @@ class Employee extends Eloquent {
 		 'personal_file_number' => 'required|unique:employee',
 		 'identity_number' => 'required|unique:employee',
 		 'pay' => 'regex:/^[0-9]{1,3}(,[0-9]{3})*\.[0-9]+$/',
-		 'email_office' => 'email|unique:employee',
+		 'email_office' => 'required|email|unique:employee',
 		 'email_personal' => 'email|unique:employee',
 		 'passport_number' => 'unique:employee',
 		 'work_permit_number' => 'unique:employee',
@@ -37,8 +37,12 @@ class Employee extends Eloquent {
 		 'telephone_mobile' => 'unique:employee',
 		 'swift_code' => 'unique:employee',
 		 'bank_account_number' => 'unique:employee',
-		 'bank_eft_code' => 'unique:employee'
-
+		 'bank_eft_code' => 'unique:employee',
+         'branch_id' => 'required',
+		 'department_id' => 'required',
+		 'kin_idno' => 'unique:employee',
+		 'kin_phone' => 'unique:employee',
+		 'kin_email' => 'email|unique:employee',
 	];
 
     public static function rolesUpdate($id)
@@ -49,7 +53,7 @@ class Employee extends Eloquent {
 		 'personal_file_number' => 'required|unique:employee,personal_file_number,' . $id,
 		 'identity_number' => 'required|unique:employee,identity_number,' . $id,
 		 'pay' => 'regex:/^[0-9]{1,3}(,[0-9]{3})*\.[0-9]+$/',
-		 'email_office' => 'email|unique:employee,email_office,' . $id,
+		 'email_office' => 'required|email|unique:employee,email_office,' . $id,
 		 'email_personal' => 'email|unique:employee,email_personal,' . $id,
 		 'passport_number' => 'unique:employee,passport_number,' . $id,
 		 'work_permit_number' => 'unique:employee,work_permit_number,' . $id,
@@ -59,7 +63,12 @@ class Employee extends Eloquent {
 		 'telephone_mobile' => 'unique:employee,telephone_mobile,' . $id,
 		 'swift_code' => 'unique:employee,swift_code,' . $id,
 		 'bank_account_number' => 'unique:employee,bank_account_number,' . $id,
-		 'bank_eft_code' => 'unique:employee,bank_eft_code,' . $id
+		 'bank_eft_code' => 'unique:employee,bank_eft_code,' . $id,
+		 'branch_id' => 'required',
+		 'department_id' => 'required',
+		 'kin_idno' => 'unique:employee,kin_idno,' . $id,
+		 'kin_phone' => 'unique:employee,kin_phone,' . $id,
+		 'kin_email' => 'email|unique:employee,kin_email,' . $id,
         );
     }
 
@@ -71,7 +80,10 @@ class Employee extends Eloquent {
         'identity_number.required'=>'Please insert employee`s identity number!',
         'identity_number.unique'=>'That identity number already exists!',
         'pay.regex'=>'Please insert a valid salary!',
+        'email_office.required'=>'Please insert employee`s office email!',
+        'email_office.email'=>'Please insert a valid employee`s office email!',
         'email_office.unique'=>'That employee`s office email already exists!',
+        'email_personal.email'=>'Please insert a valid employee`s personal email!',
         'email_personal.unique'=>'That employee personal email already exists!',
         'passport_number.unique'=>'That passport number already exists!',
         'work_permit_number.unique'=>'That work permit number already exists!',
@@ -82,6 +94,12 @@ class Employee extends Eloquent {
         'swift_code.unique'=>'That swift code already exists!',
         'bank_account_number.unique'=>'That bank account number already exists!',
         'bank_eft_code.unique'=>'That bank eft code already exists!',
+        'branch_id.required'=>'Please insert employee`s branch!',
+        'department_id.required'=>'Please insert employee`s department!',
+        'kin_idno.unique'=>'That employee`s kin identity number already exists!',
+        'kin_phone.unique'=>'That employee`s kin phone number exists!',
+        'kin_email.email'=>'Please insert a valid employee`s kin email!',
+        'kin_email.unique'=>'That employee`s kin email address already exists!',
     );
 
 	// Don't forget to fill this array
@@ -124,6 +142,11 @@ class Employee extends Eloquent {
 		return $this->hasMany('Occurence');
 	}
 
+	public function emergencycontact(){
+
+		return $this->hasMany('Emergencycontact');
+	}
+
     public function education(){
 
 		return $this->hasMany('Education');
@@ -142,6 +165,13 @@ class Employee extends Eloquent {
     public static function getActiveEmployee(){
 
 		$employee = DB::table('employee')->where('in_employment', '=', 'Y')->get();
+
+		return $employee;
+	}
+
+	public static function getDeactiveEmployee(){
+
+		$employee = DB::table('employee')->where('in_employment', '=', 'N')->get();
 
 		return $employee;
 	}

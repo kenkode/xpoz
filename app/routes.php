@@ -838,7 +838,7 @@ Route::post('import/employees', function(){
       $employee->social_security_number = $result->nssf_number;
       $employee->hospital_insurance_number = $result->nhif_number;
       $employee->email_office = $result->email_address;
-      $employee->basic_pay = $result->basic_pay;
+      $employee->basic_pay = str_replace( ',', '', $result->basic_pay);
       $employee->save();
       
     }
@@ -1372,11 +1372,22 @@ Route::get('employee_type/edit/{id}', 'EmployeeTypeController@edit');
 * employees routes
 */
 
+Route::get('deactives', function(){
+
+  $employees = Employee::getDeactiveEmployee();
+
+  return View::make('employees.activate', compact('employees'));
+
+} );
+
+
 Route::resource('employees', 'EmployeesController');
 Route::post('employees/update/{id}', 'EmployeesController@update');
 Route::get('employees/deactivate/{id}', 'EmployeesController@deactivate');
+Route::get('employees/activate/{id}', 'EmployeesController@activate');
 Route::get('employees/edit/{id}', 'EmployeesController@edit');
 Route::get('employees/view/{id}', 'EmployeesController@view');
+Route::get('employees/viewdeactive/{id}', 'EmployeesController@viewdeactive');
 
 /*
 * occurences routes
@@ -2562,6 +2573,13 @@ Route::get('NextOfKins/delete/{id}', 'NextOfKinsController@destroy');
 Route::get('NextOfKins/edit/{id}', 'NextOfKinsController@edit');
 Route::get('NextOfKins/view/{id}', 'NextOfKinsController@view');
 Route::get('NextOfKins/create/{id}', 'NextOfKinsController@create');
+
+Route::resource('EmergencyContacts', 'EmergencyContactsController');
+Route::post('EmergencyContacts/update/{id}', 'EmergencyContactsController@update');
+Route::get('EmergencyContacts/delete/{id}', 'EmergencyContactsController@destroy');
+Route::get('EmergencyContacts/edit/{id}', 'EmergencyContactsController@edit');
+Route::get('EmergencyContacts/view/{id}', 'EmergencyContactsController@view');
+Route::get('EmergencyContacts/create/{id}', 'EmergencyContactsController@create');
 
 Route::resource('Appraisals', 'AppraisalsController');
 Route::post('Appraisals/update/{id}', 'AppraisalsController@update');
