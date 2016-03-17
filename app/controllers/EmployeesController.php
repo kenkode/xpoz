@@ -432,8 +432,12 @@ class EmployeesController extends \BaseController {
 	{
 
 		$employee = Employee::findOrFail($id);
-		
-		DB::table('employee')->where('id',$id)->update(array('in_employment'=>'Y'));
+
+		$employee->date_joined=date("Y-m-d");
+
+		$employee->in_employment="Y";
+
+		$employee->update();
 
 		Audit::logaudit('Employee', 'activate', 'activated: '.$employee->personal_file_number.'-'.$employee->first_name.' '.$employee->last_name);
 

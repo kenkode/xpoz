@@ -307,6 +307,48 @@ function asMoney($value) {
 </div>
 </div>
 <div class="row">
+
+<div class="col-lg-4">
+<table class="table table-bordered table-hover">
+ <tr><td colspan="2"><strong><span style="color:green">Next of Kin Information</span></strong></td></tr>
+ <tr><td><strong>Name:</strong></td>
+        @if($employee->kin_name != null)
+        <td>{{$employee->kin_name}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+<tr><td><strong>ID Number:</strong></td>
+        @if($employee->kin_idno != null)
+        <td>{{$employee->kin_idno}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Email Address:</strong></td>
+        @if($employee->kin_email != null)
+        <td>{{$employee->kin_email}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Telephone Number:</strong></td>
+        @if($employee->kin_phone != null)
+        <td>{{$employee->kin_phone}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Relationship:</strong></td>
+        @if($employee->kin_relationship != null)
+        <td>{{$employee->kin_relationship}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+</table>
+</div>
+
  <div class="col-lg-4">
 <table class="table table-bordered table-hover">
  <tr><td colspan="2"><strong><span style="color:green">Contact Information</span></strong></td></tr>
