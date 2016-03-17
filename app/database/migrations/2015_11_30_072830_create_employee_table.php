@@ -77,7 +77,7 @@ class CreateEmployeeTable extends Migration {
             $table->string('kin_name')->nullable();
             $table->string('kin_idno',30)->nullable()->unique();
             $table->string('kin_email')->nullable()->unique();
-            $table->string('kin_mobile',30)->nullable()->unique();
+            $table->string('kin_phone',30)->nullable()->unique();
             $table->string('kin_relationship')->nullable();
             $table->string('custom_field1',30)->nullable();
             $table->string('custom_field2',30)->nullable();
