@@ -30,9 +30,11 @@
             <label for="username">Employee</label>
             <select class="form-control" name="employee_id">
             <option> select employee</option>
-              @foreach($employees as $employee)  
+              @foreach($employees as $employee)
+		@if($employee->in_employment == 'Y')  
                     <option value="{{$employee->id}}">{{$employee->first_name." ".$employee->last_name." ".$employee->middle_name}}</option>
-              @endforeach
+@endif             
+ @endforeach
             </select>
         </div>
 
