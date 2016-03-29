@@ -47,7 +47,7 @@
   								</button>
   				
   								<ul class="dropdown-menu" role="menu">
-                    <li><a href="{{URL::to('users/show/'.$user->id)}}">View</a></li>
+                    <li><a href="{{URL::to('userview/'.$user->id)}}">View</a></li>
     								<li><a href="{{URL::to('users/edit/'.$user->id)}}">Edit</a></li>
 
     								<?php if($user->confirmed){ ?>

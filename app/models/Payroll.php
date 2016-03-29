@@ -112,6 +112,21 @@ public static $rules = [
 
     }
 
+    public static function jobbenefits($id){
+    $ben = 0.00;
+    
+    $total_bens = DB::table('employeebenefits')
+                     ->join('employee', 'employeebenefits.jobgroup_id', '=', 'employee.job_group_id')
+                     ->select(DB::raw('COALESCE(sum(amount),0.00) as totalben'))
+                     ->where('employee_id', '=', $id)
+                     ->get();
+    foreach($total_bens as $total_ben){
+    $tben = $total_ben->totalben;
+    }
+    return $tben;
+
+    }
+
     public static function total_benefits($id){
     $total_earnings = 0.00;
     

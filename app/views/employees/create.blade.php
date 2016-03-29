@@ -405,7 +405,7 @@ $(document).ready(function() {
                     </div>
 
                      <div class="form-group">
-                        <label for="username">Job Group</label>
+                        <label for="username">Job Group <span style="color:red">*</span></label>
                         <select name="jgroup_id" class="form-control">
                             <option></option>
                             @foreach($jgroups as $jgroup)
@@ -451,7 +451,7 @@ $(document).ready(function() {
                     </div>
 
                     <div class="form-group">
-                        <label for="username">Date joined</label>
+                        <label for="username">Date joined <span style="color:red">*</span></label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
                         <input class="form-control datepicker"  readonly="readonly" placeholder="" type="text" name="djoined" id="djoined" value="{{{ Input::old('djoined') }}}">

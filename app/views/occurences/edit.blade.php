@@ -24,7 +24,7 @@
         </div>
         @endif
 
-         <form method="POST" action="{{{ URL::to('occurences/update/'.$occurence->id) }}}" accept-charset="UTF-8">
+         <form method="POST" action="{{{ URL::to('occurences/update/'.$occurence->id) }}}" accept-charset="UTF-8" enctype="multipart/form-data">
    
     <fieldset>
         <div class="form-group">
@@ -62,6 +62,16 @@
             <label for="username">Occurence Narrative </label>
             <textarea class="form-control" name="narrative">{{{ $occurence->narrative }}}</textarea>
         </div>
+
+        <div class="form-group">
+                        <label for="username">Current Document</label><br>
+                        <input class="form-control" readonly placeholder="" type="text" name="curpath" value="{{ $occurence->doc_path }}">
+                    </div>
+
+        <div class="form-group">
+                        <label for="username">Update Document</label><br>
+                        <input class="img" placeholder="" type="file" name="path" id="path" value="{{ $occurence->doc_path }}">
+                    </div>
 
         <div class="form-group">
                         <label for="username">Occurence Date <span style="color:red">*</span></label>

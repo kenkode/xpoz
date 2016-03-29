@@ -208,7 +208,7 @@ $(document).ready(function() {
                     </div>
 
                     <div class="form-group">
-                        <label for="username">Date joined</label>
+                        <label for="username">Date joined <span style="color:red">*</span></label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
                         <input class="form-control datepicker"  readonly="readonly" placeholder="" type="text" name="djoined" id="djoined" value="{{{ $employee->date_joined }}}">
@@ -389,7 +389,7 @@ $(document).ready(function() {
                  <fieldset>
                     <div class="form-group"><h3 style='color:Green;strong'>Branch Information</h3></div>
                     <div class="form-group">
-                        <label for="username">Employee Branch<span style="color:red">*</span></label>
+                        <label for="username">Employee Branch <span style="color:red">*</span></label>
                         <select name="branch_id" class="form-control">
                             <option></option>
                             @foreach($branches as $branch)
@@ -402,7 +402,7 @@ $(document).ready(function() {
 
 
                      <div class="form-group">
-                        <label for="username">Employee Department<span style="color:red">*</span></label>
+                        <label for="username">Employee Department <span style="color:red">*</span></label>
                         <select name="department_id" class="form-control">
                             <option></option>
                             @foreach($departments as $department)
@@ -414,7 +414,7 @@ $(document).ready(function() {
                     </div>
 
                      <div class="form-group">
-                        <label for="username">Job Group</label>
+                        <label for="username">Job Group <span style="color:red">*</span></label>
                         <select name="jgroup_id" class="form-control">
                             <option></option>
                             @foreach($jgroups as $jgroup)
@@ -425,7 +425,7 @@ $(document).ready(function() {
                 
                     </div>
 
-
+                     
                      <div class="form-group">
                         <label for="username">Employee Type</label>
                         <select name="type_id" class="form-control">
@@ -470,7 +470,7 @@ $(document).ready(function() {
                     </div>
 
                     <div class="form-group">
-                        <label for="username">Office Email<span style="color:red">*</span></label>
+                        <label for="username">Office Email <span style="color:red">*</span></label>
                         <input class="form-control" placeholder="" type="text" name="email_office" id="email_office" value="{{{ $employee->email_office }}}">
                     </div>
 

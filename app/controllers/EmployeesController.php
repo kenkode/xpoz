@@ -432,8 +432,12 @@ class EmployeesController extends \BaseController {
 	{
 
 		$employee = Employee::findOrFail($id);
-		
-		DB::table('employee')->where('id',$id)->update(array('in_employment'=>'Y'));
+
+		$employee->date_joined=date("Y-m-d");
+
+		$employee->in_employment="Y";
+
+		$employee->update();
 
 		Audit::logaudit('Employee', 'activate', 'activated: '.$employee->personal_file_number.'-'.$employee->first_name.' '.$employee->last_name);
 
@@ -455,9 +459,13 @@ class EmployeesController extends \BaseController {
 
         $documents = Document::where('employee_id', $id)->get();
 
+        $benefits = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->get();
+
+        $count = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->count();
+
 		$organization = Organization::find(1);
 
-		return View::make('employees.view', compact('employee','appraisals','contacts','documents','occurences','properties'));
+		return View::make('employees.view', compact('employee','appraisals','contacts','documents','occurences','properties','benefits','count'));
 		
 	}
 
@@ -475,9 +483,13 @@ class EmployeesController extends \BaseController {
 
         $documents = Document::where('employee_id', $id)->get();
 
+        $benefits = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->get();
+
+        $count = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->count();
+     
 		$organization = Organization::find(1);
 
-		return View::make('employees.viewdeactive', compact('employee','appraisals','kins','documents','occurences','properties'));
+		return View::make('employees.viewdeactive', compact('employee','appraisals','kins','documents','occurences','properties','benefits','count'));
 		
 	}
 

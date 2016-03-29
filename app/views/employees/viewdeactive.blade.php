@@ -137,6 +137,7 @@ function asMoney($value) {
     <li role="presentation"><a href="#appraisals" aria-controls="appraisals" role="tab" data-toggle="tab">Appraisal</a></li>
     <li role="presentation"><a href="#properties" aria-controls="properties" role="tab" data-toggle="tab">Company Property</a></li>
     <li role="presentation"><a href="#occurences" aria-controls="occurences" role="tab" data-toggle="tab">Occurence</a></li>
+    <li role="presentation"><a href="#benefits" aria-controls="benefits" role="tab" data-toggle="tab">Benefits</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -306,6 +307,48 @@ function asMoney($value) {
 </div>
 </div>
 <div class="row">
+
+<div class="col-lg-4">
+<table class="table table-bordered table-hover">
+ <tr><td colspan="2"><strong><span style="color:green">Next of Kin Information</span></strong></td></tr>
+ <tr><td><strong>Name:</strong></td>
+        @if($employee->kin_name != null)
+        <td>{{$employee->kin_name}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+<tr><td><strong>ID Number:</strong></td>
+        @if($employee->kin_idno != null)
+        <td>{{$employee->kin_idno}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Email Address:</strong></td>
+        @if($employee->kin_email != null)
+        <td>{{$employee->kin_email}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Telephone Number:</strong></td>
+        @if($employee->kin_phone != null)
+        <td>{{$employee->kin_phone}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+        <tr><td><strong>Relationship:</strong></td>
+        @if($employee->kin_relationship != null)
+        <td>{{$employee->kin_relationship}}</td>
+        @else
+        <td></td>
+        @endif
+        </tr>
+</table>
+</div>
+
  <div class="col-lg-4">
 <table class="table table-bordered table-hover">
  <tr><td colspan="2"><strong><span style="color:green">Contact Information</span></strong></td></tr>
@@ -782,6 +825,45 @@ function asMoney($value) {
 
 
 	</div>
+
+
+  <div role="tabpanel" class="tab-pane" id="benefits">
+
+        <br>
+
+     <div class="row">
+          <div class="col-lg-12">
+
+    
+
+          <div class="row">
+
+
+           <div class="col-lg-6">
+
+             <table class="table table-bordered table-hover">
+           
+      <tr><td><strong>Name: </strong></td><td><strong>Amount</strong></td></tr>
+      @if($count>0)
+      @foreach($benefits as $benefit)
+      <tr><td>{{Benefitsetting::getBenefit($benefit->benefit_id)}}</td>
+      <td>{{asMoney($benefit->amount)}}</td></tr>
+      @endforeach
+
+      @else
+      <tr><td colspan="2" align="center">Not found</td></tr>
+      @endif
+</table>
+</div>
+
+</div>
+   
+
+        
+    </div>
+
+</div>
+</div>
 
 </div>
 </div>

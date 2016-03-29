@@ -99,6 +99,12 @@ Route::get('users/password/{user}', 'UsersController@Password');
 Route::post('users/password/{user}', 'UsersController@changePassword');
 Route::get('users/profile/{user}', 'UsersController@profile');
 Route::get('users/show/{user}', 'UsersController@show');
+Route::get('userview/{user}', function($id){
+
+    $user = User::findorfail($id);
+
+    return View::make('users.show', compact('user'));
+});
 
 
 
@@ -1410,7 +1416,7 @@ Route::get('occurences/delete/{id}', 'OccurencesController@destroy');
 Route::get('occurences/edit/{id}', 'OccurencesController@edit');
 Route::get('occurences/view/{id}', 'OccurencesController@view');
 Route::get('occurences/create/{id}', 'OccurencesController@create');
-
+Route::get('occurences/download/{id}', 'OccurencesController@getDownload');
 
 /*
 * employee earnings routes

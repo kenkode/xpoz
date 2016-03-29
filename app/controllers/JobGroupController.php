@@ -44,11 +44,11 @@ class JobGroupController extends \BaseController {
 
 		$count = DB::table('benefitsettings')->count();
 
-		$c = count(Input::get('benefitid'));
+		$c = count(Input::get('chbox'));
 
 		$a = count(Input::get('amount'));
 
-		$ben = Input::get('benefitid');
+		$ben = Input::get('chbox');
 
         $amt = str_replace( ',', '', Input::get('amount'));
 
@@ -88,9 +88,11 @@ class JobGroupController extends \BaseController {
 	{
 		$jobgroup = Jobgroup::findOrFail($id);
 
-		$benefits = Benefitsetting::all();
+		$benefits = Employeebenefit::where('jobgroup_id', $id)->get();
 
-		return View::make('job_group.show', compact('jobgroup','benefits'));
+		$count = Employeebenefit::where('jobgroup_id', $id)->count();
+
+		return View::make('job_group.view', compact('jobgroup','benefits','count'));
 	}
 
 	/**
@@ -103,13 +105,13 @@ class JobGroupController extends \BaseController {
 	{
 		$jobgroup = Jobgroup::find($id);
 
-		$benefits = Benefitsetting::all();
+		$benefits = Employeebenefit::where('jobgroup_id', $id)->get();
 
-		$amounts=DB::table('employeebenefits')->where('jobgroup_id',$id)->get();
+		$bens = Benefitsetting::all();
 
-		$count = DB::table('employeebenefits')->where('jobgroup_id',$id)->count();
+		$count = Employeebenefit::where('jobgroup_id', $id)->count();
 
-		return View::make('job_group.edit', compact('jobgroup','benefits','count','amounts'));
+		return View::make('job_group.edit', compact('jobgroup','benefits','count','bens'));
 	}
 
 	/**
@@ -128,28 +130,49 @@ class JobGroupController extends \BaseController {
 		{
 			return Redirect::back()->withErrors($validator)->withInput();
 		}
-        $c = count(Input::get('benefitid'));
+        $count = DB::table('benefitsettings')->count();
 
-		$ben = Input::get('benefitid');
-        $amt = str_replace( ',', '', Input::get('amount') );
+		$c = count(Input::get('chbox'));
 
+		$c1 = count(Input::get('chbox1'));
+
+		$count= Input::get('count');
+
+		$ben = Input::get('chbox');
+
+		$bens = Input::get('chbox1');
+
+        $amt = str_replace( ',', '', Input::get('amount'));
+
+        $amts = str_replace( ',', '', Input::get('amount1'));
 
 		$jgroup->job_group_name = Input::get('name');
-		$jgroup->update();
 
-		DB::table('employeebenefits')->where('jobgroup_id',$id)->delete();
+        $jgroup->update();
 
+        if($count>0){
+        Employeebenefit::where('jobgroup_id', $id)->delete();
         for ( $i=0; $i< $c; $i++) {
-
         $benefit = new Employeebenefit;
-
         $benefit->jobgroup_id=$id;
         $benefit->benefit_id = $ben[$i];
         $benefit->amount = $amt[$i];
+
         $benefit->save();
-    
+        }
+        }else{
+         for ( $i=0; $i< $c1; $i++) {
+        $benefit = new Employeebenefit;
+        $benefit->jobgroup_id=$id;
+        $benefit->benefit_id = $bens[$i];
+        $benefit->amount = $amts[$i];
+
+        $benefit->save();
         }
 
+        }
+
+         
         
         Audit::logaudit('Job Groups', 'update', 'updated: '.$jgroup->job_group_name);
 

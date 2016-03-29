@@ -58,6 +58,16 @@ class OccurencesController extends \BaseController {
 
 		$occurence->occurence_date = Input::get('date');
 
+		if ( Input::hasFile('path')) {
+
+            $file = Input::file('path');
+            $name = $file->getClientOriginalName();
+            $file = $file->move('public/uploads/employees/documents/', $name);
+            $input['file'] = '/public/uploads/employees/documents/'.$name;
+            $extension = pathinfo($name, PATHINFO_EXTENSION);
+            $occurence->doc_path = $name;
+        }
+
         $occurence->organization_id = '1';
 
 		$occurence->save();
@@ -121,6 +131,20 @@ class OccurencesController extends \BaseController {
 
 		$occurence->occurence_date = Input::get('date');
 
+		if ( Input::hasFile('path')) {
+
+            $file = Input::file('path');
+            $name = $file->getClientOriginalName();
+            $file = $file->move('public/uploads/employees/documents/', $name);
+            $input['file'] = '/public/uploads/employees/documents/'.$name;
+            $extension = pathinfo($name, PATHINFO_EXTENSION);
+            $occurence->doc_path = $name;
+        }else{
+        	$name = Input::get('curpath');
+            $occurence->doc_path = $name;
+
+        }
+
 		$occurence->update();
 
 		Audit::logaudit('Occurences', 'update', 'updated: '.$occurence->occurence_brief.' for '.Employee::getEmployeeName(Input::get('employee')));
@@ -153,5 +177,13 @@ class OccurencesController extends \BaseController {
 		return View::make('occurences.view', compact('occurence'));
 		
 	}
+
+	public function getDownload($id){
+        //PDF file is stored under project/public/download/info.pdf
+        $occurence = Occurence::findOrFail($id);
+        $file= public_path(). "/uploads/employees/documents/".$occurence->doc_path;
+        
+        return Response::download($file, $occurence->doc_path);
+}
 
 }
