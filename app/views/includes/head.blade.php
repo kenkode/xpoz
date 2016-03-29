@@ -71,6 +71,8 @@
    <script type="text/javascript">
 
     $(document).ready(function() {
+
+
     $('#users').DataTable();
     $('#doc').DataTable();
     $('#app').DataTable();
@@ -81,6 +83,9 @@
     $('#app').DataTable();
     $('#disbursed').DataTable();
     $('#amended').DataTable();
+
+
+    
 
     } );
 
@@ -167,5 +172,7 @@ $('.datepicker40').datepicker({
 });
 
 </script>
+
+
 
 </head>
