@@ -292,4 +292,141 @@ public static $rules = [
 
     }
 
+    public static function processedsalaries($id,$period){
+
+    $salary = 0.00;
+    
+    $pays = DB::table('transact')
+                     ->select('employee_id',DB::raw('COALESCE(sum(basic_pay),0.00) as total_pay'))
+                     ->where('financial_month_year' ,'=', $period)
+                     ->where('employee_id', '=', $id)
+                     ->groupBy('employee_id')
+                     ->get();
+
+    foreach($pays as $pay){
+    $salary = $pay->total_pay;
+    }
+    
+    return  number_format($salary,2);
+
+    }
+
+    public static function processedhouseallowances($id,$period){
+
+    $hallw = 0.00;
+    
+    $total_hallws = DB::table('transact_allowances')
+                     ->select('employee_id',DB::raw('COALESCE(sum(allowance_amount),0.00) as total_allowances'))
+                     ->where('financial_month_year' ,'=', $period)
+                     ->where('employee_id', '=', $id)
+                     ->where('employee_allowance_id', '=', 1)
+                     ->groupBy('employee_id')
+                     ->get();
+
+    foreach($total_hallws as $total_hallw){
+    $hallw = $total_hallw->total_allowances;
+    }
+    
+    return  number_format($hallw,2);
+
+    }
+
+   public static function processedtransportallowances($id,$period){
+
+    $tallw = 0.00;
+    
+    $total_tallws = DB::table('transact_allowances')
+                     ->select('employee_id',DB::raw('COALESCE(sum(allowance_amount),0.00) as total_allowances'))
+                     ->where('financial_month_year' ,'=', $period)
+                     ->where('employee_id', '=', $id)
+                     ->where('employee_allowance_id', '=', 2)
+                     ->groupBy('employee_id')
+                     ->get();
+
+    foreach($total_tallws as $total_tallw){
+    $tallw = $total_tallw->total_allowances;
+    }
+    
+    return  number_format($tallw,2);
+
+    }
+
+    public static function processedotherallowances($id,$period){
+
+    $oallw = 0.00;
+    
+    $total_oallws = DB::table('transact_allowances')
+                     ->select('employee_id',DB::raw('COALESCE(sum(allowance_amount),0.00) as total_allowances'))
+                     ->where('financial_month_year' ,'=', $period)
+                     ->where('employee_id', '=', $id)
+                     ->where('employee_allowance_id', '<>', 1)
+                     ->where('employee_allowance_id', '<>', 2)
+                     ->groupBy('employee_id')
+                     ->get();
+
+    foreach($total_oallws as $total_oallw){
+    $oallw = $total_oallw->total_allowances;
+    }
+    
+    return  number_format($oallw,2);
+
+    }
+
+    public static function processedreliefs($id,$period){
+
+    $rel = 0.00;
+    
+    $total_rels = DB::table('transact_reliefs')
+                     ->select('employee_id',DB::raw('COALESCE(sum(relief_amount),0.00) as total_reliefs'))
+                     ->where('financial_month_year' ,'=', $period)
+                     ->where('employee_id', '=', $id)
+                     ->groupBy('employee_id')
+                     ->get();
+
+    foreach($total_rels as $total_rel){
+    $rel = $total_rel->total_reliefs;
+    }
+    
+    return  number_format($rel,2);
+
+    }
+
+    public static function processedearnings($id,$period){
+
+    $earn = 0.00;
+    
+    $total_earns = DB::table('transact_earnings')
+        ->select('employee_id',DB::raw('COALESCE(sum(relief_amount),0.00) as total_earnings'))
+        ->where('financial_month_year' ,'=', $period)
+        ->where('employee_id' ,'=', $id)
+        ->groupBy('employee_id')
+        ->get();
+
+    foreach($total_earns as $total_earn){
+    $earn = $total_earn->total_earnings;
+    }
+    
+    return  number_format($earn,2);
+
+    }
+
+   public static function processedovertimes($id,$period){
+
+    $otime = 0.00;
+    
+    $total_overtimes = DB::table('transact_overtimes')
+                     ->select('employee_id',DB::raw('COALESCE(sum(overtime_period*overtime_amount),0.00) as overtimes'))
+                     ->where('financial_month_year' ,'=', $period)
+                     ->where('employee_id' ,'=', $id)
+                     ->groupBy('employee_id')
+                     ->get();
+
+    foreach($total_overtimes as $total_overtime){
+    $otime = $total_overtime->overtimes;
+    }
+    
+    return  number_format($otime,2);
+
+    }
+
 }

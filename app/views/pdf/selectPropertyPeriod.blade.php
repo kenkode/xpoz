@@ -24,7 +24,7 @@
         </div>
         @endif
 
-		 <form method="POST" action="{{URL::to('reports/companyproperty')}}" accept-charset="UTF-8">
+		 <form target="_blank" method="POST" action="{{URL::to('reports/companyproperty')}}" accept-charset="UTF-8">
    
     <fieldset>
 
@@ -45,9 +45,10 @@
        </div>
         
        <div class="form-group">
-                        <label for="username">Select:</label>
-                        <select name="employeeid" class="form-control">
+                        <label for="username">Select: <span style="color:red">*</span></label>
+                        <select required name="employeeid" class="form-control">
                             <option></option>
+                            <option value="All">All</option>
                             @foreach($employees as $employee)
                             <option value="{{$employee->id }}"> {{ $employee->first_name.' '.$employee->last_name }}</option>
                             @endforeach
@@ -56,12 +57,15 @@
                 
         </div>
 
-        <div class="checkbox">
-                        <label>
-                            <input type="checkbox" checked name="selE">
-                              Select All Employee
-                        </label>
-                    </div>
+        <div class="form-group">
+                        <label for="username">Download as: <span style="color:red">*</span></label>
+                        <select required name="format" class="form-control">
+                            <option></option>
+                            <option value="excel"> Excel</option>
+                            <option value="pdf"> PDF</option>
+                        </select>
+                
+            </div>
 
         <div class="form-actions form-group">
         

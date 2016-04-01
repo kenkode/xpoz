@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOvertimesTable extends Migration {
+class CreateTransactAdvancesTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,13 +12,13 @@ class CreateOvertimesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('overtimes', function(Blueprint $table)
+		Schema::create('transact_advances', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('employee_id')->unsigned()->default('0')->index('overtimes_employee_id_foreign');
-            $table->string('type');
-            $table->float('period',15,2);
+			$table->string('employee_id')->index('transact_employee_id_foreign');
+			$table->integer('account_id')->unsigned()->default('0')->index('transact_account_id_foreign');
 			$table->string('amount')->default('0.00');
+			$table->string('financial_month_year');
 			$table->timestamps();
 		});
 	}
@@ -31,7 +31,6 @@ class CreateOvertimesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('overtimes');
+		Schema::drop('transact_advances');
 	}
-
 }

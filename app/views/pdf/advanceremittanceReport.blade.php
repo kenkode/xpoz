@@ -151,7 +151,7 @@ body {
      <tr><td width='80'><strong>Period:</strong></td><td>{{ $period }}</td></tr>
 
     </table>
-   <div align="center" style="margin-bottom:20px"><strong>SALARY TRANSFER LETTER</strong></div>
+   <div align="center" style="margin-bottom:20px"><strong>SALARY ADVANCE TRANSFER LETTER</strong></div>
 
     <div style="margin-bottom:10px">Please arrange to transfer funds to the below listed employees` respective bank accounts</div>
 
@@ -199,14 +199,14 @@ body {
          @else
         <td></td>
         @endif
-        <td align="right"> {{ asMoney($rem->net ) }}</td>
+        <td align="right">{{ asMoney($rem->amount ) }}</td>
         </tr>
       <?php $i++; ?>
    
     @endforeach
     
   
-    <tr><td align="right" colspan='8'><strong>Total Remittances: </strong></td><td align="right" >{{ asMoney($total ) }}</td></tr>     
+    <tr><td align="right" colspan='8'><strong>Total Remittances: </strong></td><td align="right" ><strong>{{ asMoney($total ) }}</strong></td></tr>     
 
     </table>
 

@@ -136,7 +136,7 @@ body {
 
 	<div class="content" style='margin-top:0px;'>
     <table>
-    <?php if($selBranch == 'All' && $selDept == 'All'){?>
+    <?php if(($selBranch) == 'All' && $selDept == 'All'){?>
      <tr><td width='50'><strong>Branch:</strong></td><td>All</td></tr>
      <tr><td width='50'><strong>Department:</strong></td><td>All</td></tr>
     <?php }else if($selBranch == 'All'){?>
@@ -145,7 +145,7 @@ body {
     <?php }else if($selDept == 'All'){?>
      <tr><td width='50'><strong>Branch:</strong></td><td>{{$sels->name}}</td></tr>
      <tr><td width='50'><strong>Department:</strong></td><td>All</td></tr>
-     <?php }else if($selDept != 'Áll' && $selBranch !='All'){?>
+     <?php }else if($selDept != 'All' && $selBranch != 'All'){?>
      <tr><td width='50'><strong>Branch:</strong></td><td>{{$selBr->name}}</td></tr>
      <tr><td width='50'><strong>Department:</strong></td><td>{{$selDt->department_name}}</td></tr>
     <?php } ?> 
@@ -157,7 +157,7 @@ body {
       </tr>
       <tr><td width='50'><strong>Period:</strong></td><td>{{$period}}</td></tr>
       </table>
-   <div style="margin-bottom:20px" align="center"><strong>PAYROLL SUMMARY</strong></div>
+   <div style="margin-bottom:20px" align="center"><strong>ADVANCE SALARY SUMMARY</strong></div>
 
     <table class="table table-bordered" border='1' cellspacing='0' cellpadding='0'>
 
@@ -165,16 +165,8 @@ body {
 
         <td width='20'><strong># </strong></td>
         <td><strong>Payroll Number </strong></td>
-        <td><strong>Employee Name </strong></td>
-        <td><strong>Basic Pay </strong></td>
-        <td><strong>Allowance </strong></td>
-        <td><strong>Gross Pay </strong></td>
-        <td><strong>Paye</strong></td>
-        <td><strong>Nssf Amount</strong></td>
-        <td><strong>Nhif Amount</strong></td>
-        <td><strong>Other Deductions</strong></td>
-        <td><strong>Total Deductions </strong></td>  
-        <td><strong>Net Pay </strong></td>    
+        <td><strong>Employee Name </strong></td> 
+        <td><strong>Amount </strong></td>    
       </tr>
       <?php $i =1; ?>
       @foreach($sums as $sum)
@@ -184,15 +176,7 @@ body {
        <td td width='20'>{{$i}}</td>
         <td> {{ $sum->personal_file_number }}</td>
         <td> {{ $sum->last_name.' '.$sum->first_name }}</td>
-        <td align="right"> {{ asMoney($sum->basic_pay) }}</td>
-        <td align="right"> {{ asMoney($sum->earning_amount) }}</td>
-        <td align="right"> {{ asMoney($sum->taxable_income) }}</td>
-        <td align="right"> {{ asMoney($sum->paye) }}</td>
-        <td align="right"> {{ asMoney($sum->nssf_amount) }}</td>
-        <td align="right"> {{ asMoney($sum->nhif_amount) }}</td>
-        <td align="right"> {{ asMoney($sum->other_deductions) }}</td>
-        <td align="right"> {{ asMoney($sum->total_deductions) }}</td>
-        <td align="right"> {{ asMoney($sum->net ) }}</td>
+        <td align="right"> {{ asMoney($sum->amount ) }}</td>
         </tr>
       <?php $i++; ?>
    
@@ -200,18 +184,11 @@ body {
     
     <tr><td colspan='3' align="right"><strong>Total: </strong></td>
 
-    <td align="right" width="69">{{ asMoney($total_pay ) }}</td>
-    <td align="right" width="72">{{ asMoney($total_earning ) }}</td>
-    <td align="right" width="73">{{ asMoney($total_gross ) }}</td>
-    <td align="right" width="69">{{ asMoney($total_paye ) }}</td>
-    <td align="right" width="62">{{ asMoney($total_nssf ) }}</td>
-    <td align="right" width="63">{{ asMoney($total_nhif ) }}</td>
-    <td align="right" width="77">{{ asMoney($total_others ) }}</td>
-    <td align="right" width="78">{{ asMoney($total_deds ) }}</td>
-    <td align="right" width="68">{{ asMoney($total_net ) }}</td></tr>
+   
+    <td align="right" width="68"><strong>{{ asMoney($total_amount ) }}</strong></td></tr>
 
      
-   <tr> <td align="right" colspan='11'><strong>Total net:</strong></td><td align="right" width="68">{{ asMoney($total_net ) }}</td></tr>
+   <tr> <td align="right" colspan='3'><strong>Total net:</strong></td><td align="right" width="68"><strong>{{ asMoney($total_amount ) }}</strong></td></tr>
 
     </table>
 

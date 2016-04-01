@@ -100,11 +100,6 @@ body {
 
 <br>
 
-<?php
-  $d=strtotime($from);
-  $d1=strtotime($to);
-?>
-
 <div class="footer">
      <p class="page">Page <?php $PAGE_NUM ?></p>
    </div>
@@ -112,7 +107,7 @@ body {
 
 	<div class="content" style='margin-top:0px;'>
 
-<div align="center"><strong>Company Property Report for period between {{date("F j, Y", $d).' and '.date("F j, Y", $d1)}}</strong></div><br>
+<div align="center"><strong>Employee List Report For Deactived Employees </strong></div><br>
     <table class="table table-bordered" border='1' cellspacing='0' cellpadding='0'>
 
       <tr>
@@ -120,41 +115,63 @@ body {
 
 
         <td width='20'><strong># </strong></td>
-        <td><strong>Employee</strong></td>
-        <td><strong>Property Name </strong></td>
-        <td><strong>Description </strong></td>
-        <td><strong>Serial No.</strong></td>
-        <td><strong>Digital SNo.</strong></td>  
-        <td><strong>Value</strong></td>
-        <td><strong>Issued by</strong></td>
-        <td><strong>Issue Date</strong></td>
-        <td><strong>Scheduled Return Date</strong></td>
-        <td><strong>Status</strong></td>
-        <td><strong>Received by</strong></td>
+        <td><strong>Payroll Number </strong></td>
+        <td><strong>Employee Name </strong></td>
+        <td><strong>Branch </strong></td>
+        <td><strong>Department </strong></td>
+        <td><strong>Gender</strong></td>
+        <td><strong>Kra Pin</strong></td>  
+        <td><strong>Nssf Number</strong></td>
+        <td><strong>Nhif Number</strong></td>
+       
+
       </tr>
       <?php $i =1; ?>
-      @foreach($properties as $property)
+      @foreach($employees as $employee)
       <tr>
 
 
        <td td width='20'>{{$i}}</td>
-        <td> {{$property->last_name.' '.$property->first_name}}</td>
-        <td> {{ $property->name}}</td>
-        <td> {{ $property->description}}</td>
-        <td> {{ $property->serial}}</td>
-        <td> {{ $property->digitalserial}}</td>
-        <td align="right"> {{ asMoney((double)$property->monetary) }} </td>
-        <td> {{ Property::getIssuer($property->issued_by)}}</td>
-        <td> {{ $property->issue_date}}</td>
-        <td> {{ $property->scheduled_return_date}}</td>
-        
-        @if($property->state == 1)
-        <td> Returned</td>
-        <td> {{ Property::getReceiver($property->received_by)}}</td>
+        <td>{{$employee->personal_file_number}}</td>
+        <td> {{$employee->last_name.' '.$employee->first_name.' '.$employee->middle_name}}</td>
+
+         @if($employee->branch_id != 0)
+        <td> {{ $employee->branch->name}}</td>
         @else
-        <td>Not Returned</td>
         <td></td>
         @endif
+       
+
+        @if($employee->department_id != 0)
+        <td> {{ $employee->department->department_name}}</td>
+        @else
+        <td></td>
+        @endif
+
+        @if($employee->gender != null)
+        <td>{{$employee->gender}}</td>
+        @else
+        <td></td>
+        @endif
+        
+        @if($employee->pin != null)
+        <td>{{$employee->pin}}</td>
+        @else
+        <td></td>
+        @endif
+
+        @if($employee->social_security_number != null)
+        <td>{{$employee->social_security_number}}</td>
+        @else
+        <td></td>
+        @endif
+
+        @if($employee->hospital_insurance_number != null)
+        <td>{{$employee->hospital_insurance_number}}</td>
+        @else
+        <td></td>
+        @endif
+       
         </tr>
       <?php $i++; ?>
    

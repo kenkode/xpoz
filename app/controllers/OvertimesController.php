@@ -12,7 +12,7 @@ class OvertimesController extends \BaseController {
 		$overtimes = DB::table('employee')
 		          ->join('overtimes', 'employee.id', '=', 'overtimes.employee_id')
 		          ->where('in_employment','=','Y')
-		          ->select('overtimes.id','type','first_name','last_name','rate','amount','period')
+		          ->select('overtimes.id','type','first_name','last_name','amount','period')
 		          ->get();
 
 		Audit::logaudit('Overtimes', 'view', 'viewed employee overtime');
@@ -53,8 +53,6 @@ class OvertimesController extends \BaseController {
         $overtime->employee_id = Input::get('employee');
 
 		$overtime->type = Input::get('type');
-
-		$overtime->rate = Input::get('rate');
 
 		$overtime->period = Input::get('period');
 
@@ -117,7 +115,6 @@ class OvertimesController extends \BaseController {
 
 		$overtime->period = Input::get('period');
 
-		$overtime->rate = Input::get('rate');
         $a = str_replace( ',', '', Input::get('amount') );
 
 		$overtime->amount = $a;

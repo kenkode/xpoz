@@ -71,18 +71,7 @@ function totalB() {
                 
                     </div>
 
-                    <div class="form-group">
-                        <label for="username">Rate <span style="color:red">*</span></label>
-                        <select name="rate" class="form-control">
-                            <option></option>
-                            <option value="Normal"> Normal</option>
-                            <option value="Weekday"> Weekday</option>
-                            <option value="Saturday"> Saturday</option>
-                            <option value="Sunday"> Sunday</option>
-                            <option value="Holiday"> Holiday</option>
-                        </select>
-                
-                    </div>
+                    
 
           <div class="form-group">
             <label for="username">Period Worked <span style="color:red">*</span> </label>
@@ -93,11 +82,7 @@ function totalB() {
         <div class="form-group">
             <label for="username">Amount <span style="color:red">*</span> </label>
             <input class="form-control" placeholder="" type="text" name="amount" onkeypress="totalBalance()" onkeyup="totalBalance()" id="amount" value="{{{ Input::old('amount') }}}">
-            <script type="text/javascript">
-           $(document).ready(function() {
-           $('#amount').priceFormat();
-           });
-           </script>
+           
         </div>
         
         <div class="form-group">

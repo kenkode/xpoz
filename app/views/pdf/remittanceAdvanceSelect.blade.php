@@ -4,7 +4,7 @@
 
 <div class="row">
 	<div class="col-lg-12">
-  <h3>Select Deduction</h3>
+  <h3>Select Period</h3>
 
 <hr>
 </div>	
@@ -24,7 +24,7 @@
         </div>
         @endif
 
-		 <form target="_blank" method="POST" action="{{URL::to('payrollReports/deductions')}}" accept-charset="UTF-8">
+		 <form target="_blank" method="POST" action="{{URL::to('advanceReports/advanceRemittances')}}" accept-charset="UTF-8">
    
     <fieldset>
 
@@ -37,19 +37,46 @@
        </div>
 
             <div class="form-group">
-                        <label for="username">Select: <span style="color:red">*</span></label>
-                        <select required name="deduction" class="form-control">
+                        <label for="username">Select Branch: <span style="color:red">*</span></label>
+                        <select required name="branch" class="form-control">
                             <option></option>
                             <option value='All'>All</option>
-                            @foreach($deds as $ded)
-                            <option value="{{$ded->id}}"> {{ $ded->deduction_name }}</option>
+                            @foreach($branches as $branch)
+                            <option value="{{$branch->id}}"> {{ $branch->name }}</option>
                             @endforeach
 
                         </select>
                 
             </div>
 
-                    
+
+            <div class="form-group">
+                        <label for="username">Select Department: <span style="color:red">*</span></label>
+                        <select required name="department" class="form-control">
+                            <option></option>
+                            <option value='All'>All</option>
+                            @foreach($depts as $dept)
+                            <option value="{{$dept->id}}"> {{ $dept->department_name }}</option>
+                            @endforeach
+
+                        </select>
+                
+            </div>
+
+           
+            <div class="form-group">
+                        <label for="username">Select Payment Mode: <span style="color:red">*</span></label>
+                        <select required name="mode" class="form-control">
+                            <option></option>
+                            <option value='All'>All</option>
+                            <option value="Bank">Bank</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Cheque">Cheque</option>
+                        </select>
+                
+            </div>
+
+
             <div class="form-group">
                         <label for="username">Download as: <span style="color:red">*</span></label>
                         <select required name="format" class="form-control">
@@ -59,7 +86,7 @@
                         </select>
                 
             </div>
-        
+
         <div class="form-actions form-group">
         
           <button type="submit" class="btn btn-primary btn-sm">Select</button>

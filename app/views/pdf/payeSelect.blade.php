@@ -24,7 +24,7 @@
         </div>
         @endif
 
-		 <form method="POST" action="{{URL::to('payrollReports/payeReturns')}}" accept-charset="UTF-8">
+		 <form target="_blank" method="POST" action="{{URL::to('payrollReports/payeReturns')}}" accept-charset="UTF-8">
    
     <fieldset>
 
@@ -35,6 +35,24 @@
                         <input required class="form-control datepicker2" readonly="readonly" placeholder="" type="text" name="period" id="period" value="{{{ Input::old('period') }}}">
                     </div>
        </div>
+       
+       <div>
+       <div class="form-group">
+                        <label for="username">Disabled: <span style="color:red">*</span></label><br>
+                        <input class=""  type="radio" required name="type" id="type" value="enabled"> No
+                        <input class=""  type="radio" required name="type" id="type" value="disabled"> Yes
+                
+            </div>
+
+       <div class="form-group">
+                        <label for="username">Download as: <span style="color:red">*</span></label>
+                        <select required name="format" class="form-control">
+                            <option></option>
+                            <option value="excel"> CSV</option>
+                            <option value="pdf"> PDF</option>
+                        </select>
+                
+            </div>
         
         <div class="form-actions form-group">
         

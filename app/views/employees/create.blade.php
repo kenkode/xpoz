@@ -253,14 +253,14 @@ $(document).ready(function() {
 
                         <div class="checkbox">
                         <label>
-                            <input type="checkbox" checked name="i_tax">
+                            <input type="checkbox" checked name="i_tax" id="itax">
                               Apply Income Tax
                         </label>
                     </div>
 
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" checked name="i_tax_relief">
+                            <input type="checkbox" checked name="i_tax_relief" id="irel">
                                Apply Income Tax Relief
                         </label>
                     </div>
@@ -568,6 +568,18 @@ $(document).ready(function() {
   </div>
 
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+$("#itax").click(function(){
+if($(this).is(':checked')){
+ $("#irel").prop('checked', true);
+}else{
+$("#irel").prop('checked', false);
+}
+});
+});
+</script>
 
 
 @stop

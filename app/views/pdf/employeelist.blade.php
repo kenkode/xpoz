@@ -67,7 +67,8 @@ body {
        
         <td style="width:150px">
 
-            <img src="{{ '../images/logo.png' }}" alt="{{ $organization->logo }}" width="150px"/>
+            <img src="{{public_path().'/uploads/logo/'.$organization->logo}}" alt="logo" width="80%">
+
     
         </td>
 
@@ -114,15 +115,15 @@ body {
 
 
         <td width='20'><strong># </strong></td>
-        <td><strong>Payroll Number </strong></td>
-        <td><strong>Employee Name </strong></td>
+        <td><strong>Payroll NO. </strong></td>
+        <td><strong>Employee</strong></td>
         <td><strong>Branch </strong></td>
         <td><strong>Department </strong></td>
         <td><strong>Gender</strong></td>
         <td><strong>Kra Pin</strong></td>  
-        <td><strong>Nssf Number</strong></td>
-        <td><strong>Nhif Number</strong></td>
-       
+        <td><strong>Nssf NO.</strong></td>
+        <td><strong>Nhif NO.</strong></td>
+        <td><strong>Status</strong></td>
 
       </tr>
       <?php $i =1; ?>
@@ -170,6 +171,13 @@ body {
         @else
         <td></td>
         @endif
+
+        @if($employee->in_employment == 'Y')
+        <td>Active</td>
+        @else
+        <td>Deactivated</td>
+        @endif
+       
        
         </tr>
       <?php $i++; ?>

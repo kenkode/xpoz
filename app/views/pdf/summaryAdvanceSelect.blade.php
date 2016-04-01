@@ -24,7 +24,7 @@
         </div>
         @endif
 
-		 <form target="_blank" method="POST" action="{{URL::to('payrollReports/payslip')}}" accept-charset="UTF-8">
+		 <form target="_blank" method="POST" action="{{URL::to('advanceReports/advanceSummary')}}" accept-charset="UTF-8">
    
     <fieldset>
 
@@ -36,18 +36,34 @@
                     </div>
        </div>
 
-           <div class="form-group">
-                        <label for="username">Select:</label>
-                        <select name="employeeid" class="form-control">
+            <div class="form-group">
+                        <label for="username">Select Branch: <span style="color:red">*</span></label>
+                        <select required name="branch" class="form-control">
                             <option></option>
-                            @foreach($employees as $employee)
-                            <option value="{{$employee->id }}"> {{ $employee->personal_file_number.' '.$employee->last_name.' '.$employee->first_name }}</option>
+                            <option value="All">All</option>
+                            @foreach($branches as $branch)
+                            <option value="{{$branch->id}}"> {{ $branch->name }}</option>
                             @endforeach
 
                         </select>
                 
-        </div>
+            </div>
 
+            
+            <div class="form-group">
+                        <label for="username">Select Department: <span style="color:red">*</span></label>
+                        <select required name="department" class="form-control">
+                            <option></option>
+                            <option value="All">All</option>
+                            @foreach($depts as $dept)
+                            <option value="{{$dept->id}}"> {{ $dept->department_name }}</option>
+                            @endforeach
+
+                        </select>
+                
+            </div>
+
+        
         <div class="form-group">
                         <label for="username">Download as: <span style="color:red">*</span></label>
                         <select required name="format" class="form-control">
@@ -57,15 +73,6 @@
                         </select>
                 
             </div>
-
-        <!--
-                        <div class="checkbox">
-                        <label>
-                            <input type="checkbox" checked name="sel">
-                              Select All
-                        </label>
-                    </div>
-        -->
         
         <div class="form-actions form-group">
         
