@@ -54,6 +54,18 @@ class Leaveapplication extends \Eloquent {
 		$application->organization()->associate($organization);
 		$application->save();
 
+
+
+		$name = $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name;
+
+
+		Mail::send( 'emails.leavecreate', array('application'=>$application, 'name'=>$name), function( $message ) use ($organization)
+		{
+    		
+    		$message->to($organization->email )->subject( 'Leave Application' );
+		});
+
+
 	}
 
 

@@ -315,6 +315,17 @@ Route::get('leaveapplications/cancellations', 'LeaveapplicationsController@cance
 Route::get('leaveapplications/amends', 'LeaveapplicationsController@amended');
 
 
+Route::get('leaveapplicationenddate', function(){
+
+   
+
+    $enddate = date('Y-m-d');
+
+    return json_encode($enddate);
+
+});
+
+
 Route::get('leaveapprovals', function(){
 
   $leaveapplications = Leaveapplication::all();
