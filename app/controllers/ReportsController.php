@@ -2753,6 +2753,7 @@ class ReportsController extends \BaseController {
     $excel->sheet('Remittance Report', function($sheet) use($data,$total,$organization,$currency,$branch,$bank,$objPHPExcel){
             $orgbankname = '';
             $orgbankbranchname = '';
+
             
             if($organization->bank_id==0){
             $orgbankname = '';
@@ -2833,7 +2834,7 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -2846,7 +2847,7 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -2854,7 +2855,7 @@ class ReportsController extends \BaseController {
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -2870,23 +2871,31 @@ class ReportsController extends \BaseController {
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->net), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->net), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -2897,7 +2906,7 @@ class ReportsController extends \BaseController {
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -2905,14 +2914,14 @@ class ReportsController extends \BaseController {
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-            $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -2979,7 +2988,7 @@ class ReportsController extends \BaseController {
             $orgbankbranchname = $branch->bank_branch_name;
             }
 
-              $sheet->row(1, array(
+             $sheet->row(1, array(
               'BANK NAME: ',$orgbankname 
               ));
               
@@ -3046,7 +3055,7 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -3059,7 +3068,7 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -3067,7 +3076,7 @@ class ReportsController extends \BaseController {
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -3083,23 +3092,31 @@ class ReportsController extends \BaseController {
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->net), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->net), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -3110,7 +3127,7 @@ class ReportsController extends \BaseController {
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -3118,14 +3135,14 @@ class ReportsController extends \BaseController {
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-            $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -3191,7 +3208,7 @@ class ReportsController extends \BaseController {
             $orgbankbranchname = $branch->bank_branch_name;
             }
 
-              $sheet->row(1, array(
+               $sheet->row(1, array(
               'BANK NAME: ',$orgbankname 
               ));
               
@@ -3258,7 +3275,7 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -3271,7 +3288,7 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -3279,7 +3296,7 @@ class ReportsController extends \BaseController {
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -3295,23 +3312,31 @@ class ReportsController extends \BaseController {
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->net), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->net), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -3322,7 +3347,7 @@ class ReportsController extends \BaseController {
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -3330,14 +3355,14 @@ class ReportsController extends \BaseController {
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-            $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -3472,7 +3497,7 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -3485,7 +3510,7 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -3493,7 +3518,7 @@ class ReportsController extends \BaseController {
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -3509,23 +3534,31 @@ class ReportsController extends \BaseController {
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->net), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->net), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -3536,7 +3569,7 @@ class ReportsController extends \BaseController {
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -3544,14 +3577,14 @@ class ReportsController extends \BaseController {
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-            $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -3619,7 +3652,7 @@ class ReportsController extends \BaseController {
             $orgbankbranchname = $branch->bank_branch_name;
             }
 
-              $sheet->row(1, array(
+               $sheet->row(1, array(
               'BANK NAME: ',$orgbankname 
               ));
               
@@ -3686,7 +3719,7 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -3699,7 +3732,7 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -3707,7 +3740,7 @@ class ReportsController extends \BaseController {
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -3723,23 +3756,31 @@ class ReportsController extends \BaseController {
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->net), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->net), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -3750,7 +3791,7 @@ class ReportsController extends \BaseController {
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -3758,21 +3799,20 @@ class ReportsController extends \BaseController {
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-            $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
              ));
              
     });
-
   })->download('xls');
   }else if(Input::get('mode') == 'All'){
           $total = DB::table('transact')
@@ -3833,7 +3873,7 @@ class ReportsController extends \BaseController {
             $orgbankbranchname = $branch->bank_branch_name;
             }
 
-              $sheet->row(1, array(
+               $sheet->row(1, array(
               'BANK NAME: ',$orgbankname 
               ));
               
@@ -3900,7 +3940,7 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -3913,7 +3953,7 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -3921,7 +3961,7 @@ class ReportsController extends \BaseController {
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -3937,23 +3977,31 @@ class ReportsController extends \BaseController {
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->net), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->net), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -3964,7 +4012,7 @@ class ReportsController extends \BaseController {
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -3972,14 +4020,14 @@ class ReportsController extends \BaseController {
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-            $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -4116,7 +4164,7 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -4129,7 +4177,7 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -4137,7 +4185,7 @@ class ReportsController extends \BaseController {
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -4153,23 +4201,31 @@ class ReportsController extends \BaseController {
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->net), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->net), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -4180,7 +4236,7 @@ class ReportsController extends \BaseController {
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -4188,21 +4244,20 @@ class ReportsController extends \BaseController {
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-            $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
              ));
              
     });
-
   })->download('xls');
   }
   }else{
@@ -6445,7 +6500,7 @@ public function period_advrem()
               });
 
               $sheet->row(5, array(
-              'CURRENCY:', $currency->shortname
+              'Currency:', $currency->shortname
               ));
 
               $sheet->cell('A5', function($cell) {
@@ -6456,7 +6511,7 @@ public function period_advrem()
               });
 
               $sheet->row(6, array(
-              'PERIOD:', Input::get('period')
+              'Period:', Input::get('period')
               ));
 
               $sheet->cell('A6', function($cell) {
@@ -6465,8 +6520,8 @@ public function period_advrem()
                 $cell->setFontWeight('bold');
 
               });
-              
-              $sheet->mergeCells('A8:H8');
+
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -6479,7 +6534,7 @@ public function period_advrem()
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -6487,7 +6542,7 @@ public function period_advrem()
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -6503,23 +6558,31 @@ public function period_advrem()
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->amount), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->amount), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -6530,7 +6593,7 @@ public function period_advrem()
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -6538,19 +6601,19 @@ public function period_advrem()
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-              $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
              ));
-            
+             
     });
 
   })->download('xls');
@@ -6658,7 +6721,7 @@ public function period_advrem()
               });
 
               $sheet->row(5, array(
-              'CURRENCY:', $currency->shortname
+              'Currency:', $currency->shortname
               ));
 
               $sheet->cell('A5', function($cell) {
@@ -6669,7 +6732,7 @@ public function period_advrem()
               });
 
               $sheet->row(6, array(
-              'PERIOD:', Input::get('period')
+              'Period:', Input::get('period')
               ));
 
               $sheet->cell('A6', function($cell) {
@@ -6679,7 +6742,7 @@ public function period_advrem()
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -6692,7 +6755,7 @@ public function period_advrem()
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -6700,7 +6763,7 @@ public function period_advrem()
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -6716,23 +6779,31 @@ public function period_advrem()
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->amount), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->amount), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -6743,7 +6814,7 @@ public function period_advrem()
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -6751,14 +6822,14 @@ public function period_advrem()
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-              $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -6870,7 +6941,7 @@ public function period_advrem()
               });
 
               $sheet->row(5, array(
-              'CURRENCY:', $currency->shortname
+              'Currency:', $currency->shortname
               ));
 
               $sheet->cell('A5', function($cell) {
@@ -6881,7 +6952,7 @@ public function period_advrem()
               });
 
               $sheet->row(6, array(
-              'PERIOD:', Input::get('period')
+              'Period:', Input::get('period')
               ));
 
               $sheet->cell('A6', function($cell) {
@@ -6891,7 +6962,7 @@ public function period_advrem()
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -6904,7 +6975,7 @@ public function period_advrem()
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -6912,7 +6983,7 @@ public function period_advrem()
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -6928,23 +6999,31 @@ public function period_advrem()
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->amount), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->amount), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -6955,7 +7034,7 @@ public function period_advrem()
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -6963,14 +7042,14 @@ public function period_advrem()
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-              $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -7084,7 +7163,7 @@ public function period_advrem()
               });
 
               $sheet->row(5, array(
-              'CURRENCY:', $currency->shortname
+              'Currency:', $currency->shortname
               ));
 
               $sheet->cell('A5', function($cell) {
@@ -7095,7 +7174,7 @@ public function period_advrem()
               });
 
               $sheet->row(6, array(
-              'PERIOD:', Input::get('period')
+              'Period:', Input::get('period')
               ));
 
               $sheet->cell('A6', function($cell) {
@@ -7105,7 +7184,7 @@ public function period_advrem()
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -7118,7 +7197,7 @@ public function period_advrem()
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -7126,7 +7205,7 @@ public function period_advrem()
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -7142,23 +7221,31 @@ public function period_advrem()
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->amount), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->amount), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -7169,7 +7256,7 @@ public function period_advrem()
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -7177,14 +7264,14 @@ public function period_advrem()
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-              $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -7298,7 +7385,7 @@ public function period_advrem()
               });
 
               $sheet->row(5, array(
-              'CURRENCY:', $currency->shortname
+              'Currency:', $currency->shortname
               ));
 
               $sheet->cell('A5', function($cell) {
@@ -7309,7 +7396,7 @@ public function period_advrem()
               });
 
               $sheet->row(6, array(
-              'PERIOD:', Input::get('period')
+              'Period:', Input::get('period')
               ));
 
               $sheet->cell('A6', function($cell) {
@@ -7319,7 +7406,7 @@ public function period_advrem()
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -7332,7 +7419,7 @@ public function period_advrem()
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -7340,7 +7427,7 @@ public function period_advrem()
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -7356,23 +7443,31 @@ public function period_advrem()
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->amount), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->amount), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -7383,7 +7478,7 @@ public function period_advrem()
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -7391,14 +7486,14 @@ public function period_advrem()
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-              $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
@@ -7500,7 +7595,7 @@ public function period_advrem()
               });
 
               $sheet->row(5, array(
-              'CURRENCY:', $currency->shortname
+              'Currency:', $currency->shortname
               ));
 
               $sheet->cell('A5', function($cell) {
@@ -7511,7 +7606,7 @@ public function period_advrem()
               });
 
               $sheet->row(6, array(
-              'PERIOD:', Input::get('period')
+              'Period:', Input::get('period')
               ));
 
               $sheet->cell('A6', function($cell) {
@@ -7520,7 +7615,8 @@ public function period_advrem()
                 $cell->setFontWeight('bold');
 
               });
-              $sheet->mergeCells('A8:H8');
+
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -7533,7 +7629,7 @@ public function period_advrem()
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -7541,7 +7637,7 @@ public function period_advrem()
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -7557,23 +7653,31 @@ public function period_advrem()
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->amount), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->amount), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -7584,7 +7688,7 @@ public function period_advrem()
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -7592,21 +7696,20 @@ public function period_advrem()
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-              $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
              ));
              
     });
-
   })->download('xls');
   }else if(Input::get('branch') != 'All' && Input::get('department') != 'All' && Input::get('mode') != 'All'){
           $total = DB::table('transact_advances')
@@ -7715,7 +7818,7 @@ public function period_advrem()
               });
 
               $sheet->row(5, array(
-              'CURRENCY:', $currency->shortname
+              'Currency:', $currency->shortname
               ));
 
               $sheet->cell('A5', function($cell) {
@@ -7726,7 +7829,7 @@ public function period_advrem()
               });
 
               $sheet->row(6, array(
-              'PERIOD:', Input::get('period')
+              'Period:', Input::get('period')
               ));
 
               $sheet->cell('A6', function($cell) {
@@ -7736,7 +7839,7 @@ public function period_advrem()
 
               });
 
-              $sheet->mergeCells('A8:H8');
+              $sheet->mergeCells('A8:E8');
 
               $sheet->row(8, array(
               'SALARY ADVANCE TRANSFER LETTER'
@@ -7749,7 +7852,7 @@ public function period_advrem()
               $r->setAlignment('center');
               });
 
-              $sheet->mergeCells('A10:H10');
+              $sheet->mergeCells('A10:E10');
 
               $sheet->row(10, array(
               'Please arrange to transfer funds to the below listed employees` respective bank accounts
@@ -7757,7 +7860,7 @@ public function period_advrem()
               ));
 
               $sheet->row(12, array(
-              'PAYROLL NO.', 'EMPLOYEE','ID NO.','BANK', 'BANK BRANCH','BANK ACCOUNT','SWIFT CODE','AMOUNT'
+              'PAYE NAME','PAYE ACC NO.','REFERENCE','BANK CODE', 'BRANCH CODE',
               ));
 
               $sheet->row(12, function ($r) {
@@ -7773,23 +7876,31 @@ public function period_advrem()
             for($i = 0; $i<count($data); $i++){
             $bankname = '';
             $bankbranchname = '';
+
+            $name = '';
+
+            if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
             if($data[$i]->bank_id==0){
             $bankname = '';
             }else{
-            $bankname = $data[$i]->bank_name;
+            $bankname = $data[$i]->bank_code;
             }
             
             if($data[$i]->bank_branch_id==0){
             $bankbranchname = '';
             }else{
-            $bankbranchname = $data[$i]->bank_branch_name;
+            $bankbranchname = $data[$i]->branch_code;
             }
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->identity_number,$bankname,$bankbranchname,$data[$i]->bank_account_number,$data[$i]->swift_code,number_format(floatval($data[$i]->amount), 2)
+             $name,$data[$i]->bank_account_number,number_format(floatval($data[$i]->amount), 2),$bankname,$bankbranchname
              ));
 
-             $sheet->cell('H'.$row, function($cell) {
+             $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
@@ -7800,7 +7911,7 @@ public function period_advrem()
              
              }       
              $sheet->row($row, array(
-             '','','','','','','Total',number_format(floatval($total), 2)
+             '','Total',number_format(floatval($total), 2)
              ));
             $sheet->row($row, function ($r) {
 
@@ -7808,14 +7919,14 @@ public function period_advrem()
               $r->setFontWeight('bold');
  
               });
-            $sheet->cell('H'.$row, function($cell) {
+            $sheet->cell('C'.$row, function($cell) {
 
                // manipulate the cell
                 $cell->setAlignment('right');
 
               });
 
-              $sheet->mergeCells('A'.($row+2).':H'.($row+2));
+            $sheet->mergeCells('A'.($row+2).':E'.($row+2));
 
              $sheet->row($row+2, array(
              'Please debit our account with your bank charges and confirm once the above transfer has been made.'
