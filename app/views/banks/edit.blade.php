@@ -32,6 +32,10 @@
             <input class="form-control" placeholder="" type="text" name="name" id="name" value="{{ $bank->bank_name}}">
         </div>
 
+        <div class="form-group">
+            <label for="username">Bank Code <span style="color:red">*</span> </label>
+            <input class="form-control" placeholder="" type="text" name="code" id="code" value="{{ $bank->bank_code}}">
+        </div>
         
         <div class="form-actions form-group">
         

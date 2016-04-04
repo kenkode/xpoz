@@ -41,6 +41,7 @@
       <thead>
 
         <th>#</th>
+        <th>Bank Code</th>
         <th>Bank Name</th>
         <th>Action</th>
 
@@ -53,6 +54,7 @@
         <tr>
 
           <td> {{ $i }}</td>
+          <td>{{ $bank->bank_code }}</td>
           <td>{{ $bank->bank_name }}</td>
           <td>
 

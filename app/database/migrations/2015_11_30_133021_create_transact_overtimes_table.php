@@ -17,7 +17,6 @@ class CreateTransactOvertimesTable extends Migration {
 			$table->increments('id');
 			$table->integer('employee_id')->unsigned()->default('0')->index('transact_overtimes_employee_id_foreign');
 			$table->string('overtime_type');
-			$table->string('overtime_rate');
 			$table->float('overtime_period',15,2);
 			$table->string('overtime_amount')->default('0.00');
 			$table->string('financial_month_year');

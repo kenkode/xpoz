@@ -1253,6 +1253,8 @@ Route::post('import/banks', function(){
 
     $bank->bank_name = $result->bank_name;
 
+    $bank->bank_code = $result->bank_code;
+
     $bank->organization_id = $result->organization_id;
 
     $bank->save();

@@ -1,7 +1,7 @@
 <?php
 
 class Payroll extends \Eloquent {
-	public $table = "transact";
+    public $table = "transact";
 
     /*
 
@@ -25,25 +25,25 @@ class Payroll extends \Eloquent {
     */
 
 public static $rules = [
-		'period' => 'required',
-		'account' => 'required'
-	];
+        'period' => 'required',
+        'account' => 'required'
+    ];
 
-	public static $messages = array(
+    public static $messages = array(
         'period.required'=>'Please select period!',
         'account.required'=>'Please select account type!',
     );
 
-	// Don't forget to fill this array
-	protected $fillable = [];
+    // Don't forget to fill this array
+    protected $fillable = [];
 
 
-	public function employees(){
+    public function employees(){
 
-		return $this->hasMany('Employee');
-	}
+        return $this->hasMany('Employee');
+    }
 
-	public static function allowances($id){
+    public static function allowances($id){
     $allw = 0.00;
     
     $total_allws = DB::table('employee_allowances')
@@ -53,7 +53,7 @@ public static $rules = [
     foreach($total_allws as $total_allw){
     $allw = $total_allw->total_allowances;
     }
-    return $allw;
+    return round($allw,2);
 
     }
 
@@ -67,21 +67,41 @@ public static $rules = [
     foreach($total_rels as $total_rel){
     $rel = $total_rel->total_reliefs;
     }
-    return $rel;
+    return round($rel,2);
 
     }
 
     public static function earnings($id){
+    $period = Input::get('period');
+    $part = explode("-", $period);
+    $start = $part[1]."-".$part[0]."-01";
+    $end  = date('Y-m-t', strtotime($start));
+
     $earn = 0.00;
-    
+
     $total_earns = DB::table('earnings')
-                     ->select(DB::raw('COALESCE(sum(earnings_amount),0.00) as total_earnings'))
-                     ->where('employee_id', '=', $id)
-                     ->get();
+                     ->select(DB::raw('COALESCE(sum(earnings_amount),0.00) as total_earnings,instalments'))
+                     ->where(function ($query) use ($id,$start){
+                       $query->where('employee_id', '=', $id)
+                             ->where('formular', '=', 'Recurring')
+                             ->where('first_day_month','<=',$start);
+                       })
+                      ->orWhere(function ($query) use ($id,$start) {
+                        $query->where('employee_id', '=', $id)
+                              ->where('instalments', '>', 0)
+                              ->where('first_day_month','<=',$start)
+                              ->where('last_day_month','>=',$start);
+                        })->get();
+                      
     foreach($total_earns as $total_earn){
+    if($total_earn->instalments>=1){
     $earn = $total_earn->total_earnings;
+    }else{
+    $earn = 0.00;
     }
-    return $earn;
+    }
+    
+    return round($earn,2);
 
     }
     
@@ -95,11 +115,11 @@ public static $rules = [
     foreach($pays as $pay){
     $salary = $pay->total_pay;
     }
-    return $salary;
+    return round($salary,2);
    }
 
    public static function overtimes($id){
-    $earn = 0.00;
+    $otime = 0.00;
     
     $total_overtimes = DB::table('overtimes')
                      ->select(DB::raw('COALESCE(sum(amount*period),0.00) as overtimes'))
@@ -108,22 +128,7 @@ public static $rules = [
     foreach($total_overtimes as $total_overtime){
     $otime = $total_overtime->overtimes;
     }
-    return $otime;
-
-    }
-
-    public static function jobbenefits($id){
-    $ben = 0.00;
-    
-    $total_bens = DB::table('employeebenefits')
-                     ->join('employee', 'employeebenefits.jobgroup_id', '=', 'employee.job_group_id')
-                     ->select(DB::raw('COALESCE(sum(amount),0.00) as totalben'))
-                     ->where('employee_id', '=', $id)
-                     ->get();
-    foreach($total_bens as $total_ben){
-    $tben = $total_ben->totalben;
-    }
-    return $tben;
+    return round($otime,2);
 
     }
 
@@ -132,7 +137,7 @@ public static $rules = [
     
     $total_earnings = static::allowances($id)+static::earnings($id)+static::overtimes($id);
 
-    return $total_earnings;
+    return round($total_earnings,2);
 
     }
 
@@ -141,7 +146,7 @@ public static $rules = [
     
     $total_gross = static::salary_pay($id)+static::total_benefits($id);
 
-    return $total_gross;
+    return round($total_gross,2);
 
     }
 
@@ -212,7 +217,7 @@ public static $rules = [
     }
     }
     }
-    return $nssfAmt;
+    return round($nssfAmt,2);
    }
 
    public static function nhif($id){
@@ -233,7 +238,7 @@ public static $rules = [
     }
     }
    }
-    return $nhifAmt;
+    return round($nhifAmt,2);
    }
     
     public static function deductions($id){
@@ -265,7 +270,7 @@ public static $rules = [
     $other_ded = 0.00;
     }
     }
-    return $other_ded;
+    return round($other_ded,2);
    }
 
    public static function total_deductions($id){
@@ -273,7 +278,7 @@ public static $rules = [
     
     $total_deds = static::tax($id)+static::nssf($id)+static::nhif($id)+static::deductions($id);
 
-    return $total_deds;
+    return round($total_deds,2);
 
     }
 
@@ -282,7 +287,7 @@ public static $rules = [
     
     $total_net = static::gross($id)-static::total_deductions($id);
 
-    return $total_net;
+    return round($total_net,2);
 
     }
 
