@@ -1460,7 +1460,9 @@ Route::get('employee_deductions/view/{id}', 'EmployeeDeductionsController@view')
 
 Route::resource('payroll', 'PayrollController');
 Route::post('deleterow', 'PayrollController@del_exist');
+Route::post('showrecord', 'PayrollController@display');
 Route::post('payroll/preview', 'PayrollController@create');
+
 
 /*
 * advance routes
@@ -1469,6 +1471,7 @@ Route::post('payroll/preview', 'PayrollController@create');
 
 Route::resource('advance', 'AdvanceController');
 Route::post('deleteadvance', 'AdvanceController@del_exist');
+Route::post('showadvance', 'AdvanceController@display');
 Route::post('advance/preview', 'AdvanceController@create');
 
 

@@ -84,6 +84,43 @@ class AdvanceController extends \BaseController {
     exit();
 	}
 
+	public function display(){
+      $display = "";
+      $postedit = Input::all();
+      $part1    = $postedit['period1'];
+      $part2    = $postedit['period2'];
+      $part3    = $postedit['period3'];
+
+      $fperiod   = $part1.$part2.$part3; 
+      $employees = DB::table('employee')
+                  ->join('employee_deductions', 'employee.id', '=', 'employee_deductions.employee_id')
+                  ->where('in_employment','=','Y')
+                  ->where('deduction_id',1)
+                  ->where('instalments','>',0)
+                  ->get();
+        
+        $i=1;
+        foreach($employees as $employee){
+        $deductions = number_format($employee->deduction_amount);
+
+        $display .="
+        <tr>
+
+          <td> $i </td>
+          <td >$employee->personal_file_number</td>
+          <td>$employee->first_name $employee->last_name </td>
+          <td align='right'>$deductions</td>
+          
+        </tr>
+        ";
+         $i++;
+         
+        } 
+        return $display;
+        exit();
+
+    }
+
 	/**
 	 * Store a newly created branch in storage.
 	 *

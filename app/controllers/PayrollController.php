@@ -103,6 +103,56 @@ class PayrollController extends \BaseController {
     exit();
     }
 
+    public function display(){
+      $display = "";
+      $postedit = Input::all();
+      $part1    = $postedit['period1'];
+      $part2    = $postedit['period2'];
+      $part3    = $postedit['period3'];
+
+      $fperiod   = $part1.$part2.$part3; 
+      $employees = DB::table('employee')
+                  ->where('in_employment','=','Y')
+                  ->get();
+        
+        $i=1;
+        foreach($employees as $employee){
+        $salary = number_format($employee->basic_pay,2);
+        $benefits = number_format(Payroll::total_benefits($employee->id,$fperiod),2);
+        $gross = number_format(Payroll::gross($employee->id,$fperiod),2);
+        $paye = number_format(Payroll::tax($employee->id,$fperiod),2);
+        $nssf = number_format(Payroll::nssf($employee->id,$fperiod),2);
+        $nhif = number_format(Payroll::nhif($employee->id,$fperiod),2);
+        $deductions = number_format(Payroll::deductions($employee->id,$fperiod),2);
+        $total_deductions = number_format(Payroll::total_deductions($employee->id,$fperiod),2);
+        $net = number_format(Payroll::net($employee->id,$fperiod),2);
+
+        $display .="
+        <tr>
+
+          <td> $i </td>
+          <td >$employee->personal_file_number</td>
+          <td>$employee->first_name $employee->last_name </td>
+          <td align='right'>$salary</td>
+          <td align='right'>$benefits</td>
+          <td align='right'>$gross</td>
+          <td align='right'>$paye</td>
+          <td align='right'>$nssf</td>
+          <td align='right'>$nhif</td>
+          <td align='right'>$deductions</td>
+          <td align='right'>$total_deductions</td>
+          <td align='right'>$net</td>
+          
+        </tr>
+        ";
+         $i++;
+         
+        } 
+        return $display;
+        exit();
+
+    }
+
     /**
      * Store a newly created branch in storage.
      *
@@ -119,14 +169,14 @@ class PayrollController extends \BaseController {
 
         $payroll->employee_id = $employee->personal_file_number;
         $payroll->basic_pay = $employee->basic_pay; 
-        $payroll->earning_amount = Payroll::total_benefits($employee->id);
-        $payroll->taxable_income = Payroll::gross($employee->id);
-        $payroll->paye = Payroll::tax($employee->id);
-        $payroll->nssf_amount = Payroll::nssf($employee->id);
-        $payroll->nhif_amount = Payroll::nhif($employee->id);
-        $payroll->other_deductions = Payroll::deductions($employee->id);
-        $payroll->total_deductions = Payroll::total_deductions($employee->id);
-        $payroll->net = Payroll::net($employee->id);
+        $payroll->earning_amount = Payroll::total_benefits($employee->id,Input::get('period'));
+        $payroll->taxable_income = Payroll::gross($employee->id,Input::get('period'));
+        $payroll->paye = Payroll::tax($employee->id,Input::get('period'));
+        $payroll->nssf_amount = Payroll::nssf($employee->id,Input::get('period'));
+        $payroll->nhif_amount = Payroll::nhif($employee->id,Input::get('period'));
+        $payroll->other_deductions = Payroll::deductions($employee->id,Input::get('period'));
+        $payroll->total_deductions = Payroll::total_deductions($employee->id,Input::get('period'));
+        $payroll->net = Payroll::net($employee->id,Input::get('period'));
         $payroll->financial_month_year = Input::get('period');
         $payroll->account_id = Input::get('account');
         $payroll->save();
