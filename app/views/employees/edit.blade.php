@@ -262,14 +262,14 @@ $(document).ready(function() {
 
                         <div class="checkbox">
                         <label>
-                            <input type="checkbox" value="{{{ $employee->income_tax_applicable }}}" name="i_tax"<?= ($employee->income_tax_applicable=='1')?'checked="checked"':''; ?>>
+                            <input type="checkbox" name="itax" value="{{{ $employee->income_tax_applicable }}}" name="i_tax"<?= ($employee->income_tax_applicable=='1')?'checked="checked"':''; ?>>
                               Apply Income Tax
                         </label>
                     </div>
 
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" value="{{{ $employee->income_tax_relief_applicable }}}" name="i_tax_relief"<?= ($employee->income_tax_relief_applicable=='1')?'checked="checked"':''; ?>>
+                            <input type="checkbox" name="irel" value="{{{ $employee->income_tax_relief_applicable }}}" name="i_tax_relief"<?= ($employee->income_tax_relief_applicable=='1')?'checked="checked"':''; ?>>
                                Apply Income Tax Relief
                         </label>
                     </div>
@@ -568,6 +568,18 @@ $(document).ready(function() {
   </div>
 
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+$("#itax").click(function(){
+if($(this).is(':checked')){
+ $("#irel").prop('checked', true);
+}else{
+$("#irel").prop('checked', false);
+}
+});
+});
+</script>
 
 
 @stop

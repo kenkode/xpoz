@@ -51,7 +51,6 @@ function asMoney($value) {
         <th>#</th>
         <th>Employee</th>
         <th>Type</th>
-        <th>Pay rate</th>
         <th>Period Worked</th>
         <th>Amount</th>
         <th>Total Amount</th>
@@ -68,7 +67,6 @@ function asMoney($value) {
           <td> {{ $i }}</td>
           <td>{{ $overtime->first_name.' '.$overtime->last_name }}</td>
           <td>{{ $overtime->type }}</td>
-          <td>{{ $overtime->rate }}</td>
           <td>{{ $overtime->period }}</td>
           <td align="right">{{ asMoney((double)$overtime->amount) }}</td>
           <td align="right">{{ asMoney((double)$overtime->amount*(double)$overtime->period) }}</td>

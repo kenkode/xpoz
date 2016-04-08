@@ -29,12 +29,18 @@
                   <li>
                     <a href="{{ URL::to('employee_deductions') }}"><i class="glyphicon glyphicon-barcode fa-fw"></i> Deductions</a>
                   </li>
+
+                  <li>
+                    <a href="{{ URL::to('advance') }}"><i class="glyphicon glyphicon-circle-arrow-right fa-fw"></i>  Process Advance Salaries</a>
+                  </li>
                         
                   <li>
                     <a href="{{ URL::to('payroll') }}"><i class="glyphicon glyphicon-circle-arrow-right fa-fw"></i>  Process Payroll</a>
                   </li>
                 
-                  
+                  <li>
+                    <a href="{{ URL::to('advanceReports') }}"><i class="fa fa-file fa-fw"></i>  Advance Reports</a>
+                  </li>
                   
                   <li>
                     <a href="{{ URL::to('payrollReports') }}"><i class="fa fa-file fa-fw"></i>  Payroll Reports</a>

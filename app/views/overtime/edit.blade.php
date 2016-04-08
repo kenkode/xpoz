@@ -74,18 +74,7 @@ function totalB() {
                 
                     </div>
 
-                    <div class="form-group">
-                        <label for="username">Pay Rate <span style="color:red">*</span></label>
-                        <select name="rate" class="form-control">
-                            <option></option>
-                            <option value="Normal"<?= ($overtime->rate=='Normal')?'selected="selected"':''; ?>> Normal</option>
-                            <option value="Weekday"<?= ($overtime->rate=='Weekday')?'selected="selected"':''; ?>> Weekday</option>
-                            <option value="Saturday"<?= ($overtime->rate=='Saturday')?'selected="selected"':''; ?>> Saturday</option>
-                            <option value="Sunday"<?= ($overtime->rate=='Sunday')?'selected="selected"':''; ?>> Sunday</option>
-                            <option value="Holiday"<?= ($overtime->rate=='Holiday')?'selected="selected"':''; ?>> Holiday</option>
-                        </select>
-                
-                    </div>
+                  
 
           <div class="form-group">
             <label for="username">Period Worked<span style="color:red">*</span> </label>
@@ -96,11 +85,7 @@ function totalB() {
         <div class="form-group">
             <label for="username">Amount <span style="color:red">*</span> </label>
             <input class="form-control" placeholder="" type="text" onkeypress="totalBalance()" onkeyup="totalBalance()" name="amount" id="amount" value="{{$overtime->amount}}">
-            <script type="text/javascript">
-           $(document).ready(function() {
-           $('#amount').priceFormat();
-           });
-           </script>
+            
         </div>
         
         <div class="form-group">

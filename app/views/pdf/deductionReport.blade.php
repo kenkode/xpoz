@@ -67,7 +67,8 @@ body {
        
         <td style="width:150px">
 
-            <img src="{{ '../images/logo.png' }}" alt="{{ $organization->logo }}" width="150px"/>
+            <img src="{{public_path().'/uploads/logo/'.$organization->logo}}" alt="logo" width="80%">
+
     
         </td>
 
@@ -105,8 +106,11 @@ body {
 
 
 	<div class="content" style='margin-top:0px;'>
+    @if($type == 'All')
    <div style="margin-bottom:20px">{{'<strong>Period</strong> : '.$period}}<div align="center"><strong>Deduction Report</strong></div></div>
-
+    @else
+    <div style="margin-bottom:20px">{{'<strong>Period</strong> : '.$period}}<div align="center"><strong>Deduction Report for {{$name->deduction_name}}</strong></div></div>
+    @endif
     <table class="table table-bordered" border='1' cellspacing='0' cellpadding='0'>
 
       <tr>
@@ -116,7 +120,10 @@ body {
         <td width='20'><strong># </strong></td>
         <td><strong>Payroll Number </strong></td>
         <td><strong>Employee Name </strong></td>
+         @if($type == 'All')
         <td><strong>Deduction Type </strong></td>
+         @else
+         @endif
          @foreach($currencies as $currency)
         <td><strong>Amount ({{$currency->shortname}}) </strong></td>  
          @endforeach   
@@ -129,15 +136,20 @@ body {
        <td td width='20'>{{$i}}</td>
         <td> {{ $ded->personal_file_number }}</td>
         <td> {{ $ded->last_name.' '.$ded->first_name }}</td>
+         @if($type == 'All')
         <td> {{ $ded->deduction_name }}</td>
+        @else
+        @endif
         <td align="right"> {{ asMoney($ded->deduction_amount )}}</td>
         </tr>
       <?php $i++; ?>
    
     @endforeach
-
-     
-
+      @if($type == 'All')
+     <tr><td colspan="4" align="right"><strong>Total</strong></td><td align="right"><strong>{{asMoney($total)}}<strong></td></tr>
+      @else
+      <tr><td colspan="3" align="right"><strong>Total</strong></td><td align="right"><strong>{{asMoney($total)}}<strong></td></tr>
+      @endif
     </table>
 
 <br><br>

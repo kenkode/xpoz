@@ -24,7 +24,7 @@
         </div>
         @endif
 
-		 <form method="POST" action="{{URL::to('reports/employee')}}" accept-charset="UTF-8">
+		 <form target="_blank" method="POST" action="{{URL::to('reports/employee')}}" accept-charset="UTF-8">
    
     <fieldset>
             <div class="form-group">

@@ -23,7 +23,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'xpose',
+			'database'  => 'xpoz',
 			'username'  => 'root',
 			'password'  => 'mysql',
 			'charset'   => 'utf8',

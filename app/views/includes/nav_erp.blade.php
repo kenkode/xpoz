@@ -75,15 +75,23 @@
                     <a href="{{ URL::to('locations') }}"><i class="glyphicon glyphicon-home fa-fw"></i>  Stores</a>
                   </li>   
 
-
+<!--
                   <li>
+
                     <a href="#"><i class="glyphicon glyphicon-folder-open fa-fw"></i>  Reports</a>
                   </li> 
 
 
                   <li>
                     <a href="#"><i class="glyphicon glyphicon-upload fa-fw"></i>  Migrate</a>
-                  </li>    
+                  </li>    -->
+
+
+                    <a href="{{ URL::to('invreports') }}"><i class="glyphicon glyphicon-folder-open fa-fw"></i>  Reports</a>
+                  </li> 
+
+
+                  
 
 
                     

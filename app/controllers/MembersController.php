@@ -315,6 +315,12 @@ $name = $employee->first_name.' '.$employee->last_name;
 		
 		if($email != null){
 
+
+			if(Mailsender::checkConnection() == false){
+
+				return Redirect::back()->with('notice', 'Employee has not been activated kindly check your mail settings');
+			}
+
 		DB::table('users')->insert(
 	array('email' => $employee->email_office, 
 	  'username' => $employee->personal_file_number,
