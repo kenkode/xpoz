@@ -24,6 +24,11 @@
         </div>
         @endif
 
+
+         @if (Session::get('notice'))
+            <div class="alert alert-info">{{ Session::get('notice') }}</div>
+        @endif
+
 		 <form method="POST" action="{{URL::to('payrollReports/payslip')}}" accept-charset="UTF-8">
    
     <fieldset>

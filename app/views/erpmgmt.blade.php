@@ -20,17 +20,17 @@
 
 
                       <div class="col-md-2">
-                        <a class="btn btn-default btn-icon input-block-level" href="{{URL::to('salesorders/create')}}">
-                          <i class="glyphicon glyphicon-tasks fa-2x"></i>
-                          <div>New Quote</div>
+                        <a class="btn btn-default btn-icon input-block-level" href="{{URL::to('checks/create')}}">
+                          <i class="glyphicon glyphicon-random fa-2x"></i>
+                          <div>New Checkout</div>
                           
                         </a>
                       </div>
 
                       <div class="col-md-2">
-                        <a class="btn btn-default btn-icon input-block-level" href="{{ URL::to('purchaseorders/cretae')}}">
-                          <i class="glyphicon glyphicon-random fa-2x"></i>
-                          <div>Release Items</div>
+                        <a class="btn btn-default btn-icon input-block-level" href="{{ URL::to('bookings/create')}}">
+                          <i class="glyphicon glyphicon-th fa-2x"></i>
+                          <div>New Booking</div>
                           
                         </a>
                       </div>
@@ -38,21 +38,15 @@
                       
 
                       <div class="col-md-2">
-                        <a class="btn btn-default btn-icon input-block-level" href="{{ URL::to('stocks/create')}}">
-                          <i class="glyphicon glyphicon-random fa-2x"></i>
-                          <div>Receive Items</div>
+                        <a class="btn btn-default btn-icon input-block-level" href="{{ URL::to('maintenances/create')}}">
+                          <i class="glyphicon glyphicon-th-large fa-2x"></i>
+                          <div>New Maintenance</div>
                           
                         </a>
                       </div>
 
 
-                      <div class="col-md-2">
-                        <a class="btn btn-default btn-icon input-block-level" href="{{ URL::to('payments/create')}}">
-                          <i class="glyphicon glyphicon-barcode fa-2x"></i>
-                          <div>New Stock</div>
-                          
-                        </a>
-                      </div>
+                     
 
 
                        

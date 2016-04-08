@@ -60,6 +60,12 @@ class LeaveapplicationsController extends \BaseController {
 		}
 
 
+		if(Mailsender::checkConnection() == false){
+
+				return Redirect::back()->with('notice', 'Employee has not been activated kindly check your mail settings');
+			}
+
+
 		Leaveapplication::createLeaveApplication($data);
 
 		if(Confide::user()->user_type == 'member'){

@@ -77,14 +77,11 @@
 
 
                   <li>
-                    <a href="{{ URL::to('erpreports') }}"><i class="glyphicon glyphicon-folder-open fa-fw"></i>  Reports</a>
+                    <a href="{{ URL::to('invreports') }}"><i class="glyphicon glyphicon-folder-open fa-fw"></i>  Reports</a>
                   </li> 
 
 
-                  <li>
-                    <a href="{{ URL::to('erpmigrate') }}"><i class="glyphicon glyphicon-upload fa-fw"></i>  Migrate</a>
-                  </li>    
-
+                  
 
                     
                     
