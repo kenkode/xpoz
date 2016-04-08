@@ -43,7 +43,7 @@ public static $rules = [
         return $this->hasMany('Employee');
     }
 
-    public static function allowances($id){
+    public static function allowances($id,$period){
     $allw = 0.00;
     
     $total_allws = DB::table('employee_allowances')
@@ -57,7 +57,7 @@ public static $rules = [
 
     }
 
-    public static function reliefs($id){
+    public static function reliefs($id,$period){
     $rel = 0.00;
     
     $total_rels = DB::table('employee_relief')
@@ -71,8 +71,8 @@ public static $rules = [
 
     }
 
-    public static function earnings($id){
-    $period = Input::get('period');
+    public static function earnings($id,$period){
+ 
     $part = explode("-", $period);
     $start = $part[1]."-".$part[0]."-01";
     $end  = date('Y-m-t', strtotime($start));
@@ -105,7 +105,7 @@ public static $rules = [
 
     }
     
-    public static function salary_pay($id){
+    public static function salary_pay($id,$period){
     $salary = 0.00;
     
     $pays = DB::table('employee')
@@ -118,7 +118,7 @@ public static $rules = [
     return round($salary,2);
    }
 
-   public static function overtimes($id){
+   public static function overtimes($id,$period){
     $otime = 0.00;
     
     $total_overtimes = DB::table('overtimes')
@@ -132,29 +132,29 @@ public static $rules = [
 
     }
 
-    public static function total_benefits($id){
+    public static function total_benefits($id,$period){
     $total_earnings = 0.00;
     
-    $total_earnings = static::allowances($id)+static::earnings($id)+static::overtimes($id);
+    $total_earnings = static::allowances($id,$period)+static::earnings($id,$period)+static::overtimes($id,$period);
 
     return round($total_earnings,2);
 
     }
 
-    public static function gross($id){
+    public static function gross($id,$period){
     $total_gross = 0.00;
     
-    $total_gross = static::salary_pay($id)+static::total_benefits($id);
+    $total_gross = static::salary_pay($id,$period)+static::total_benefits($id,$period);
 
     return round($total_gross,2);
 
     }
 
 
-    public static function tax($id){
+    public static function tax($id,$period){
     $paye = 0.00;
-    $total_pay = static::gross($id);
-    $total_nssf = static::nssf($id);
+    $total_pay = static::gross($id,$period);
+    $total_nssf = static::nssf($id,$period);
     $taxable = $total_pay-$total_nssf;
     $emps = DB::table('employee')->where('id', '=', $id)->get();
     foreach($emps as $emp){
@@ -163,32 +163,32 @@ public static $rules = [
     }else if($emp->income_tax_applicable=='1' && $emp->income_tax_relief_applicable=='1'){
     if($taxable>=11135.67 && $taxable<19741){
     $paye = 1016.4+($taxable-10165)*15/100;
-    $paye = $paye-1162.00-static::reliefs($id);
+    $paye = $paye-1162.00-static::reliefs($id,$period);
     }else if($taxable>=19741 && $taxable<29317){
     $paye = 2452.8+($taxable-19741)*20/100;
-    $paye = $paye-1162.00-static::reliefs($id);
+    $paye = $paye-1162.00-static::reliefs($id,$period);
     }else if($taxable>=29317 && $taxable<38893){
     $paye = 4368+($taxable-29317)*25/100;
-    $paye = $paye-1162.00-static::reliefs($id);
+    $paye = $paye-1162.00-static::reliefs($id,$period);
     }else if($taxable>=38893){
     $paye = 6762+($taxable-38893)*30/100;
-    $paye = $paye-1162.00-static::reliefs($id);
+    $paye = $paye-1162.00-static::reliefs($id,$period);
     }else{
     $paye = 0.00;
     }
     }else if($emp->income_tax_applicable=='1' && $emp->income_tax_relief_applicable=='0'){
     if($taxable>=11135.67 && $taxable<19741){
     $paye = 1016.4+($taxable-10165)*15/100;
-    $paye = $paye-static::reliefs($id);
+    $paye = $paye-static::reliefs($id,$period);
     }else if($taxable>=19741 && $taxable<29317){
     $paye = 2452.8+($taxable-19741)*20/100;
-    $paye = $paye-static::reliefs($id);
+    $paye = $paye-static::reliefs($id,$period);
     }else if($taxable>=29317 && $taxable<38893){
     $paye = 4368+($taxable-29317)*25/100;
-    $paye = $paye-static::reliefs($id);
+    $paye = $paye-static::reliefs($id,$period);
     }else if($taxable>=38893){
     $paye = 6762+($taxable-38893)*30/100;
-    $paye = $paye-static::reliefs($id);
+    $paye = $paye-static::reliefs($id,$period);
     }else{
     $paye = 0.00;
     }
@@ -199,9 +199,9 @@ public static $rules = [
     return round($paye,2);
    }
 
-    public static function nssf($id){
+    public static function nssf($id,$period){
     $nssfAmt = 0.00;
-    $total = static::gross($id);
+    $total = static::gross($id,$period);
     $emps = DB::table('employee')->where('id', '=', $id)->get();
     foreach($emps as $emp){
     if($emp->social_security_applicable=='0'){
@@ -220,9 +220,9 @@ public static $rules = [
     return round($nssfAmt,2);
    }
 
-   public static function nhif($id){
+   public static function nhif($id,$period){
     $nhifAmt = 0.00;
-    $total = static::gross($id);
+    $total = static::gross($id,$period);
     $emps = DB::table('employee')->where('id', '=', $id)->get();
     foreach($emps as $emp){
     if($emp->hospital_insurance_applicable=='0'){
@@ -241,8 +241,8 @@ public static $rules = [
     return round($nhifAmt,2);
    }
     
-    public static function deductions($id){
-    $period = Input::get('period');
+    public static function deductions($id,$period){
+    
     $part = explode("-", $period);
     $start = $part[1]."-".$part[0]."-01";
     $end  = date('Y-m-t', strtotime($start));
@@ -273,19 +273,19 @@ public static $rules = [
     return round($other_ded,2);
    }
 
-   public static function total_deductions($id){
+   public static function total_deductions($id,$period){
     $total_deds = 0.00;
     
-    $total_deds = static::tax($id)+static::nssf($id)+static::nhif($id)+static::deductions($id);
+    $total_deds = static::tax($id,$period)+static::nssf($id,$period)+static::nhif($id,$period)+static::deductions($id,$period);
 
     return round($total_deds,2);
 
     }
 
-    public static function net($id){
+    public static function net($id,$period){
     $total_net = 0.00;
     
-    $total_net = static::gross($id)-static::total_deductions($id);
+    $total_net = static::gross($id,$period)-static::total_deductions($id,$period);
 
     return round($total_net,2);
 

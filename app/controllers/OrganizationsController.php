@@ -206,11 +206,6 @@ class OrganizationsController extends \BaseController {
 public function logo($id){
 
 
-	
-
-
-
-
 
 
 	if(Input::hasFile('photo')){

@@ -48,6 +48,31 @@ $start  = date('Y-m-01', strtotime($end_date));
        }else{
       window.location.href = "{{URL::to('advance')}}";
      }
+
+     $(document).ready(function(){
+       
+       var p1 = <?php echo $part[0]?>;
+       var p2 = "-";
+       var p3 = <?php echo $part[1]?>;  
+
+       displaydata(); 
+
+      function displaydata(){
+       $.ajax({
+                      url     : "{{URL::to('showadvance')}}",
+                      type    : "POST",
+                      async   : false,
+                      data    : {
+                              'period1'  : p1,
+                              'period2'  : p2,
+                              'period3'  : p3
+                      },
+                      success : function(s){
+                      $('.displayrecord').html(s)
+                      }        
+       });
+       }
+      });
     </script>
     <?php } ?>
 
@@ -78,11 +103,6 @@ function asMoney($value) {
 
       <input type="hidden" name="period" value="{{ $period }}"> 
        <input type="hidden" name="account" value="{{ $account }}"> 
-
-<div align="right" class="form-actions form-group">
-        
-          <button class="btn btn-primary btn-sm process" >Process</button>
-        </div>
 
         <div class="panel panel-default">
       <div class="panel panel-success">
@@ -123,6 +143,10 @@ function asMoney($value) {
 
     </table>
      
+     <div align="right" style="margin-top:50px;" class="form-actions form-group">
+        
+          <button class="btn btn-primary btn-sm process" >Process</button>
+        </div>
      
 
       </form>

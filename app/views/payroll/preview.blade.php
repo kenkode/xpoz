@@ -15,8 +15,8 @@ $start  = date('Y-m-01', strtotime($end_date));
           ->count();
      if($per>0){?>
 
-      <script type="text/javascript"> 
-     
+      <script type="text/javascript">
+       
       if (window.confirm("Do you wish to process payroll for this period again?"))
       {
 
@@ -37,17 +37,45 @@ $start  = date('Y-m-01', strtotime($end_date));
                           'period3'  : p3
                       },
                       success : function(d){
+                       
                       if(d == 0){
-                           
+                          
                          }else{
-                           
+                          
                          }
                       }        
              });
          });
+        
        }else{
       window.location.href = "{{URL::to('payroll')}}";
      }
+
+     $(document).ready(function(){
+       
+       var p1 = <?php echo $part[0]?>;
+       var p2 = "-";
+       var p3 = <?php echo $part[1]?>;  
+
+       displaydata(); 
+
+      function displaydata(){
+       $.ajax({
+                      url     : "{{URL::to('showrecord')}}",
+                      type    : "POST",
+                      async   : false,
+                      data    : {
+                              'period1'  : p1,
+                              'period2'  : p2,
+                              'period3'  : p3
+                      },
+                      success : function(s){
+                      $('.displayrecord').html(s)
+                      }        
+       });
+       }
+      });
+
     </script>
     <?php } ?>
 
@@ -59,6 +87,7 @@ function asMoney($value) {
 ?>
 
 @section('content')
+
 <br/>
 
 <div class="row">
@@ -76,7 +105,7 @@ function asMoney($value) {
     <div class="panel panel-default">
       <div class="panel panel-success">
       <div class="panel-heading">
-          <h4>Payroll Preview</h4>
+          <h4>Payroll Preview for {{ $period }}</h4>
         </div>
         <div class="panel-body" style="margin-left:-10px;">
     <form method="POST" action="{{{ URL::to('payroll') }}}" accept-charset="UTF-8">
@@ -84,7 +113,7 @@ function asMoney($value) {
       <input type="hidden" name="period" value="{{ $period }}"> 
        <input type="hidden" name="account" value="{{ $account }}"> 
 
-    <table id="users" style="font-size:10px;width:1000px" class="table table-condensed table-bordered table-responsive table-hover">
+    <table id="users" data-show-refresh="true" style="font-size:10px;width:1000px" class="table table-condensed table-bordered table-responsive table-hover">
 
 
       <thead>
@@ -103,7 +132,7 @@ function asMoney($value) {
          <th>Net Pay</th>
 
       </thead>
-      <tbody>
+      <tbody class="displayrecord">
 
         <?php $i = 1; ?>
         @foreach($employees as $employee)
@@ -114,14 +143,14 @@ function asMoney($value) {
           <td >{{ $employee->personal_file_number }}</td>
           <td>{{ $employee->first_name.' '.$employee->last_name }}</td>
           <td align="right">{{ asMoney((double)$employee->basic_pay) }}</td>
-          <td align="right">{{ asMoney((double)Payroll::total_benefits($employee->id)) }}</td>
-          <td align="right">{{ asMoney((double)Payroll::gross($employee->id)) }}</td>
-          <td align="right">{{ asMoney((double)Payroll::tax($employee->id)) }}</td>
-          <td align="right">{{ asMoney((double)Payroll::nssf($employee->id)) }}</td>
-          <td align="right">{{ asMoney((double)Payroll::nhif($employee->id)) }}</td>
-          <td align="right">{{ asMoney((double)Payroll::deductions($employee->id)) }}</td>
-          <td align="right">{{ asMoney((double)Payroll::total_deductions($employee->id)) }}</td>
-          <td align="right">{{ asMoney((double)Payroll::net($employee->id)) }}</td>
+          <td align="right">{{ asMoney((double)Payroll::total_benefits($employee->id,$period)) }}</td>
+          <td align="right">{{ asMoney((double)Payroll::gross($employee->id,$period)) }}</td>
+          <td align="right">{{ asMoney((double)Payroll::tax($employee->id,$period)) }}</td>
+          <td align="right">{{ asMoney((double)Payroll::nssf($employee->id,$period)) }}</td>
+          <td align="right">{{ asMoney((double)Payroll::nhif($employee->id,$period)) }}</td>
+          <td align="right">{{ asMoney((double)Payroll::deductions($employee->id,$period)) }}</td>
+          <td align="right">{{ asMoney((double)Payroll::total_deductions($employee->id,$period)) }}</td>
+          <td align="right">{{ asMoney((double)Payroll::net($employee->id,$period)) }}</td>
           
         </tr>
          
