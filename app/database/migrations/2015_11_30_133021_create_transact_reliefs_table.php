@@ -16,7 +16,7 @@ class CreateTransactReliefsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('employee_id')->unsigned()->default('0')->index('transact_reliefs_employee_id_foreign');
-			$table->integer('relief_id')->unsigned()->default('0')->index('transact_reliefs_relief_id_foreign');
+			$table->integer('employee_relief_id')->unsigned()->default('0')->index('transact_reliefs_employee_relief_id_foreign');
 			$table->string('relief_name');
 			$table->double('relief_amount',15,2)->default('0.00');
 			$table->string('financial_month_year');
