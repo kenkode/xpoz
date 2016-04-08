@@ -13,12 +13,12 @@
 
 Route::get('/', function()
 {
-
+    $organization = DB::table('organizations')->where('id', '=', 1)->first();
     $count = count(User::all());
 
     if($count <= 1 ){
 
-        return View::make('login');
+        return View::make('login', compact('organization'));
     }
 
 
@@ -28,7 +28,7 @@ Route::get('/', function()
 
         return Redirect::to('/dashboard');
         } else {
-            return View::make('login');
+            return View::make('login',compact('organization'));
         }
 });
 
@@ -99,12 +99,6 @@ Route::get('users/password/{user}', 'UsersController@Password');
 Route::post('users/password/{user}', 'UsersController@changePassword');
 Route::get('users/profile/{user}', 'UsersController@profile');
 Route::get('users/show/{user}', 'UsersController@show');
-Route::get('userview/{user}', function($id){
-
-    $user = User::findorfail($id);
-
-    return View::make('users.show', compact('user'));
-});
 
 
 
@@ -117,7 +111,6 @@ Route::get('roles/create', 'RolesController@create');
 Route::get('roles/edit/{id}', 'RolesController@edit');
 Route::post('roles/update/{id}', 'RolesController@update');
 Route::get('roles/delete/{id}', 'RolesController@destroy');
-Route::get('roles/show/{id}', 'RolesController@show');
 
 });
 
@@ -592,8 +585,8 @@ Route::get('template/earnings', function(){
                 $objValidation->setPromptTitle('Pick from list');
                 $objValidation->setPrompt('Please pick a value from the drop-down list.');
                 $objValidation->setFormula1('"Bonus, Commission, Others"'); //note this!
-
-
+                
+                
 
                 $objValidation = $sheet->getCell('A'.$i)->getDataValidation();
                 $objValidation->setType(\PHPExcel_Cell_DataValidation::TYPE_LIST);
@@ -1260,6 +1253,8 @@ Route::post('import/banks', function(){
 
     $bank->bank_name = $result->bank_name;
 
+    $bank->bank_code = $result->bank_code;
+
     $bank->organization_id = $result->organization_id;
 
     $bank->save();
@@ -1416,7 +1411,7 @@ Route::get('occurences/delete/{id}', 'OccurencesController@destroy');
 Route::get('occurences/edit/{id}', 'OccurencesController@edit');
 Route::get('occurences/view/{id}', 'OccurencesController@view');
 Route::get('occurences/create/{id}', 'OccurencesController@create');
-Route::get('occurences/download/{id}', 'OccurencesController@getDownload');
+
 
 /*
 * employee earnings routes
@@ -1467,6 +1462,15 @@ Route::resource('payroll', 'PayrollController');
 Route::post('deleterow', 'PayrollController@del_exist');
 Route::post('payroll/preview', 'PayrollController@create');
 
+/*
+* advance routes
+*/
+
+
+Route::resource('advance', 'AdvanceController');
+Route::post('deleteadvance', 'AdvanceController@del_exist');
+Route::post('advance/preview', 'AdvanceController@create');
+
 
 /*
 * employees routes
@@ -1481,7 +1485,10 @@ Route::post('employees/update/{id}', 'EmployeesController@update');
 Route::get('employees/delete/{id}', 'EmployeesController@destroy');
 
 
+Route::get('advanceReports', function(){
 
+    return View::make('employees.advancereports');
+});
 
 
 Route::get('payrollReports', function(){
@@ -1502,7 +1509,9 @@ Route::get('reports/employees', function(){
     return View::make('employees.reports');
 });
 
-Route::get('reports/employeelist', 'ReportsController@employees');
+
+Route::get('reports/selectEmployeeStatus', 'ReportsController@selstate');
+Route::post('reports/employeelist', 'ReportsController@employees');
 Route::get('employee/select', 'ReportsController@emp_id');
 Route::post('reports/employee', 'ReportsController@individual');
 Route::get('payrollReports/selectPeriod', 'ReportsController@period_payslip');
@@ -1531,6 +1540,11 @@ Route::get('reports/Appraisals/selectPeriod', 'ReportsController@appraisalperiod
 Route::post('reports/appraisal', 'ReportsController@appraisal');
 Route::get('reports/nextofkin/selectEmployee', 'ReportsController@selempkin');
 Route::post('reports/EmployeeKin', 'ReportsController@kin');
+
+Route::get('advanceReports/selectRemittancePeriod', 'ReportsController@period_advrem');
+Route::post('advanceReports/advanceRemittances', 'ReportsController@payeAdvRems');
+Route::get('advanceReports/selectSummaryPeriod', 'ReportsController@period_advsummary');
+Route::post('advanceReports/advanceSummary', 'ReportsController@payAdvSummary');
 
 /*
 *#################################################################
@@ -2167,6 +2181,7 @@ Route::group(['before' => 'manage_items'], function() {
 Route::get('items/edit/{id}', 'ItemsController@edit');
 Route::post('items/update/{id}', 'ItemsController@update');
 Route::get('items/delete/{id}', 'ItemsController@destroy');
+
 Route::get('items/show/{id}', 'ItemsController@show');
 
     
@@ -2218,6 +2233,7 @@ Route::get('bookingscommit', function(){
 
     
 });
+
 
 
 
@@ -2314,6 +2330,31 @@ Route::get('api/dropdown', function(){
     $id = Input::get('option');
     $bbranch = Bank::find($id)->bankbranch;
     return $bbranch->lists('bank_branch_name', 'id');
+});
+
+Route::get('api/getDays', function(){
+    $id = Input::get('employee');
+    $lid = Input::get('leave');
+    $d = Input::get('option');
+    $total = 0;
+    $balance = 0;
+ 
+    $leavedays = DB::table('leavetypes')
+                       ->where('id',$lid)
+                       ->first();
+    
+
+    $leaveapplications = DB::table('leaveapplications')
+                       ->join('leavetypes','leaveapplications.leavetype_id','=','leavetypes.id')
+                       ->where('employee_id',$id)
+                       ->where('leavetype_id',$lid)
+                       ->where('date_approved','<>','')
+                       ->get();
+    foreach ($leaveapplications as $leaveapplication) {
+      $total+=Leaveapplication::getLeaveDays($leaveapplication->applied_start_date, $leaveapplication->applied_end_date);
+    }
+    $balance = $leavedays->days-$total-$d;
+    return $balance;
 });
 
 Route::get('api/score', function(){
@@ -2650,13 +2691,6 @@ Route::get('NextOfKins/edit/{id}', 'NextOfKinsController@edit');
 Route::get('NextOfKins/view/{id}', 'NextOfKinsController@view');
 Route::get('NextOfKins/create/{id}', 'NextOfKinsController@create');
 
-Route::resource('EmergencyContacts', 'EmergencyContactsController');
-Route::post('EmergencyContacts/update/{id}', 'EmergencyContactsController@update');
-Route::get('EmergencyContacts/delete/{id}', 'EmergencyContactsController@destroy');
-Route::get('EmergencyContacts/edit/{id}', 'EmergencyContactsController@edit');
-Route::get('EmergencyContacts/view/{id}', 'EmergencyContactsController@view');
-Route::get('EmergencyContacts/create/{id}', 'EmergencyContactsController@create');
-
 Route::resource('Appraisals', 'AppraisalsController');
 Route::post('Appraisals/update/{id}', 'AppraisalsController@update');
 Route::get('Appraisals/delete/{id}', 'AppraisalsController@destroy');
@@ -2693,6 +2727,7 @@ Route::post('itemcategories/update/{id}', 'ItemcategoriesController@update');
 
 Route::group(['before' => 'manage_maintenance'], function() {
 
+
   Route::resource('tests', 'TestsController');
 Route::get('tests/edit/{id}', 'TestsController@edit');
 Route::get('tests/delete/{id}', 'TestsController@destroy');
@@ -2724,6 +2759,7 @@ Route::group(['before' => 'manage_inventory_reports'], function() {
     });
 
 });
+
 
 
 
@@ -2796,38 +2832,15 @@ Route::post('import/categories', function(){
 
 
   return Redirect::back()->with('notice', 'Employees have been succeffully imported');
-
-
-
   
 
 });
 
+Route::get('reports/AllowanceExcel', 'ReportsController@excelAll');
 
-Route::resource('bookingitems', 'BookingitemsController');
-
-
-
+Route::get('itax/download', 'ReportsController@getDownload');
 
 
-
-Route::get('connection', function(){
-
-  Organization::checkInternet();
-
-});
-
-Route::get('mail', function(){
-
-    $mail = Mailsender::find(1);
-
-    return View::make('system.mail', compact('mail'));
-
-});
-
-
-Route::resource('mails', 'MailsController');
-Route::get('mailtest', 'MailsController@test');
 
 Route::get('errorboard', function(){
 

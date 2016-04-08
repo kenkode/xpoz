@@ -24,7 +24,7 @@
         </div>
         @endif
 
-		 <form method="POST" action="{{URL::to('reports/EmployeeKin')}}" accept-charset="UTF-8">
+		 <form target="_blank" method="POST" action="{{URL::to('reports/EmployeeKin')}}" accept-charset="UTF-8">
    
     <fieldset>
             <div class="form-group">
@@ -39,6 +39,15 @@
                 
         </div>
 
+        <div class="form-group">
+                        <label for="username">Download as: <span style="color:red">*</span></label>
+                        <select required name="format" class="form-control">
+                            <option></option>
+                            <option value="excel"> Excel</option>
+                            <option value="pdf"> PDF</option>
+                        </select>
+                
+            </div>
         
         <div class="form-actions form-group">
         

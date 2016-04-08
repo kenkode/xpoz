@@ -44,6 +44,8 @@ class BanksController extends \BaseController {
 
 		$bank->bank_name = Input::get('name');
 
+		$bank->bank_code = Input::get('code');
+
         $bank->organization_id = '1';
 
 		$bank->save();
@@ -97,6 +99,7 @@ class BanksController extends \BaseController {
 		}
 
 		$bank->bank_name = Input::get('name');
+		$bank->bank_code = Input::get('code');
 		$bank->update();
         
         Audit::logaudit('Bank', 'update', 'updated: '.$bank->bank_name);

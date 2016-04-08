@@ -33,6 +33,10 @@
        </li>
 
        <li>
+          <a href="{{ URL::to('itax/download') }}">Download Itax Template</a>
+       </li>
+
+       <li>
         <a href="reports/blank" target="_blank">Blank report template</a>
       </li>
     </ul>

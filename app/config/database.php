@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'xpoz',
+			'database'  => 'cytonn',
 			'username'  => 'root',
 			'password'  => '',
 			'port' => '3306',

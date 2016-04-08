@@ -96,7 +96,8 @@ body {
        
         <td style="width:150px">
 
-            <img src="{{ '../images/logo.png' }}" alt="{{ $organization->logo }}" width="150px"/>
+           <img src="{{public_path().'/uploads/logo/'.$organization->logo}}" alt="logo" width="80%">
+
     
         </td>
 
@@ -135,16 +136,16 @@ body {
 
 	<div class="content" style='margin-top:0px;'>
     <table>
-    <?php if(!empty($selBranch) && !empty($selDept)){?>
+    <?php if($selBranch == 'All' && $selDept == 'All'){?>
      <tr><td width='50'><strong>Branch:</strong></td><td>All</td></tr>
      <tr><td width='50'><strong>Department:</strong></td><td>All</td></tr>
-    <?php }else if(!empty($selBranch)){?>
+    <?php }else if($selBranch == 'All'){?>
      <tr><td width='50'><strong>Branch:</strong></td><td>All</td></tr>
      <tr><td width='50'><strong>Department:</strong></td><td>{{$sels->department_name}}</td></tr>
-    <?php }else if(!empty($selDept)){?>
+    <?php }else if($selDept == 'All'){?>
      <tr><td width='50'><strong>Branch:</strong></td><td>{{$sels->name}}</td></tr>
      <tr><td width='50'><strong>Department:</strong></td><td>All</td></tr>
-     <?php }else if(empty($selDept) && empty($selBranch)){?>
+     <?php }else if($selDept != 'Áll' && $selBranch !='All'){?>
      <tr><td width='50'><strong>Branch:</strong></td><td>{{$selBr->name}}</td></tr>
      <tr><td width='50'><strong>Department:</strong></td><td>{{$selDt->department_name}}</td></tr>
     <?php } ?> 

@@ -67,7 +67,8 @@ body {
        
         <td style="width:150px">
 
-            <img src="{{ '../images/logo.png' }}" alt="{{ $organization->logo }}" width="150px"/>
+            <img src="{{public_path().'/uploads/logo/'.$organization->logo}}" alt="logo" width="80%">
+
     
         </td>
 
@@ -116,7 +117,8 @@ body {
         <td width='20'><strong># </strong></td>
         <td><strong>Kin Name</strong></td>
         <td><strong>Relationship</strong></td>
-        <td><strong>Identity Number</strong></td>
+        <td><strong>Kin Id no.</strong></td>
+        <td><strong>kin Contact</strong></td>
         <td><strong>Goodwill (%)</strong></td>
       </tr>
       <?php $i =1; ?>
@@ -126,6 +128,7 @@ body {
         <td> {{$kin->name}}</td>
         <td> {{ $kin->relationship}}</td>
         <td> {{ $kin->id_number}}</td>
+        <td> {{ $kin->contact}}</td>
         <td> {{ $kin->goodwill}}</td>
      </tr>
       <?php $i++; ?>

@@ -86,7 +86,8 @@ body {
        
         <td style="width:150px">
 
-            <img src="{{ '../images/logo.png' }}" alt="{{ $organization->logo }}" width="150px"/>
+            <img src="{{public_path().'/uploads/logo/'.$organization->logo}}" alt="logo" width="80%">
+
     
         </td>
 
@@ -125,27 +126,21 @@ body {
 
 	<div class="content" style='margin-top:0px;'>
     <table>
-    <?php
-     $banks=DB::table('banks')
-            ->where('organization_id','=',$organization->id)
-            ->where('id','=',$organization->bank_id)
-            ->get();
-    ?>
-
+    
       @if($organization->bank_id != 0)
-      @foreach($banks as $bank)
+     
     <tr><td width='80'><strong>Bank Name:</strong></td><td>{{ $bank->bank_name}}</td></tr>
-     @endforeach
+    
       @else
     <tr><td width='80'><strong>Bank Name:</strong></td><td></td></tr>
        @endif
-    @foreach($branches as $branch)
+   
      @if($organization->bank_branch_id != 0)
    <tr><td width='50'><strong>Bank Branch:</strong></td><td>{{$branch->bank_branch_name}}</td></tr>
      @else
-    <tr><td width='80'><strong>Bank Name:</strong></td><td></td></tr>
+    <tr><td width='80'><strong>Bank Branch:</strong></td><td></td></tr>
      @endif
-   @endforeach
+   
     <tr><td width='80'><strong>Bank Account:</strong></td><td>{{ $organization->bank_account_number}}</td></tr>
     <tr><td width='80'><strong>Swift Code:</strong></td><td>{{ $organization->swift_code}}</td></tr>
      <tr>
@@ -184,28 +179,13 @@ body {
         <td> {{ $rem->last_name.' '.$rem->first_name }}</td>
         <td> {{ $rem->identity_number }}</td>
         @if($rem->bank_id != 0)
-
-        <?php $banks = DB::table('banks')
-            ->join('employee', 'banks.id', '=', 'employee.bank_id')
-            ->where('banks.id','=',$rem->bank_id)
-            ->get(); 
-            ?>
-        @foreach($banks as $bank)
-        <td> {{ $bank->bank_name }}</td>
-        @endforeach
+        <td> {{ $rem->bank_name }}</td>
         @else
         <td></td>
         @endif
 
-        @if($rem->bank_branch_id != 0)
-        <?php $bbranches = DB::table('bank_branches')
-            ->join('employee', 'bank_branches.id', '=', 'employee.bank_branch_id')
-            ->where('bank_branches.id','=',$rem->bank_branch_id)
-            ->get(); 
-            ?>
-        @foreach($bbranches as $bbranch)
-        <td> {{ $bbranch->bank_branch_name }}</td>
-        @endforeach
+        @if($rem->bank_branch_id != 0) 
+        <td> {{ $rem->bank_branch_name }}</td>
         @else
         <td></td>
         @endif

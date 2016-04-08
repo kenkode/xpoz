@@ -3,11 +3,14 @@
 class Bank extends \Eloquent {
 
 public static $rules = [
-		'name' => 'required'
+		'name' => 'required',
+		'code' => 'required'
 	];
 
 public static $messages = array(
         'name.required'=>'Please insert bank name!',
+        'code.required'=>'Please insert bank code!',
+
     );
 
 	// Don't forget to fill this array
