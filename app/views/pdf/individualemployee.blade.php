@@ -46,6 +46,14 @@ body {
   background-color: #fff;
 }
 
+.emp {
+    display: inline-block;
+    width:700px;
+}
+.pic {
+    display: inline-block;
+    width:200px;
+}
 
 
  @page { margin: 170px 30px; }
@@ -71,7 +79,7 @@ body {
        
         <td style="width:150px">
 
-            <img src="{{public_path().'/uploads/logos/'.$organization->logo}}" alt="logo" width="80%">
+            <img src="{{public_path().'/uploads/logo/'.$organization->logo}}" alt="logo" width="80%">
 
     
         </td>
@@ -102,24 +110,35 @@ body {
     </table>
    </div>
 
-
-<div style='margin-left:550px;margin-top:30px'>
-<table class="t">
-<tr>
-<td><img src="{{ asset('/public/uploads/employees/photo/'.$employee->photo) }}" alt="{{asset('/public/uploads/employees/photo/default_photo.png') }}" width="150px"/></td>
-</tr>
-<tr>
-<td><img src="{{asset('/public/uploads/employees/signature/'.$employee->signature) }}" alt="{{asset('/public/uploads/employees/signature/sign_av.jpg') }}" width="100px"/></td>
-</tr>
-</table>
-</div>
-
 <div class="footer">
      <p class="page">Page <?php $PAGE_NUM ?></p>
    </div>
 
+   <div style='width:1000px;'>
 
-	<div class="content" style='margin-top:-230px;' align="left">
+<div class="pic">
+<table class="t">
+<tr>
+    @if($employee->photo != null || $employee->photo != '')
+    <td><img src="{{ asset('/public/uploads/employees/photo/'.$employee->photo) }}" alt="Photo" width="150px"/></td>
+    @else
+    <td></td>
+    @endif
+</tr>
+<tr>
+    @if($employee->signature != null || $employee->signature != '')
+    <td><img src="{{asset('/public/uploads/employees/signature/'.$employee->signature) }}" alt="Signature" width="100px"/></td>
+    @else
+    <td></td>
+    @endif
+</tr>
+</table>
+</div>
+
+
+
+
+    <div class="emp">
 
 
     <table class="table table-bordered" border='1' cellspacing='0' cellpadding='0'>
@@ -332,7 +351,7 @@ body {
 
 <br><br>
 
-   
+   <div>
 </div>
 
 
