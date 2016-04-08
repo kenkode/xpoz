@@ -294,71 +294,7 @@ class TenantsTableSeeder extends Seeder {
             
 
     
-/*
-    $perm = new Permission;
 
-    $perm->name = 'view_loan_product';
-    $perm->display_name = 'view loan products';
-    $perm->category = 'Loanproduct';
-    $perm->save();
-
-    $perm = new Permission;
-
-    $perm->name = 'delete_loan_product';
-    $perm->display_name = 'delete loan products';
-    $perm->category = 'Loanproduct';
-    $perm->save();
-
-
-    $perm = new Permission;
-
-    $perm->name = 'create_loan_account';
-    $perm->display_name = 'create loan account';
-    $perm->category = 'Loanaccount';
-    $perm->save();
-
-
-    $perm = new Permission;
-
-    $perm->name = 'view_loan_account';
-    $perm->display_name = 'view loan account';
-    $perm->category = 'Loanaccount';
-    $perm->save();
-
-
-    $perm = new Permission;
-
-    $perm->name = 'approve_loan_account';
-    $perm->display_name = 'approve loan';
-    $perm->category = 'Loanaccount';
-    $perm->save();
-
-
-    $perm = new Permission;
-
-    $perm->name = 'disburse_loan';
-    $perm->display_name = 'disburse loan';
-    $perm->category = 'Loanaccount';
-    $perm->save();
-
-
-
-    $perm = new Permission;
-
-    $perm->name = 'view_savings_account';
-    $perm->display_name = 'view savings account';
-    $perm->category = 'Savingaccount';
-    $perm->save();
-
-
-    $perm = new Permission;
-
-    $perm->name = 'open_saving_account';
-    $perm->display_name = 'Open savings account';
-    $perm->category = 'Savingaccount';
-    $perm->save();
-
-*/
 
     
 	}

@@ -2149,19 +2149,34 @@ echo "Decoded L code: ".$name4."<br>";
 
 /* ########################  ERP ROUTES ################################ */
 
-Route::resource('clients', 'ClientsController');
+Route::group(['before' => 'manage_clients'], function() {
+
+  Route::resource('clients', 'ClientsController');
 Route::get('clients/edit/{id}', 'ClientsController@edit');
 Route::post('clients/update/{id}', 'ClientsController@update');
 Route::get('clients/delete/{id}', 'ClientsController@destroy');
 
-Route::resource('items', 'ItemsController');
+    
+});
+
+
+Route::group(['before' => 'manage_items'], function() {
+
+
+    Route::resource('items', 'ItemsController');
 Route::get('items/edit/{id}', 'ItemsController@edit');
 Route::post('items/update/{id}', 'ItemsController@update');
 Route::get('items/delete/{id}', 'ItemsController@destroy');
 Route::get('items/show/{id}', 'ItemsController@show');
 
+    
+});
 
-Route::resource('bookings', 'BookingsController');
+
+Route::group(['before' => 'manage_bookings'], function() {
+
+
+    Route::resource('bookings', 'BookingsController');
 Route::get('bookings/edit/{id}', 'BookingsController@edit');
 Route::post('bookings/update/{id}', 'BookingsController@update');
 Route::get('bookings/delete/{id}', 'BookingsController@destroy');
@@ -2201,16 +2216,60 @@ Route::get('bookingscommit', function(){
 
 });
 
+    
+});
+
+
+
+Route::group(['before' => 'manage_stores'], function() {
+
+
+   Route::resource('locations', 'LocationsController');
+Route::get('locations/edit/{id}', 'LocationsController@edit');
+Route::get('locations/delete/{id}', 'LocationsController@destroy');
+Route::post('locations/update/{id}', 'LocationsController@update');
+
+
+    
+});
+
+
+Route::group(['before' => 'manage_checkin'], function() {
+
+
+
+Route::get('checks/checkin/{id}', 'ChecksController@checkin');
+Route::post('checks/checkin/{id}', 'ChecksController@docheckin');
+
+    
+});
+
+
+Route::group(['before' => 'manage_checkout'], function() {
+
+
+
+ Route::resource('checks', 'ChecksController');
+Route::get('checks/edit/{id}', 'ChecksController@edit');
+Route::get('checks/delete/{id}', 'ChecksController@destroy');
+Route::post('checks/update/{id}', 'ChecksController@update');
+Route::get('checks/show/{id}', 'ChecksController@show');
+
+Route::get('checks/checkout', 'ChecksController@checkout');
+
+    
+});
+
+
+
+
+  
 
 
 
 Route::resource('paymentmethods', 'PaymentmethodsController');
 
 
-Route::resource('locations', 'LocationsController');
-Route::get('locations/edit/{id}', 'LocationsController@edit');
-Route::get('locations/delete/{id}', 'LocationsController@destroy');
-Route::post('locations/update/{id}', 'LocationsController@update');
 
 
 
@@ -2618,16 +2677,27 @@ Route::get('AppraisalSettings/delete/{id}', 'AppraisalSettingsController@destroy
 Route::get('AppraisalSettings/edit/{id}', 'AppraisalSettingsController@edit');
 
 
+
+Route::group(['before' => 'manage_items'], function() {
+
 Route::resource('itemcategories', 'ItemcategoriesController');
 Route::get('itemcategories/edit/{id}', 'ItemcategoriesController@edit');
 Route::get('itemcategories/delete/{id}', 'ItemcategoriesController@destroy');
 Route::post('itemcategories/update/{id}', 'ItemcategoriesController@update');
 
+    
+});
 
-Route::resource('tests', 'TestsController');
+
+
+
+Route::group(['before' => 'manage_maintenance'], function() {
+
+  Route::resource('tests', 'TestsController');
 Route::get('tests/edit/{id}', 'TestsController@edit');
 Route::get('tests/delete/{id}', 'TestsController@destroy');
 Route::post('tests/update/{id}', 'TestsController@update');
+
 
 Route::resource('maintenances', 'MaintenancesController');
 Route::get('maintenances/edit/{id}', 'MaintenancesController@edit');
@@ -2635,16 +2705,27 @@ Route::get('maintenances/delete/{id}', 'MaintenancesController@destroy');
 Route::post('maintenances/update/{id}', 'MaintenancesController@update');
 
 
-Route::resource('checks', 'ChecksController');
-Route::get('checks/edit/{id}', 'ChecksController@edit');
-Route::get('checks/delete/{id}', 'ChecksController@destroy');
-Route::post('checks/update/{id}', 'ChecksController@update');
-Route::get('checks/show/{id}', 'ChecksController@show');
+    
+});
 
-Route::get('checks/checkout', 'ChecksController@checkout');
 
-Route::get('checks/checkin/{id}', 'ChecksController@checkin');
-Route::post('checks/checkin/{id}', 'ChecksController@docheckin');
+
+
+Route::group(['before' => 'manage_inventory_reports'], function() {
+
+    Route::get('invreports', function(){
+
+
+      $items = Item::all();
+      $stores = Location::all();
+
+      return View::make('invreports', compact('items', 'stores'));
+
+    });
+
+});
+
+
 
 
 Route::get('erpmigrate', function(){
@@ -2747,4 +2828,73 @@ Route::get('mail', function(){
 
 Route::resource('mails', 'MailsController');
 Route::get('mailtest', 'MailsController@test');
+
+Route::get('errorboard', function(){
+
+  return View::make('errorboard');
+
+});
+
+Route::get('perms', function(){
+
+    $perm = new Permission;
+
+    $perm->name = 'manage_checkout';
+    $perm->display_name = 'Checkout Items';
+    $perm->category = 'Inventory';
+    $perm->save();
+
+
+    $perm = new Permission;
+
+    $perm->name = 'manage_checkin';
+    $perm->display_name = 'Checkin Items';
+    $perm->category = 'Inventory';
+    $perm->save();
+
+    $perm = new Permission;
+
+    $perm->name = 'manage_bookings';
+    $perm->display_name = 'Manage Bookings';
+    $perm->category = 'Inventory';
+    $perm->save();
+
+    $perm = new Permission;
+
+    $perm->name = 'manage_maintenance';
+    $perm->display_name = 'Manage Maintenance';
+    $perm->category = 'Inventory';
+    $perm->save();
+
+    $perm = new Permission;
+
+    $perm->name = 'manage_items';
+    $perm->display_name = 'Manage Items';
+    $perm->category = 'Inventory';
+    $perm->save();
+
+    $perm = new Permission;
+
+    $perm->name = 'manage_clients';
+    $perm->display_name = 'Manage Clients';
+    $perm->category = 'Inventory';
+    $perm->save();
+
+    $perm = new Permission;
+
+    $perm->name = 'manage_stores';
+    $perm->display_name = 'Manage Stores';
+    $perm->category = 'Inventory';
+    $perm->save();
+
+    $perm = new Permission;
+
+    $perm->name = 'manage_inventory_reports';
+    $perm->display_name = 'View Reports';
+    $perm->category = 'Inventory';
+    $perm->save();
+
+   
+
+});
 

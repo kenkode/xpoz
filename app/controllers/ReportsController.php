@@ -263,6 +263,15 @@ class ReportsController extends \BaseController {
     }else{*/
       
         $period = Input::get("period");
+
+
+         $transactCount = DB::table('transact')->where('financial_month_year', '=', $period)->count();
+
+         if($transactCount < 1){
+
+            return Redirect::back()->with('notice', 'payslip for the selected period does not exist');
+         }
+
         
         $id = Input::get('employeeid');
 

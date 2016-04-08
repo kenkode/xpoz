@@ -152,7 +152,7 @@ Route::filter('process_payroll', function()
 {
     if (! Entrust::can('process_payroll') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -160,7 +160,7 @@ Route::filter('manage_earning', function()
 {
     if (! Entrust::can('manage_earning') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -168,7 +168,7 @@ Route::filter('manage_deduction', function()
 {
     if (! Entrust::can('manage_deduction') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -176,7 +176,7 @@ Route::filter('manage_allowance', function()
 {
     if (! Entrust::can('manage_allowance') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -185,7 +185,7 @@ Route::filter('view_application', function()
 {
     if (! Entrust::can('view_applications') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -194,7 +194,7 @@ Route::filter('amend_application', function()
 {
     if (! Entrust::can('amend_application') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -202,7 +202,7 @@ Route::filter('reject_application', function()
 {
     if (! Entrust::can('reject_application') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -213,7 +213,7 @@ Route::filter('leave_mgmt', function()
 {
     if (! Entrust::can('view_application') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -222,7 +222,7 @@ Route::filter('create_employee', function()
 {
     if (! Entrust::can('create_employee') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -232,7 +232,7 @@ Route::filter('manage_organization', function()
 {
     if (! Entrust::can('manage_organization') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -240,7 +240,7 @@ Route::filter('manage_branch', function()
 {
     if (! Entrust::can('manage_branch') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -248,7 +248,7 @@ Route::filter('manage_group', function()
 {
     if (! Entrust::can('manage_group') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -256,7 +256,7 @@ Route::filter('manage_settings', function()
 {
     if (! Entrust::can('manage_settings') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -265,7 +265,7 @@ Route::filter('manage_users', function()
 {
     if (! Entrust::can('manage_user') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -273,7 +273,7 @@ Route::filter('manage_roles', function()
 {
     if (! Entrust::can('manage_role') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -281,7 +281,7 @@ Route::filter('manage_audits', function()
 {
     if (! Entrust::can('manage_audit') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
     }
 });
 
@@ -289,7 +289,76 @@ Route::filter('manage_leavetypes', function()
 {
     if (! Entrust::can('manage_leave') ) // Checks the current user
     {
-        return Redirect::to('dashboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+        return Redirect::to('errorboard')->with('notice', 'you do not have access to this resource. Contact your system admin');
+    }
+});
+
+
+
+
+
+Route::filter('manage_checkin', function()
+{
+    if (! Entrust::can('manage_checkin') ) // Checks the current user
+    {
+        return Redirect::to('errorboard')->with('notice', 'you do not have permission to access this resource. Contact your system admin');
+    }
+});
+
+
+Route::filter('manage_checkout', function()
+{
+    if (! Entrust::can('manage_checkout') ) // Checks the current user
+    {
+        return Redirect::to('errorboard')->with('notice', 'you do not have permission to access this resource. Contact your system admin');
+    }
+});
+
+Route::filter('manage_bookings', function()
+{
+    if (! Entrust::can('manage_bookings') ) // Checks the current user
+    {
+        return Redirect::to('errorboard')->with('notice', 'you do not have permission to access this resource. Contact your system admin');
+    }
+});
+
+Route::filter('manage_maintenance', function()
+{
+    if (! Entrust::can('manage_maintenance') ) // Checks the current user
+    {
+        return Redirect::to('errorboard')->with('notice', 'you do not have permission to access this resource. Contact your system admin');
+    }
+});
+
+Route::filter('manage_items', function()
+{
+    if (! Entrust::can('manage_items') ) // Checks the current user
+    {
+        return Redirect::to('errorboard')->with('notice', 'you do not have permission to access this resource. Contact your system admin');
+    }
+});
+
+Route::filter('manage_clients', function()
+{
+    if (! Entrust::can('manage_clients') ) // Checks the current user
+    {
+        return Redirect::to('errorboard')->with('notice', 'you do not have permission to access this resource. Contact your system admin');
+    }
+});
+
+Route::filter('manage_stores', function()
+{
+    if (! Entrust::can('manage_stores') ) // Checks the current user
+    {
+        return Redirect::to('errorboard')->with('notice', 'you do not have permission to access this resource. Contact your system admin');
+    }
+});
+
+Route::filter('manage_inventory_reports', function()
+{
+    if (! Entrust::can('manage_inventory_reports') ) // Checks the current user
+    {
+        return Redirect::to('errorboard')->with('notice', 'you do not have permission to access this resource. Contact your system admin');
     }
 });
 
