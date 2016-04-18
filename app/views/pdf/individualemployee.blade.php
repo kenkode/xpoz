@@ -79,7 +79,12 @@ body {
        
         <td style="width:150px">
 
+<<<<<<< HEAD
             <img src="{{public_path().'/uploads/logos/'.$organization->logo}}" alt="logo" width="80%">
+=======
+
+            <img src="{{asset('/public/uploads/logos/'.$organization->logo)}}" alt="logo" width="80%">
+>>>>>>> 7deaf969de76d8744898055a8c06fadd621b4cf0
 
     
         </td>
