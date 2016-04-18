@@ -32,7 +32,12 @@ Route::get('/', function()
         }
 });
 
+Route::get('roles/show/{id}', 'RolesController@show');
 
+	Route::get('mail', function(){
+	$mail = Mailsender::find(1);	
+	return View::make('system.mail', compact('mail'));
+	});
 
 Route::get('/dashboard', function()
 {
@@ -110,7 +115,7 @@ Route::resource('roles', 'RolesController');
 Route::get('roles/create', 'RolesController@create');
 Route::get('roles/edit/{id}', 'RolesController@edit');
 Route::post('roles/update/{id}', 'RolesController@update');
-Route::get('roles/delete/{id}', 'RolesController@destroy');
+Route::get('roles/destroy/{id}', 'RolesController@destroy');
 
 });
 
