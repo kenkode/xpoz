@@ -34,4 +34,26 @@ public static $rules = [
         return $benefit->benefit_name;
 	}
 
+	public static function getAmount($id,$jid){
+        $count = DB::table('employeebenefits')
+		         ->where('benefit_id', $id)
+		         ->where('jobgroup_id', $jid)
+		         ->count();
+
+		$amount = 0;
+
+		if($count == 0){
+        $amount = 0;
+		}else{
+		$benefit = DB::table('employeebenefits')
+		         ->where('benefit_id', $id)
+		         ->where('jobgroup_id', $jid)
+		         ->first();
+
+		$amount = $benefit->amount;
+	    }
+
+		return $amount;
+	}
+
 }

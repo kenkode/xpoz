@@ -2302,6 +2302,7 @@ class ReportsController extends \BaseController {
               $mortgage = '';
               $deposit = '';
               $relief = '';
+              $paye = '';
 
               if($data[$i]->type_id == 1){
                 $type = 'Primary Employee';
@@ -2334,17 +2335,33 @@ class ReportsController extends \BaseController {
               }
 
               if($data[$i]->type_id == 1){
+              if($data[$i]->pin == '' || $data[$i]->pin == null) {
+                $relief = 0.00;
+              }else if((Payroll::processedsalaries($data[$i]->personal_file_number,$period) == 0 || Payroll::processedsalaries($data[$i]->personal_file_number,$period) == 11335.67)){
+                $relief = 0.00;
+              }else{
                 $relief = 1162.00;
+              }
               }else{
                 $relief = '';
+              }
+
+              if($data[$i]->pin == '' || $data[$i]->pin == null) {
+                $paye = 0.00;
+              }else if((Payroll::processedsalaries($data[$i]->personal_file_number,$period) == 0 || Payroll::processedsalaries($data[$i]->personal_file_number,$period) == 11335.67)){
+                $paye = 0.00;
+              }else if($data[$i]->type_id > 1){
+                 $paye = Payroll::processedsalaries($data[$i]->personal_file_number,$period)*0.3;
+              }else{
+                $paye = Payroll::processedpaye($data[$i]->personal_file_number,$period);
               }
             
              $sheet->row($row, array(
              $data[$i]->pin,$name,'Resident',$type,Payroll::processedsalaries($data[$i]->personal_file_number,$period),
              Payroll::processedhouseallowances($data[$i]->id,$period),Payroll::processedtransportallowances($data[$i]->id,$period),
-             0,Payroll::processedovertimes($data[$i]->id,$period),0,0,Payroll::processedotherallowances($data[$i]->id,$period),'',
+             0,Payroll::processedovertimes($data[$i]->id,$period),0,0,Payroll::processedotherallowances($data[$i]->id,$period)+Payroll::processedearnings($data[$i]->id,$period),'',
              0,0,'',0,'Benefit not given','','','','','','',$ac,'',$mortgage,$deposit,'','','',$relief,Payroll::processedreliefs($data[$i]->id,$period),
-             '',0
+             '',$paye
              )); 
              $row++;  
             }        
@@ -2383,6 +2400,7 @@ class ReportsController extends \BaseController {
               $mortgage = '';
               $deposit = '';
               $relief = '';
+              $paye = '';
 
               if($data_disabled[$i]->type_id == 1){
                 $type = 'Primary Employee';
@@ -2415,15 +2433,31 @@ class ReportsController extends \BaseController {
               }
 
               if($data_disabled[$i]->type_id == 1){
-                $relief = 1162.00;
+              if($data_disabled[$i]->pin == '' || $data_disabled[$i]->pin == null) {
+                $relief = 0.00;
+              }else if((Payroll::processedsalaries($data_disabled[$i]->personal_file_number,$period) == 0 || Payroll::processedsalaries($data_disabled[$i]->personal_file_number,$period) == 11335.67)){
+                $relief = 0.00;
+              }else{
+                $relief = 0.00;
+              }
               }else{
                 $relief = '';
+              }
+
+              if($data_disabled[$i]->pin == '' || $data_disabled[$i]->pin == null) {
+                $paye = 0.00;
+              }else if((Payroll::processedsalaries($data_disabled[$i]->personal_file_number,$period) == 0 || Payroll::processedsalaries($data_disabled[$i]->personal_file_number,$period) == 11335.67)){
+                $paye = 0.00;
+              }else if($data_disabled[$i]->type_id > 1){
+                 $paye = 0.00;
+              }else{
+                $paye = Payroll::processedpaye($data_disabled[$i]->personal_file_number,$period);
               }
             
              $sheet->row($row, array(
              $data_disabled[$i]->pin,$name,'Resident',$type,0,Payroll::processedsalaries($data_disabled[$i]->personal_file_number,$period),
              Payroll::processedhouseallowances($data_disabled[$i]->id,$period),Payroll::processedtransportallowances($data_disabled[$i]->id,$period),
-             0,Payroll::processedovertimes($data_disabled[$i]->id,$period),0,0,Payroll::processedotherallowances($data_disabled[$i]->id,$period),'',
+             0,Payroll::processedovertimes($data_disabled[$i]->id,$period),0,0,Payroll::processedotherallowances($data_disabled[$i]->id,$period)+Payroll::processedearnings($data_disabled[$i]->id,$period),'',
              0,0,'',0,'Benefit not given','','','','','','',$ac,'',$mortgage,$deposit,'','','','',$relief,Payroll::processedreliefs($data_disabled[$i]->id,$period),
              '',0
              )); 
@@ -2492,62 +2526,138 @@ class ReportsController extends \BaseController {
 
     $excel->sheet('Nssf Report', function($sheet) use($data,$total,$organization,$objPHPExcel){
 
-
-               $sheet->row(1, array(
-              'Employee Name: ',$organization->name
+              $sheet->row(1, array(
+              'NSSF Contributions'
               ));
+
+               $sheet->row(1, function($row) {
+
+               // manipulate the cell
+                $row->setAlignment('left');
+                $row->setFontFamily('Arial');
+                $row->setFontSize(10);
+              });
+
+               $sheet->cell('A1', function($cell) {
+
+               // manipulate the cell
+                $cell->setFontWeight('bold');
+
+              });
+
+               $sheet->row(2, array(
+              'EMPLOYER NUMBER ',$organization->nssf_no
+              ));
+
+               $sheet->row(2, function($row) {
+
+               // manipulate the cell
+                $row->setAlignment('left');
+                $row->setFontFamily('Arial');
+                $row->setFontSize(10);
+               });
+
+               $sheet->row(3, array(
+              'EMPLOYER NAME ',$organization->name
+              ));
+
+               $sheet->row(3, function($row) {
+
+               // manipulate the cell
+                $row->setAlignment('left');
+                $row->setFontFamily('Arial');
+                $row->setFontSize(10);
+              });
+
+              $part = explode("-", Input::get('period'));
               
-              $sheet->cell('A1', function($cell) {
+              $m = "";
 
-               // manipulate the cell
-                $cell->setFontWeight('bold');
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m.$part[1];
 
-              });
-
-
-              $sheet->row(2, array(
-              'Contribution Period: ', Input::get('period')
+              $sheet->row(4, array(
+              'MONTH OF CONTRIBUTION ', $month
               ));
 
-              $sheet->cell('A2', function($cell) {
+              $sheet->row(4, function($row) {
 
                // manipulate the cell
-                $cell->setFontWeight('bold');
-
+                $row->setAlignment('left');
+                $row->setFontFamily('Arial');
+                $row->setFontSize(10);
               });
 
-              $sheet->row(3, array(
-              'PAYROLL NO.', 'EMPLOYEE NAME', 'NSSF NO.', 'STD AMT.','VOL AMT.','TOTAL AMT.','ID NO.','REMARKS'
+              $sheet->row(6, array(
+              'PAYROLL NO', 'OTHER NAMES', 'NSSF NUMBER', 'STD AMT','TOTAL AMT','ID NO'
               ));
 
-              $sheet->row(3, function ($r) {
+              $sheet->row(6, function($row) {
 
-             // call cell manipulation methods
-              $r->setFontWeight('bold');
- 
+               // manipulate the cell
+                $row->setFontWeight('bold');
+                $row->setAlignment('left');
+                $row->setFontFamily('Arial');
+                $row->setFontSize(10);
               });
                
-            $row = 4;
+            $row = 7;
              
              
              for($i = 0; $i<count($data); $i++){
+
+              $name = '';
+
+              if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+              }else{
+                $name = $data[$i]->first_name.' '.$data[$i]->last_name;
+              }
             
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,$data[$i]->social_security_number,$data[$i]->nssf_amount,'',$data[$i]->nssf_amount*2,$data[$i]->identity_number,''
+             $data[$i]->personal_file_number,$name,$data[$i]->social_security_number,$data[$i]->nssf_amount*2,$data[$i]->nssf_amount*2,$data[$i]->identity_number
              ));
+
+             $sheet->row($row, function($r) {
+
+               // manipulate the cell
+                $r->setFontFamily('Arial');
+                $r->setFontSize(10);
+              });
+
+             $sheet->cell('C'.$row, function ($r) {
+
+            // call cell manipulation methods
+             $r->setAlignment('left');
+
+             });
+
+             $sheet->cell('F'.$row, function ($r) {
+
+            // call cell manipulation methods
+             $r->setAlignment('left');
+
+             });
              
              $row++;
              
              }       
              $sheet->row($row, array(
-             '','Total','',$total,'',$total*2,'',''
+             '','','',$total*2,$total*2,''
              ));
-            $sheet->row($row, function ($r) {
 
-            // call cell manipulation methods
-            $r->setFontWeight('bold');
+             $sheet->row($row, function($r) {
 
-        });
+               // manipulate the cell
+                $r->setFontWeight('bold');
+                $r->setFontFamily('Arial');
+                $r->setFontSize(10);
+              });
              
     });
 
@@ -2614,47 +2724,82 @@ class ReportsController extends \BaseController {
     $excel->sheet('Nhif Report', function($sheet) use($data,$total,$organization,$objPHPExcel){
 
               $sheet->row(1, array(
-              'EMPLOYEE CODE',$organization->nhif_no
+              'EMPLOYER CODE',$organization->nhif_no
               ));
+
+              $sheet->row(1, function($row) {
+
+               // manipulate the cell
+                $row->setAlignment('left');
+                $row->setFontFamily('Arial');
+                $row->setFontSize(10);
+              });
               
               $sheet->cell('A1', function($cell) {
 
                // manipulate the cell
                 $cell->setFontWeight('bold');
-
+                
               });
                
                $sheet->row(2, array(
-              'EMPLOYEE NAME',$organization->name
+              'EMPLOYER NAME',$organization->name
               ));
+
+               $sheet->row(2, function($row) {
+
+               // manipulate the cell
+                $row->setFontFamily('Arial');
+                $row->setFontSize(10);
+              });
               
               $sheet->cell('A2', function($cell) {
 
                // manipulate the cell
                 $cell->setFontWeight('bold');
-
+                
               });
 
+              $part = explode("-", Input::get('period'));
+              
+              $m = "";
+
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $part[1]."-".$m;
 
               $sheet->row(3, array(
-              'MONTH OF CONTRIBUTION', Input::get('period')
+              'MONTH OF CONTRIBUTION', $month
               ));
+
+              $sheet->row(3, function($row) {
+
+               // manipulate the cell
+                $row->setFontFamily('Arial');
+                $row->setFontSize(10);
+              });
 
               $sheet->cell('A3', function($cell) {
 
                // manipulate the cell
                 $cell->setFontWeight('bold');
-
+                
               });
 
               $sheet->row(5, array(
-              'PAYROLL NO.', 'LAST NAME','FIRST NAME','ID NO', 'NHIF NO','AMOUNT'
+              'PAYROLL NO', 'LAST NAME','FIRST NAME','ID NO', 'NHIF NO','AMOUNT'
               ));
 
               $sheet->row(5, function ($r) {
 
              // call cell manipulation methods
               $r->setFontWeight('bold');
+              $r->setFontFamily('Arial');
+              $r->setFontSize(10);
  
               });
                
@@ -2662,10 +2807,40 @@ class ReportsController extends \BaseController {
              
              
              for($i = 0; $i<count($data); $i++){
+
+              $name = '';
+
+              if($data[$i]->middle_name != '' && $data[$i]->middle_name != null){
+                $name = $data[$i]->first_name.' '.$data[$i]->middle_name;
+              }else{
+                $name = $data[$i]->first_name;
+              }
             
              $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->last_name,$data[$i]->first_name,$data[$i]->identity_number,$data[$i]->hospital_insurance_number,$data[$i]->nhif_amount
+             $data[$i]->personal_file_number,$data[$i]->last_name,$name,$data[$i]->identity_number,$data[$i]->hospital_insurance_number,$data[$i]->nhif_amount
              ));
+
+             $sheet->row($row, function ($r) {
+
+             // call cell manipulation methods
+              $r->setFontFamily('Arial');
+              $r->setFontSize(10);
+ 
+              });
+
+             $sheet->cell('D'.$row, function ($r) {
+
+            // call cell manipulation methods
+             $r->setAlignment('left');
+
+             });
+
+             $sheet->cell('E'.$row, function ($r) {
+
+            // call cell manipulation methods
+             $r->setAlignment('left');
+
+             });
              
              $row++;
              
@@ -2673,6 +2848,15 @@ class ReportsController extends \BaseController {
              $sheet->row($row, array(
              '','','','','Total',$total
              ));
+
+             $sheet->row($row, function ($r) {
+
+             // call cell manipulation methods
+              $r->setFontFamily('Arial');
+              $r->setFontSize(10);
+ 
+              });
+
             $sheet->cell('E'.$row, function ($r) {
 
             // call cell manipulation methods

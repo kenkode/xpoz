@@ -111,7 +111,9 @@ class JobGroupController extends \BaseController {
 
 		$count = Employeebenefit::where('jobgroup_id', $id)->count();
 
-		return View::make('job_group.edit', compact('jobgroup','benefits','count','bens'));
+		$countb = Benefitsetting::all()->count();
+
+		return View::make('job_group.edit', compact('jobgroup','benefits','count','countb','bens'));
 	}
 
 	/**

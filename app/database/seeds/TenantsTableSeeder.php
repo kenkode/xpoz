@@ -292,9 +292,102 @@ class TenantsTableSeeder extends Seeder {
 
         $user->attachRole($role);
             
-
     
+    $occurence = new Occurencesetting;
 
+    $occurence->occurence_type = 'Absentism/Abandonment';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Abuse of Office';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Assessment';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Corruption';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Emergency Drill';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Incompetence';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Initiative';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Innovation';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Insubordination';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Intoxication';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Meeting';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Promotion';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Team Building';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Theft';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Training';
+    $occurence->organization_id = '1';
+    $occurence->save();
+
+    $occurence = new Occurencesetting;
+
+    $occurence->occurence_type = 'Violence';
+    $occurence->organization_id = '1';
+    $occurence->save();
 
     
 	}

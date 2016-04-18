@@ -16,8 +16,8 @@ class CreateXOccurencesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('occurence_brief');
-			$table->integer('employee_id')->unsigned()->default('0')->index('occurences_employee_id_foreign');;
-			$table->string('occurence_type');
+			$table->integer('employee_id')->unsigned()->default('0')->index('occurences_employee_id_foreign');
+			$table->integer('occurence_type_id')->unsigned()->default('0')->index('occurences_occurence_type_id_foreign');
 			$table->text('narrative')->nullable();
 			$table->string('doc_path')->nullable();
 			$table->date('occurence_date');

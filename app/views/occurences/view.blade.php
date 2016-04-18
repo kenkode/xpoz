@@ -56,10 +56,10 @@ function asMoney($value) {
       @endif
       </tr>
       <tr><td><strong>Occurence Brief: </strong></td><td>{{$occurence->occurence_brief}}</td></tr>
-      <tr><td><strong>Occurence Type: </strong></td><td>{{$occurence->occurence_type}}</td></tr>
+      <tr><td><strong>Occurence Type: </strong></td><td>{{Occurencesetting::getOccurenceType($occurence->occurence_type_id)}}</td></tr>
       <tr><td><strong>Narrative: </strong></td><td>{{$occurence->narrative}}</td></tr>
       @if($occurence->doc_path!=null || $occurence->doc_path!='')
-      <tr><td><strong>Attached Document: </strong></td><td>{{$occurence->doc_path}}</td></tr>
+      <tr><td><strong>Attached Document: </strong></td><td>{{$occurence->doc_path.' - '}}<a href="{{URL::to('occurences/download/'.$occurence->id)}}">Download <i class="glyphicon glyphicon-download"></i></a></td></tr>
       @else
       <tr><td><strong>Attached Document: </strong></td><td>None</td></tr>
       @endif

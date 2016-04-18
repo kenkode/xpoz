@@ -1317,6 +1317,15 @@ Route::get('allowances/delete/{id}', 'AllowancesController@destroy');
 Route::get('allowances/edit/{id}', 'AllowancesController@edit');
 
 /*
+* occurence settings routes
+*/
+
+Route::resource('occurencesettings', 'OccurencesettingsController');
+Route::post('occurencesettings/update/{id}', 'OccurencesettingsController@update');
+Route::get('occurencesettings/delete/{id}', 'OccurencesettingsController@destroy');
+Route::get('occurencesettings/edit/{id}', 'OccurencesettingsController@edit');
+
+/*
 * benefits setting routes
 */
 
@@ -1410,7 +1419,19 @@ Route::post('occurences/update/{id}', 'OccurencesController@update');
 Route::get('occurences/delete/{id}', 'OccurencesController@destroy');
 Route::get('occurences/edit/{id}', 'OccurencesController@edit');
 Route::get('occurences/view/{id}', 'OccurencesController@view');
+Route::get('occurences/download/{id}', 'OccurencesController@getDownload');
 Route::get('occurences/create/{id}', 'OccurencesController@create');
+
+/*
+* occurences routes
+*/
+
+Route::resource('EmergencyContacts', 'EmergencyContactsController');
+Route::post('EmergencyContacts/update/{id}', 'EmergencyContactsController@update');
+Route::get('EmergencyContacts/delete/{id}', 'EmergencyContactsController@destroy');
+Route::get('EmergencyContacts/edit/{id}', 'EmergencyContactsController@edit');
+Route::get('EmergencyContacts/view/{id}', 'EmergencyContactsController@view');
+Route::get('EmergencyContacts/create/{id}', 'EmergencyContactsController@create');
 
 
 /*

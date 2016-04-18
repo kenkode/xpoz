@@ -29,7 +29,9 @@ class OccurencesController extends \BaseController {
 		$employees = DB::table('employee')
 		          ->where('in_employment','=','Y')
 		          ->get();
-		return View::make('occurences.create',compact('employees','id'));
+		$occurences = Occurencesetting::all();
+
+		return View::make('occurences.create',compact('employees','id','occurences'));
 	}
 
 	/**
@@ -52,7 +54,7 @@ class OccurencesController extends \BaseController {
 
 		$occurence->employee_id = Input::get('employee');
 
-		$occurence->occurence_type = Input::get('type');
+		$occurence->occurence_type_id = Input::get('type');
 
 		$occurence->narrative = Input::get('narrative');
 
@@ -103,7 +105,9 @@ class OccurencesController extends \BaseController {
 
 		$employees = Employee::all();
 
-		return View::make('occurences.edit', compact('occurence','employees'));
+		$occurencetypes = Occurencesetting::all();
+
+		return View::make('occurences.edit', compact('occurence','employees','occurencetypes'));
 	}
 
 	/**
@@ -125,7 +129,7 @@ class OccurencesController extends \BaseController {
 
 		$occurence->occurence_brief = Input::get('brief');
 
-		$occurence->occurence_type = Input::get('type');
+		$occurence->occurence_type_id = Input::get('type');
 
 		$occurence->narrative = Input::get('narrative');
 

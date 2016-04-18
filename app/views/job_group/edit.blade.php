@@ -52,17 +52,18 @@ function asMoney($value) {
             @if($count>0)
             
             <?php $i = 1; ?>
-            @foreach($benefits as $benefit)
+            @foreach($bens as $benefit)
 
             
-            <input type="hidden" name="chbox[]" value="{{$benefit->benefit_id}}" />
+            <input type="hidden" name="chbox[]" value="{{$benefit->id}}" />
             <table>
             <tr><td width="200">
-            <input type="checkbox" name="benefitid[]"<?= ($benefit->amount>0)?'checked="checked"':''; ?> id="{{'benefitid_'.$i}}" value="{{$benefit->benefit_id}}">
-                             {{Benefitsetting::getBenefit($benefit->benefit_id)}}
+
+            <input type="checkbox" name="benefitid[]"<?= (Benefitsetting::getAmount($benefit->id,$jobgroup->id)>0)?'checked="checked"':''; ?> id="{{'benefitid_'.$i}}" value="{{$benefit->id}}">
+                             {{Benefitsetting::getBenefit($benefit->id)}}
             </td>
             <td>
-            <input class="form-control" placeholder="" type="text" name="amount[]" id="{{'amount_'.$i}}" value="{{$benefit->amount}}">
+            <input class="form-control" placeholder="" type="text" name="amount[]" id="{{'amount_'.$i}}" value="{{Benefitsetting::getAmount($benefit->id,$jobgroup->id)}}">
           
             </td>
             </tr>
@@ -73,30 +74,29 @@ function asMoney($value) {
             $(document).ready(function(){
             if($('#benefitid_'+<?php echo $i;?>).is(":checked")){
             $("#amount_"+<?php echo $i;?>).attr('readonly',false);
-            $("#amount_"+<?php echo $i;?>).val("{{asMoney($benefit->amount)}}");
+            $("#amount_"+<?php echo $i;?>).val("{{asMoney(Benefitsetting::getAmount($benefit->id,$jobgroup->id))}}");
             }else{
             $("#amount_"+<?php echo $i;?>).attr('readonly',true);
-            $("#amount_"+<?php echo $i;?>).val("{{asMoney($benefit->amount)}}");
+            $("#amount_"+<?php echo $i;?>).val("{{asMoney(Benefitsetting::getAmount($benefit->id,$jobgroup->id))}}");
             }
             $('#benefitid_'+<?php echo $i;?>).click(function(){
 
             if($('#benefitid_'+<?php echo $i;?>).is(":checked")){
             $('#benefitid_'+<?php echo $i;?>+':checked').each(function(){
             $("#amount_"+<?php echo $i;?>).attr('readonly',false);
-            $("#amount_"+<?php echo $i;?>).val("{{asMoney($benefit->amount)}}");
+            $("#amount_"+<?php echo $i;?>).val("{{asMoney(Benefitsetting::getAmount($benefit->id,$jobgroup->id))}}");
             });
             }else{
             $("#amount_"+<?php echo $i;?>).attr('readonly',true);
             $("#amount_"+<?php echo $i;?>).val("0.00");
             }
             });
-            $("#amount_"+<?php echo $i;?>).priceFormat();
+            
             });
             </script>
 
             <?php $i++; ?>
             @endforeach
-
             @else
             <?php $i = 1; ?>
             @foreach($bens as $benefit)

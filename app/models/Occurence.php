@@ -29,6 +29,11 @@ public static $rules = [
 	protected $fillable = [];
 
 
+	public function occurencesettings(){
+
+		return $this->hasMany('Occurencesetting');
+	}
+
 	public function employee(){
 		
 		return $this->belongsTo('Employee');

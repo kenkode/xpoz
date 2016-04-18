@@ -373,7 +373,7 @@ public static $rules = [
     $oallw = $total_oallw->total_allowances;
     }
     
-    return  number_format($oallw,2);
+    return  $oallw;
 
     }
 
@@ -392,7 +392,7 @@ public static $rules = [
     $rel = $total_rel->total_reliefs;
     }
     
-    return  number_format($rel,2);
+    return  $rel;
 
     }
 
@@ -401,7 +401,7 @@ public static $rules = [
     $earn = 0.00;
     
     $total_earns = DB::table('transact_earnings')
-        ->select('employee_id',DB::raw('COALESCE(sum(relief_amount),0.00) as total_earnings'))
+        ->select('employee_id',DB::raw('COALESCE(sum(earning_amount),0.00) as total_earnings'))
         ->where('financial_month_year' ,'=', $period)
         ->where('employee_id' ,'=', $id)
         ->groupBy('employee_id')
@@ -411,7 +411,7 @@ public static $rules = [
     $earn = $total_earn->total_earnings;
     }
     
-    return  number_format($earn,2);
+    return  $earn;
 
     }
 
@@ -431,6 +431,25 @@ public static $rules = [
     }
     
     return  number_format($otime,2);
+
+    }
+
+    public static function processedpaye($id,$period){
+
+    $tax = 0.00;
+    
+    $payes = DB::table('transact')
+                     ->select('employee_id',DB::raw('COALESCE(sum(paye),0.00) as total_paye'))
+                     ->where('financial_month_year' ,'=', $period)
+                     ->where('employee_id', '=', $id)
+                     ->groupBy('employee_id')
+                     ->get();
+
+    foreach($payes as $paye){
+    $tax = $paye->total_paye;
+    }
+    
+    return $tax+60.3;
 
     }
 
