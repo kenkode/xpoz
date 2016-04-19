@@ -2969,3 +2969,9 @@ Route::get('perms', function(){
 
 });
 
+
+Route::get('templates', function(){
+
+  return View::make('organization.templates');
+});
+
