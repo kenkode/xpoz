@@ -1,8 +1,8 @@
 <p>
-Hello {{$name}}, 
+Hello, 
 </p>
 
-<p>Your Leave application has been approved: </p>
+<p>A new Leave application has been submitted: </p>
 <br>
 
 <table>
@@ -12,7 +12,10 @@ Hello {{$name}},
 </thead>
 <tbody>
 	<tr>
-		<td>Leave Type</td><td>{{Leavetype::getName($application->id)}}</td>
+		<td>Employee</td><td>{{$name}}</td>
+	</tr>
+	<tr>
+		<td>Leave Type</td><td>{{Leavetype::getName($application->leavetype_id)}}</td>
 	</tr>
 	<tr>
 		<td>Application Date</td><td>{{$application->application_date}}</td>

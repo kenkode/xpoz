@@ -155,4 +155,19 @@
 </div>
 
 
+
+<div class="row">
+<div class="col-lg-2"></div>
+  <div class="col-lg-7">
+    
+
+    <h4 style="color:gray">Professionalism &nbsp;&nbsp;|&nbsp;&nbsp; Reliability &nbsp;&nbsp;| &nbsp;&nbsp;Pragmatism &nbsp;&nbsp;| &nbsp;&nbsp;Thoroughness &nbsp;&nbsp;|&nbsp;&nbsp; Optimism</h4>
+  </div>  
+
+  
+
+  
+</div>
+
+
 @stop

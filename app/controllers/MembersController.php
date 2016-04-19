@@ -318,7 +318,7 @@ $name = $employee->first_name.' '.$employee->last_name;
 
 			if(Mailsender::checkConnection() == false){
 
-				return Redirect::back()->with('notice', 'Employee has not been activated kindly check your mail settings');
+				return Redirect::back()->with('notice', 'Employee has not been activated. Could not establish interenet connection. kindly check your mail settings');
 			}
 
 		DB::table('users')->insert(

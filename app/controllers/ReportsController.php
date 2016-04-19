@@ -1085,8 +1085,8 @@ class ReportsController extends \BaseController {
     return $pdf->stream('Monthly_Payslip_'.$period.'.pdf');
     }else{*/
 
-      if(Input::get('format') == "excel"){
-        $period = Input::get("period");
+
+      $period = Input::get("period");
 
 
          $transactCount = DB::table('transact')->where('financial_month_year', '=', $period)->count();
@@ -1095,6 +1095,9 @@ class ReportsController extends \BaseController {
 
             return Redirect::back()->with('notice', 'payslip for the selected period does not exist');
          }
+
+      if(Input::get('format') == "excel"){
+        
 
         
         $id = Input::get('employeeid');

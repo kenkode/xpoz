@@ -352,6 +352,37 @@ class UsersController extends Controller
     }
 
 
+
+    public function updateCreds($user){
+
+        $user = User::find($user);
+
+        $password_confirmation = Input::get('password_confirmation');
+        $password = Input::get('password');
+
+        if($password != $password_confirmation){
+
+            return Redirect::back()->with('error', 'passwords do not match');
+        } 
+        else
+        {
+
+            $pass = Hash::make($password);
+            
+            DB::table('users')->where('id', $user->id)->update(array('password' => $pass));
+
+
+           // return Redirect::to('users/profile/'.$user->id);
+
+            return Redirect::to('users/logout');
+        }
+
+
+
+    }
+
+
+
     public function password($user){
 
         $user = User::find($user);
@@ -368,6 +399,14 @@ class UsersController extends Controller
         $user = User::find($user);
 
         return View::make('users.profile', compact('user'));
+    }
+
+
+     public function client($user){
+
+        $user = User::find($user);
+
+        return View::make('users.client', compact('user'));
     }
 
 
@@ -392,10 +431,10 @@ class UsersController extends Controller
 
 
 
+/*
 
 
-
-    public function changePassword2(){
+    public function changePassword(){
 
         $user_id = Confide::user()->id;
 
@@ -438,6 +477,17 @@ class UsersController extends Controller
 
         $user = Confide::user()->id;
         return View::make('css.password', compact('user'));
+
+    }
+
+
+    */
+
+
+    public function change($id){
+
+        $user = User::findorfail($id);
+        return View::make('users.change', compact('user'));
 
     }
 
@@ -515,6 +565,9 @@ class UsersController extends Controller
 
          //return View::make('users.show', compact('user'));
     }
+
+
+
 
 
 }

@@ -15,7 +15,9 @@
                     <span class="icon-bar"></span>
                 </button>
 
-                <a class="navbar-brand"  href="{{ URL::to('/')}}" > {{Organization::getOrganizationName()}}</a>
+               
+
+                <a class="navbar-brand"  href="{{ URL::to('/')}}" > </a>
             </div>
             <!-- /.navbar-header -->
 

@@ -34,10 +34,11 @@ Route::get('/', function()
 
 Route::get('roles/show/{id}', 'RolesController@show');
 
-	Route::get('mail', function(){
+Route::get('mail', function(){
 	$mail = Mailsender::find(1);	
 	return View::make('system.mail', compact('mail'));
-	});
+
+});
 
 Route::get('/dashboard', function()
 {
@@ -104,6 +105,11 @@ Route::get('users/password/{user}', 'UsersController@Password');
 Route::post('users/password/{user}', 'UsersController@changePassword');
 Route::get('users/profile/{user}', 'UsersController@profile');
 Route::get('users/show/{user}', 'UsersController@show');
+
+
+Route::post('users/changepassword/{user}', 'UsersController@updateCreds');
+Route::get('users/client/{user}', 'UsersController@client');
+Route::get('users/change/{user}', 'UsersController@change');
 
 
 
@@ -2875,6 +2881,29 @@ Route::get('errorboard', function(){
 
   return View::make('errorboard');
 
+});
+
+
+
+
+Route::resource('mails', 'MailsController');
+Route::get('mailtest', 'MailsController@test');
+
+
+Route::get('seedmail', function(){
+
+  $mail = new Mailsender;
+
+  $mail->driver = 'smtp';
+  $mail->save();
+});
+
+
+Route::get('userview/{user}', function($id){
+
+    $user = User::findorfail($id);
+
+    return View::make('users.show', compact('user'));
 });
 
 Route::get('perms', function(){

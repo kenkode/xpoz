@@ -28,6 +28,9 @@
 					</thead>
 					<tbody>
               			 @foreach($users as $user)
+
+
+                     @if($user->user_type == 'admin')
               			 <tr>
                			
                			<td>{{ $user->username }}</td>
@@ -66,6 +69,7 @@
 
                			</td>
                		</tr>
+                  @endif
                			@endforeach
 
  

@@ -62,7 +62,7 @@ class LeaveapplicationsController extends \BaseController {
 
 		if(Mailsender::checkConnection() == false){
 
-				return Redirect::back()->with('notice', 'Employee has not been activated kindly check your mail settings');
+				return Redirect::back()->with('notice', 'Employee has not been activated. Internet connection could not be established. kindly check your mail settings');
 			}
 
 
@@ -162,9 +162,21 @@ class LeaveapplicationsController extends \BaseController {
 
 		$data = Input::all();
 
-		Leaveapplication::approveLeaveApplication($data, $id);
+		if(Mailsender::checkConnection() == false){
+
+				return Redirect::back()->with('notice', 'Leave could not be approved. Internet connection could not be established. kindly check your mail settings');
+			} else {
+
+
+				Leaveapplication::approveLeaveApplication($data, $id);
 
 		return Redirect::route('leaveapplications.index');
+
+
+			}
+
+
+		
 
 	}
 
