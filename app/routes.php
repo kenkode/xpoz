@@ -40,6 +40,11 @@ Route::get('mail', function(){
 
 });
 
+Route::get('templates', function(){
+
+	return View::make('organization.template');
+});
+
 Route::get('/dashboard', function()
 {
 	if (Confide::user()) {
@@ -2970,8 +2975,4 @@ Route::get('perms', function(){
 });
 
 
-Route::get('templates', function(){
-
-  return View::make('organization.templates');
-});
 
