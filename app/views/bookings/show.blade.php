@@ -52,6 +52,12 @@ function asMoney($value) {
             <tr>
               <td>Client</td><td>{{$booking->client->name}}</td>
             </tr>
+             <tr>
+              <td>Venue</td><td>{{$booking->venue}}</td>
+            </tr>
+             <tr>
+              <td>Tech Lead</td><td>{{$booking->lead}}</td>
+            </tr>
           </table>
 
       </div>

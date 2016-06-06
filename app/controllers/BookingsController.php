@@ -22,7 +22,8 @@ class BookingsController extends \BaseController {
 	public function create()
 	{
 		$clients = Client::all();
-		return View::make('bookings.create', compact('clients'));
+		$employees = Employee::all();
+		return View::make('bookings.create', compact('clients', 'employees'));
 	}
 
 	/**
@@ -117,9 +118,13 @@ class BookingsController extends \BaseController {
     					'client_id' => array_get($data, 'client_id'), 
     					'start_date' => array_get($data, 'start_date'),
     					'end_date' => array_get($data, 'end_date'),
-    					'event' => array_get($data, 'event')
+    					'event' => array_get($data, 'event'),
+    					'venue' => array_get($data, 'venue'),
+    					'lead' => array_get($data, 'lead')
     					)
    					);
+
+		
 
   		Session::put('bookingitems', []);
 
@@ -155,7 +160,10 @@ class BookingsController extends \BaseController {
 		$bookingitems =Session::get('bookingitems');
   		$booking =Session::get('booking');
 
-  		$client = Client::findOrFail($booking['client_id']);
+  		echo '<pre>';
+  		print_r($booking);
+
+  		/*$client = Client::findOrFail($booking['client_id']);
 
   		
   		$booking = new Booking;
@@ -163,6 +171,8 @@ class BookingsController extends \BaseController {
   		$booking->event = $booking['event'];
   		$booking->start_date = $booking['start_date'];
   		$booking->end_date = $booking['end_date'];
+  		$booking->venue = $booking['venue'];
+  		$booking->lead = $booking['lead'];
   		$booking->save();
 
   		foreach($bookingitems as $bookingitem){
@@ -174,7 +184,7 @@ class BookingsController extends \BaseController {
   				$bookingitem->save();
   		}
 
-
+*/
 
 	}
 
