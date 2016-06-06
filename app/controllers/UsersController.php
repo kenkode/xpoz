@@ -544,14 +544,25 @@ class UsersController extends Controller
         $repo = App::make('UserRepository');
         $user = $repo->register($input);
          
+         echo '<pre>';
+       
+     
+        foreach ($roles as $rol) {
+                
+            $role = Role::find($rol);
 
-            foreach ($roles as $role) {
+            $user_id = DB::table('users')->where('username', '=', $user->username)->where('email', '=', $user->email)->pluck('id');
+              
 
-                $user->attachRole($role);
-            }
+            DB::table('assigned_roles')->insert(
+                    array('user_id' => $user_id, 'role_id' => $role->id)
+                );
+                
+                
+        }
         
 
-        return Redirect::to('users');
+       return Redirect::to('users');
     }
 
 

@@ -30,31 +30,37 @@
                
 
                  
-
+            @if(Confide::user()->hasRole('SUPERADMIN') || Confide::user()->hasRole('ACCOUNTS MANAGER') ||  Confide::user()->hasRole('HR OPERATIONS AND OFFICE MANAGEMENT'))
                 <li  >
                     <a  href="{{ URL::to('dashboard')}}">
                         <i class="fa fa-home fa-fw"></i>  {{{ Lang::get('messages.nav.dashboard') }}}
                     </a>
                     
                 </li>
+            @endif
 
 
+            @if(Confide::user()->hasRole('SUPERADMIN') || Confide::user()->hasRole('STORE MANAGER'))
                  <li  >
                     <a  href="{{ URL::to('erpmgmt')}}">
                         <i class="fa fa-list fa-fw"></i>  {{{ Lang::get('messages.nav.inventory') }}}
                     </a>
                     
                 </li>
+            @endif
 
-
+             @if(Confide::user()->hasRole('SUPERADMIN') || Confide::user()->hasRole('ACCOUNTS MANAGER') )
+            
                 <li  >
                     <a  href="{{ URL::to('payrollmgmt')}}">
                         <i class="fa fa-file fa-fw"></i>  {{{ Lang::get('messages.nav.payroll') }}}
                     </a>
                     
                 </li>
+            @endif
 
-
+             @if(Confide::user()->hasRole('SUPERADMIN') || Confide::user()->hasRole('HR OPERATIONS AND OFFICE MANAGEMENT'))
+            
                 <li  >
                     <a  href="{{ URL::to('leavemgmt')}}">
                         <i class="fa fa-list fa-fw"></i>  {{{ Lang::get('messages.nav.leave') }}}
@@ -62,60 +68,7 @@
                     
                 </li>
 
-<!--
 
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-file fa-fw"></i>  {{{ Lang::get('messages.nav.payroll_leave') }}} <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-user">
-
-                        <li  >
-                    <a  href="{{ URL::to('payrollmgmt')}}">
-                        <i class="fa fa-file fa-fw"></i>  {{{ Lang::get('messages.nav.payroll') }}}
-                    </a>
-                    
-                </li>
-
-                       
-                        <li class="divider"></li>
-                        <li  >
-                    <a  href="{{ URL::to('leavemgmt')}}">
-                        <i class="fa fa-list fa-fw"></i>  {{{ Lang::get('messages.nav.leave') }}}
-                    </a>
-                    
-                </li>
-
-                       
-
-                        
-                        
-                    </ul>
-                    <!-- /.dropdown-user
-                </li>
-                <!-- /.dropdown -->
-
-
-            <!--
-
-                <li  >
-                    <a  href="{{ URL::to('erpmgmt')}}">
-                        <i class="fa fa-tasks fa-fw"></i>  {{{ Lang::get('messages.nav.erp') }}}
-                    </a>
-                    
-                </li>
--->
-
-<!--
-
-                <li  >
-                    <a  href="{{ URL::to('cbsmgmt')}}">
-                        <i class="fa fa-qrcode fa-fw"></i>  {{{ Lang::get('messages.nav.cbs') }}}
-                    </a>
-                    
-                </li>
-
--->
 
                   <li  >
                     <a  href="{{ URL::to('portal')}}">
@@ -124,20 +77,25 @@
                     
                 </li>
 
+                @endif
 
+                @if(Confide::user()->hasRole('SUPERADMIN') || Confide::user()->hasRole('ACCOUNTS MANAGER'))
+            
                  <li  >
                     <a  href="{{ URL::to('accounts')}}">
                         <i class="fa fa-file fa-fw"></i>  {{{ Lang::get('messages.nav.accounting') }}} 
                     </a>
                     
                 </li>
+                @endif
 
                 
 
                
 
                 
-
+                 @if(Confide::user()->hasRole('SUPERADMIN') || Confide::user()->hasRole('HR OPERATIONS AND OFFICE MANAGEMENT'))
+            
                <li class="dropdown" >
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-cogs fa-fw"></i>  {{{ Lang::get('messages.nav.administration') }}} <i class="fa fa-caret-down"></i>
@@ -152,6 +110,8 @@
                     </ul>
                     <!-- /.dropdown-user -->
                 </li>
+
+                @endif
                 <!-- /.dropdown -->
 
 
@@ -195,59 +155,7 @@
                 <!-- /.dropdown -->
 
 
-                <li>
-                    
-
-                        
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-
-                       
-                        
-
-
-                        @if (Session::get('lang') == 'ks')
-                            Kiswahili
-                        @elseif (Session::get('lang') == 'en')
-                            English
-                        @else
-                           Language
-                        @endif 
-
-
-                         <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-user">
-                        <li>
-
-                            {{link_to_route('language.select', 'English', array('en'))}}
-
-                        </li>
-
-                       
-                        <li class="divider"></li>
-
-                         <li>
-
-                            {{link_to_route('language.select', 'Kiswahili', array('ks'))}}
-
-                        </li>
-
-                       
-                        <li class="divider"></li>
-                        
-
-
-                       
-
-                        
-                        
-                    </ul>
-
-                    
-
-                   
-
-                </li>
+                
 
 
                 

@@ -2253,6 +2253,8 @@ Route::get('bookingscommit', function(){
       $booking->event = $bking['event'];
       $booking->start_date = $bking['start_date'];
       $booking->end_date = $bking['end_date'];
+      $booking->venue = $bking['venue'];
+      $booking->lead = $bking['lead'];
       $booking->save();
 
       foreach($bookingitems as $bookingitem){

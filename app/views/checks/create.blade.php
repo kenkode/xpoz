@@ -43,13 +43,13 @@
 
         <div class="form-group">
             <label for="username">Date Out <span style="color:red">*</span> :</label>
-            <input class="form-control datepicker" placeholder="" type="text" name="date_out" id="date_out" value="{{{ Input::old('date_out') }}}" required>
+            <input class="form-control datepicker21" placeholder="" type="text" name="date_out" id="date_out" value="{{{ Input::old('date_out') }}}" required>
         </div>
 
 
           <div class="form-group">
             <label for="username">Date Expected Back :</label>
-            <input class="form-control datepicker" placeholder="" type="text" name="expected_date_back" id="expected_date_back" value="{{{ Input::old('expected_date_back') }}}" required>
+            <input class="form-control datepicker21" placeholder="" type="text" name="expected_date_back" id="expected_date_back" value="{{{ Input::old('expected_date_back') }}}" required>
         </div>
 
 

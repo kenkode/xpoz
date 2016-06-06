@@ -61,6 +61,22 @@
             </select>
         </div>
 
+         <div class="form-group">
+            <label for="username">Venue:</label>
+            <input class="form-control" placeholder="" type="text" name="venue" id="venue" value="{{{ Input::old('venue') }}}" >
+        </div>
+
+        <div class="form-group">
+            <label for="username">Tech Lead <span style="color:red">*</span> :</label>
+            <select name="lead" class="form-control">
+                @foreach($employees as $employee)
+               
+                    <option value="{{$employee->first_name.' '.$employee->last_name}}">{{$employee->first_name.' '.$employee->last_name}}</option>
+                    
+                @endforeach
+            </select>
+        </div>
+
         <div class="form-actions form-group">
         
           <button type="submit" class="btn btn-primary btn-sm">Create</button>
