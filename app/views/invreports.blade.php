@@ -24,6 +24,9 @@
 <div class="col-lg-2"></div>
 	<div class="col-lg-5">
 
+@if (Session::get('notice'))
+            <div class="alert alert-info">{{ Session::get('notice') }}</div>
+        @endif
 		
     <form method="POST" action="{{{ URL::to('invreports') }}}" accept-charset="UTF-8">
 

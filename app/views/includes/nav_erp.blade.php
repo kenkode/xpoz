@@ -86,6 +86,13 @@
                     <a href="#"><i class="glyphicon glyphicon-upload fa-fw"></i>  Migrate</a>
                   </li>    -->
 
+                  <li>
+
+                    <a href="{{ URL::to('assets') }}"><i class="glyphicon glyphicon-list fa-fw"></i>  Asset Register</a>
+                  </li> 
+
+
+                  <li>
 
                     <a href="{{ URL::to('invreports') }}"><i class="glyphicon glyphicon-folder-open fa-fw"></i>  Reports</a>
                   </li> 
