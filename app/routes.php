@@ -2782,6 +2782,15 @@ Route::get('maintenances/delete/{id}', 'MaintenancesController@destroy');
 Route::post('maintenances/update/{id}', 'MaintenancesController@update');
 
 
+Route::resource('assets', 'AssetsController');
+Route::get('assets/edit/{id}', 'AssetsController@edit');
+Route::get('assets/delete/{id}', 'AssetsController@destroy');
+Route::post('assets/update/{id}', 'AssetsController@update');
+Route::get('assets/dispose/{id}', 'AssetsController@dispose');
+Route::post('assets/dispose/{id}', 'AssetsController@submitdispose');
+Route::get('assets/show/{id}', 'AssetsController@show');
+
+
     
 });
 
@@ -2799,6 +2808,18 @@ Route::group(['before' => 'manage_inventory_reports'], function() {
       return View::make('invreports', compact('items', 'stores'));
 
     });
+
+
+     Route::post('invreports', function(){
+
+
+     $data = Input::all();
+
+     return Redirect::back()->with('notice', 'You do not have sufficient information to generate this report');
+
+    });
+
+
 
 });
 
