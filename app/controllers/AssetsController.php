@@ -41,7 +41,9 @@ class AssetsController extends \BaseController {
 		$asset = new Asset;
 		$asset->name = array_get($data, 'name');
 		$asset->purchase_date = array_get($data, 'purchase_date');
+		$asset->quantity = array_get($data, 'quantity');
 		$asset->cost = array_get($data, 'cost');
+		$asset->asset_type = array_get($data, 'type');
 		$asset->supplier = array_get($data, 'supplier');
 		$asset->receipt_number = array_get($data, 'receipt_number');
 		$asset->serial_number = array_get($data, 'serial_numberer');
@@ -102,7 +104,9 @@ class AssetsController extends \BaseController {
 		
 		$asset->name = array_get($data, 'name');
 		$asset->purchase_date = array_get($data, 'purchase_date');
+		$asset->quantity = array_get($data, 'quantity');
 		$asset->cost = array_get($data, 'cost');
+		$asset->asset_type = array_get($data, 'type');
 		$asset->supplier = array_get($data, 'supplier');
 		$asset->receipt_number = array_get($data, 'receipt_number');
 		$asset->serial_number = array_get($data, 'serial_numberer');

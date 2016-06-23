@@ -38,7 +38,7 @@ function asMoney($value) {
 
     <div class="panel panel-default">
       <div class="panel-heading">
-          <a class="btn btn-info btn-sm" href="{{ URL::to('items/create')}}">new item</a>
+          <a class="btn btn-info btn-sm" href="{{ URL::to('items/create')}}">new item</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-success btn-sm" href="{{ URL::to('items/import')}}">import</a>
         </div>
         <div class="panel-body">
 

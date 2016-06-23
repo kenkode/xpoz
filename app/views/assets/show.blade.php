@@ -25,8 +25,20 @@
                    <td>Date Purchased</td><td>{{$asset->purchase_date}}</td>
                </tr>
 
+               <tr>
+                   <td>Quantity</td><td>{{$asset->quantity}}</td>
+               </tr>
+
                 <tr>
-                   <td>Purchase Cost</td><td>{{$asset->purchase_cost}}</td>
+                   <td>Purchase Cost</td><td>{{number_format($asset->cost,2)}}</td>
+               </tr>
+
+               <tr>
+                   <td>Total Amount</td><td>{{number_format($asset->cost * $asset->quantity,2)}}</td>
+               </tr>
+
+               <tr>
+                   <td>Asset Type</td><td>{{$asset->asset_type}}</td>
                </tr>
 
                <tr>
