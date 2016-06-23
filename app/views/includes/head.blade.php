@@ -173,6 +173,16 @@ $('.datepicker40').datepicker({
 
 </script>
 
+<script type="text/javascript">
+$(function(){ 
 
+$('.expiry').datepicker({
+    format: 'yyyy-mm-dd',
+    startDate: '-60y',
+    autoclose: true
+});
+});
+
+</script>
 
 </head>
