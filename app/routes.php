@@ -443,20 +443,175 @@ Route::get('template/employees', function(){
                 }
 
                 $list = implode(", ", $listdata);
-   
-
-    
-
-                
-
-                
-        
 
     });
 
   })->export('xls');
 });
 
+Route::get('template/items', function(){
+
+  $locations = Location::all();
+
+  $categories = Itemcategory::all();
+
+  Excel::create('Items', function($excel) use($locations,$categories) {
+
+
+    require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/NamedRange.php");
+    require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/Cell/DataValidation.php");
+
+    
+
+    $excel->sheet('items', function($sheet) use($locations,$categories){
+
+
+              $sheet->row(1, array(
+     'NAME','DESCRIPTION', 'PURCHASE PRICE', 'SELLING PRICE', 'LOCATION','DURATION','CATEGORY','STORE KEEPING UNIT', 'TAG ID', 'REORDER LEVEL'
+));
+
+               $sheet->row(1, function($cell) {
+
+               // manipulate the cell
+                $cell->setFontWeight('bold');
+
+              });
+
+               $sheet->setWidth(array(
+                    'A'     =>  30,
+                    'B'     =>  30,
+                    'C'     =>  30,
+                    'D'     =>  30,
+                    'E'     =>  30,
+                    'F'     =>  30,
+                    'G'     =>  30,
+                    'H'     =>  30,
+                    'I'     =>  30,
+                    'J'     =>  30,
+              ));
+             
+                $locdata = array();
+
+                foreach($locations as $d){
+
+                  $locdata[] = $d->name;
+                }
+
+                $loclist = implode(", ", $locdata);
+
+               $catdata = array();
+
+                foreach($categories as $d){
+
+                  $catdata[] = $d->name;
+                }
+
+                $catlist = implode(", ", $catdata);
+
+
+                $row = 2;
+                $r = 2;
+            
+            for($i = 0; $i<count($locations); $i++){
+            
+             $sheet->SetCellValue("YY".$row, $locations[$i]->name);
+             $row++;
+            }  
+
+                $sheet->_parent->addNamedRange(
+                        new \PHPExcel_NamedRange(
+                        'names', $sheet, 'YY2:YY'.(count($locations)+1)
+                        )
+                );
+
+                for($i = 0; $i<count($categories); $i++){
+            
+             $sheet->SetCellValue("YZ".$r, $categories[$i]->name);
+             $r++;
+            }  
+
+                $sheet->_parent->addNamedRange(
+                        new \PHPExcel_NamedRange(
+                        'categories', $sheet, 'YZ2:YZ'.(count($categories)+1)
+                        )
+                );
+   
+
+    for($i=2; $i <= 1000; $i++){
+                $objValidation = $sheet->getCell('E'.$i)->getDataValidation();
+                $objValidation->setType(\PHPExcel_Cell_DataValidation::TYPE_LIST);
+                $objValidation->setErrorStyle(\PHPExcel_Cell_DataValidation::STYLE_INFORMATION);
+                $objValidation->setAllowBlank(false);
+                $objValidation->setShowInputMessage(true);
+                $objValidation->setShowErrorMessage(true);
+                $objValidation->setShowDropDown(true);
+                $objValidation->setErrorTitle('Input error');
+                $objValidation->setError('Value is not in list.');
+                $objValidation->setPromptTitle('Pick from list');
+                $objValidation->setPrompt('Please pick a value from the drop-down list.');
+                $objValidation->setFormula1('names'); //note this!
+
+                $objValidation = $sheet->getCell('G'.$i)->getDataValidation();
+                $objValidation->setType(\PHPExcel_Cell_DataValidation::TYPE_LIST);
+                $objValidation->setErrorStyle(\PHPExcel_Cell_DataValidation::STYLE_INFORMATION);
+                $objValidation->setAllowBlank(false);
+                $objValidation->setShowInputMessage(true);
+                $objValidation->setShowErrorMessage(true);
+                $objValidation->setShowDropDown(true);
+                $objValidation->setErrorTitle('Input error');
+                $objValidation->setError('Value is not in list.');
+                $objValidation->setPromptTitle('Pick from list');
+                $objValidation->setPrompt('Please pick a value from the drop-down list.');
+                $objValidation->setFormula1('categories'); //note this!
+                }
+
+    });
+
+  })->export('xlsx');
+
+});
+
+Route::get('template/assetregister', function(){
+
+  Excel::create('Asset Register', function($excel) {
+
+
+    require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/NamedRange.php");
+    require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/Cell/DataValidation.php");
+
+    
+
+    $excel->sheet('Assets', function($sheet){
+
+
+              $sheet->row(1, array(
+     'DATE','QUANTITY', 'ASSET SERIAL NUMBER', 'DESCRIPTION', 'UNIT PRICE','AMOUNT','ASSET TYPE'
+));
+
+              $sheet->row(1, function($cell) {
+
+               // manipulate the cell
+                $cell->setFontWeight('bold');
+
+              });
+
+
+               $sheet->setWidth(array(
+                    'A'     =>  30,
+                    'B'     =>  30,
+                    'C'     =>  30,
+                    'D'     =>  30,
+                    'E'     =>  30,
+                    'F'     =>  30,
+                    'G'     =>  30,
+              ));
+             
+
+    });
+
+  })->export('xlsx');
+
+});
 
 /*
 *allowance template
@@ -831,12 +986,7 @@ Route::post('import/employees', function(){
       $filename = str_random(12);
 
       $ext = Input::file('employees')->getClientOriginalExtension();
-      $file = $filename.'.'.$ext;
-
-
-
-      
-      
+      $file = $filename.'.'.$ext;      
      
       Input::file('employees')->move($destination, $file);
 
@@ -889,7 +1039,101 @@ Route::post('import/employees', function(){
 
 });
 
+Route::post('import/items', function(){
 
+  
+  if(Input::hasFile('items')){
+
+      $destination = public_path().'/migrations/';
+
+      $filename = str_random(12);
+
+      $ext = Input::file('items')->getClientOriginalExtension();
+      $file = $filename.'.'.$ext;      
+     
+      Input::file('items')->move($destination, $file);
+
+
+    Excel::selectSheetsByIndex(0)->load(public_path().'/migrations/'.$file, function($reader){
+
+          $results = $reader->get();   
+
+      foreach ($results as $result) {
+      if($result->name != ''){
+      
+      $location = DB::table('locations')->where('name', '=', $result->location)->pluck('id');
+      $item = new Item;
+      $item->name = $result->name;
+      $item->description = $result->description;
+      $item->purchase_price = $result->purchase_price;
+      $item->selling_price = $result->selling_price;
+      $item->sku = $result->store_keeping_unit;
+      $item->tag_id = $result->tag_id;
+      $item->category = $result->category;
+      $item->location_id = $location;
+      $item->duration = $result->duration;
+      $item->reorder_level = $result->reorder_level;
+      $item->save();
+    }
+      
+    }
+
+  });
+  
+  }
+
+
+
+  return Redirect::back()->with('notice', 'Items have been succefully imported');
+
+
+
+  
+
+});
+
+Route::post('import/assetregister', function(){
+
+  
+  if(Input::hasFile('asset')){
+
+      $destination = public_path().'/migrations/';
+
+      $filename = str_random(12);
+
+      $ext = Input::file('asset')->getClientOriginalExtension();
+      $file = $filename.'.'.$ext;      
+     
+      Input::file('asset')->move($destination, $file);
+
+
+    Excel::selectSheetsByIndex(0)->load(public_path().'/migrations/'.$file, function($reader){
+
+          $results = $reader->get(); 
+
+      foreach ($results as $result) {
+      $asset = new Asset;
+      $asset->name = $result->description;
+      $asset->purchase_date = $result->date;
+      $asset->serial_number = $result->asset_serial_number;
+      $asset->quantity = $result->quantity;
+      if($result->unit_price == ''){
+      $asset->cost = $result->amount/$result->quantity;
+      }else{
+      $asset->cost = $result->unit_price;
+      }
+      $asset->asset_type = $result->asset_type;
+      $asset->save();
+      
+    }
+
+  });
+  
+  }
+
+  return Redirect::back()->with('notice', 'Assets have been succefully imported');
+
+});
 
 
 /* #################### IMPORT EARNINGS ################################## */
@@ -1685,6 +1929,16 @@ Route::get('cbsmgmt', function(){
 Route::get('import', function(){
 
     return View::make('import');
+});
+
+Route::get('items/import', function(){
+
+    return View::make('items.import');
+});
+
+Route::get('asset/import', function(){
+
+    return View::make('assets.import');
 });
 
 
