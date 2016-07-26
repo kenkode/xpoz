@@ -17,19 +17,19 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-          <a class="btn btn-info btn-sm" href="{{ URL::to('assets/create')}}">new asset</a>
+          <a class="btn btn-info btn-sm" href="{{ URL::to('assets/create')}}">new asset</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-success btn-sm" href="{{ URL::to('asset/import')}}">import asset</a>
         </div>
         <div class="panel-body">
 
 
-    <table id="users" class="table table-condensed table-bordered table-responsive table-hover">
+    <table id="users" style="font-size:12px;" class="table table-condensed table-bordered table-responsive table-hover">
 
     <thead>
       <th>#</th>
       <th>Name</th>
       <th>Date Purchased</th>
+      <th>Quantity</th>
       <th>Cost</th>
-   
       <th>Serial Number</th>
       <th>Expected Life Years</th>
       <th>Depreciation Policy</th>
@@ -45,7 +45,8 @@
         <td>{{$i++}}</td>
         <td>{{$asset->name}}</td>
          <td>{{$asset->purchase_date}}</td>
-         <td>{{$asset->cost}}</td>
+         <td>{{$asset->quantity}}</td>
+         <td>{{number_format($asset->cost,2)}}</td>
          
          <td>{{$asset->serial_number}}</td>
          <td>{{$asset->life_years}}</td>

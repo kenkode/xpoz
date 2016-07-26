@@ -49,7 +49,27 @@ class UserRepository
         // Save if valid. Password field will be hashed before save
         $this->save($user);
 
-         
+       $perms = Permission::all();
+
+        $perms = array();
+
+        foreach($perms as $p){
+
+        $pers[] = $p->id;
+        }
+
+        
+        $role = new Role;
+
+        $role->name = 'systemadmin';
+
+        $role->save();
+
+        $role->perms()->sync($pers);
+
+        DB::table('user_role')->insert(
+        array('user_id' => $user->id, 'role_id' => $role->id)
+        );
 
         return $user;
 

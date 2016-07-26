@@ -40,12 +40,25 @@
 
         <div class="form-group">
             <label for="username">Date Purchased</label>
-            <input class="form-control datepicker21" placeholder="" type="text" name="purchase_date" id="name" value="{{$asset->purchase_date}}">
+            <div class="right-inner-addon ">
+            <i class="glyphicon glyphicon-calendar"></i>
+            <input readonly class="form-control datepicker21" placeholder="" type="text" name="purchase_date" id="name" value="{{$asset->purchase_date}}">
+        </div>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Quantity</label>
+            <input class="form-control" placeholder="" type="text" name="quantity" id="quantity" value="{{$asset->quantity}}">
         </div>
 
         <div class="form-group">
             <label for="username">Purchase Cost</label>
             <input class="form-control" placeholder="" type="text" name="cost" id="name" value="{{$asset->cost}}">
+        </div>
+
+        <div class="form-group">
+            <label for="username">Asset Type</label>
+            <input class="form-control" placeholder="" type="text" name="type" id="type" value="{{$asset->asset_type}}">
         </div>
 
         <div class="form-group">
@@ -70,7 +83,10 @@
 
         <div class="form-group">
             <label for="username">Disposal Date</label>
-            <input class="form-control datepicker21" placeholder="" type="text" name="disposal_date" id="name" value="{{$asset->disposal_date}}">
+            <div class="right-inner-addon ">
+            <i class="glyphicon glyphicon-calendar"></i>
+            <input readonly class="form-control datepicker21" placeholder="" type="text" name="disposal_date" id="name" value="{{$asset->disposal_date}}">
+        </div>
         </div>
 
         <div class="form-group">
