@@ -2998,3 +2998,24 @@ Route::get('templates', function(){
   return View::make('organization.templates');
 });
 
+
+Route::get('movements/{tag}', function($tag){
+
+  $item_id = DB::table('items')->where('tag_id', '=', $tag)->pluck('id');
+  $item = Item::findorfail($item_id);
+
+
+  return View::make('movement', compact('item', 'tag'));
+
+});
+
+
+Route::get('movements/checkout/{id}', function($id){
+
+  
+  $item = Item::findorfail($id);
+
+  return View::make('move', compact('item'));
+
+});
+
