@@ -1,3 +1,4 @@
+
 @extends('layouts.payroll')
 
 {{ HTML::style('bootstrap-select-master/dist/css/bootstrap-select.css') }}
@@ -11,7 +12,7 @@
 </style>
 
 <script type="text/javascript">
-
+document.getElementById("edate").value = '';
  function totalBalance() {
       var instals = document.getElementById("instalments").value;
       var amt = document.getElementById("amount").value.replace(/,/g,'');
@@ -30,6 +31,7 @@ function totalB() {
 
 }
 
+
 </script>
 
 <script type="text/javascript">
@@ -44,18 +46,17 @@ if($(this).val() == "Instalments"){
     $('#insts').hide();
     $('#bal').hide();
 }
-
 });
+
 });
 </script>
 
 @section('content')
-
 <br/>
 
 <div class="row">
     <div class="col-lg-12">
-  <h3>New Employee Allowance</h3>
+  <h3>New Employee Non Taxable Income</h3>
 
 <hr>
 </div>  
@@ -74,7 +75,7 @@ if($(this).val() == "Instalments"){
             @endforeach
         </div>
         @endif
-        
+
   {{ HTML::style('jquery-ui-1.11.4.custom/jquery-ui.css') }}
   {{ HTML::script('jquery-ui-1.11.4.custom/jquery-ui.js') }}
 
@@ -127,7 +128,7 @@ if($(this).val() == "Instalments"){
     function checkLength( o) {
       if ( o.val().length == 0 ) {
         o.addClass( "ui-state-error" );
-        updateTips( "Please insert allowance type!" );
+        updateTips( "Please insert non taxable income!" );
         return false;
       } else {
         return true;
@@ -150,7 +151,7 @@ if($(this).val() == "Instalments"){
  
       valid = valid && checkLength( name );
  
-      valid = valid && checkRegexp( name, /^[a-z]([0-9a-z_\s])+$/i, "Please insert a valid name for allowance type." );
+      valid = valid && checkRegexp( name, /^[a-z]([0-9a-z_\s])+$/i, "Please insert a valid name for non taxable income." );
  
       if ( valid ) {
 
@@ -170,18 +171,18 @@ if($(this).val() == "Instalments"){
        }*/
 
         $.ajax({
-            url     : "{{URL::to('createAllowance')}}",
+            url     : "{{URL::to('createNontaxable')}}",
                       type    : "POST",
                       async   : false,
                       data    : {
                               'name'  : name.val()
                       },
                       success : function(s){
-                         $('#allowance').append($('<option>', {
+                         $('#income').append($('<option>', {
                          value: s,
                          text: name.val(),
                          selected:true
-                         }));
+                        }));
                       }        
         });
         
@@ -212,7 +213,7 @@ if($(this).val() == "Instalments"){
       addUser();
     });
  
-    $('#allowance').change(function(){
+    $('#income').change(function(){
     if($(this).val() == "cnew"){
     dialog.dialog( "open" );
     }
@@ -223,8 +224,8 @@ if($(this).val() == "Instalments"){
  
    {{ HTML::script('datepicker/js/bootstrap-datepicker.min.js') }}
 
-<div id="dialog-form" title="Create new allowance type">
-  <p class="validateTips">Please insert Allowance Type.</p>
+<div id="dialog-form" title="Create new non taxable income">
+  <p class="validateTips">Please insert non taxable income.</p>
  
   <form>
     <fieldset>
@@ -236,9 +237,8 @@ if($(this).val() == "Instalments"){
     </fieldset>
   </form>
 </div>
- 
 
-         <form method="POST" action="{{{ URL::to('employee_allowances') }}}" accept-charset="UTF-8">
+         <form method="POST" action="{{{ URL::to('employeenontaxables') }}}" accept-charset="UTF-8">
    
     <fieldset>
 
@@ -253,20 +253,20 @@ if($(this).val() == "Instalments"){
                 
                     </div>                    
 
-                    <div class="form-group">
-                        <label for="username">Allowance Type <span style="color:red">*</span></label>
-                        <select name="allowance" id="allowance" class="form-control">
-                            <option id="blanko"></option>
-                            <option value="cnew">Create New</option>
-                            @foreach($allowances as $allowance)
-                            <option value="{{ $allowance->id }}"> {{ $allowance->allowance_name }}</option>
+         <div class="form-group">
+         <label for="username">Non taxable income <span style="color:red">*</span></label>
+                        <select name="income" id="income" class="form-control">
+                           <option></option>
+                           <option value="cnew">Create New</option>
+                            @foreach($nontaxables as $nontaxable)
+                            <option value="{{ $nontaxable->id }}"> {{ $nontaxable->name }}</option>
                             @endforeach
-
                         </select>
                 
-                    </div>
+        </div>          
 
-                     <div class="form-group">
+
+        <div class="form-group">
                         <label for="username">Formular <span style="color:red">*</span></label>
                         <select name="formular" id="formular" class="form-control forml">
                             <option></option>
@@ -286,10 +286,10 @@ if($(this).val() == "Instalments"){
             <label for="username">Amount <span style="color:red">*</span> </label>
             <div class="input-group">
             <span class="input-group-addon">{{$currency->shortname}}</span>
-            <input class="form-control" placeholder="" onkeypress="totalBalance()" onkeyup="totalBalance()" type="text" name="amount" id="amount" value="{{{ Input::old('amount') }}}">
-           </div>
+            <input class="form-control" placeholder="" type="text" onkeypress="totalBalance()" onkeyup="totalBalance()" name="amount" id="amount" value="{{{ Input::old('amount') }}}">
+           </div>  
         </div>
-        
+
         <div class="form-group bal_amt" id="bal">
             <label for="username">Total </label>
             <div class="input-group">
@@ -300,17 +300,17 @@ if($(this).val() == "Instalments"){
 
         
         <div class="form-group">
-                        <label for="username">Allowance Date <span style="color:red">*</span></label>
+                        <label for="username">Date <span style="color:red">*</span></label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
-                        <input class="form-control allowancedate" readonly="readonly" placeholder="" type="text" name="adate" id="adate" value="{{{ Input::old('adate') }}}">
+                        <input class="form-control incomedate" readonly="readonly" placeholder="" type="text" name="idate" id="idate" value="{{{ Input::old('idate') }}}">
                         </div>
         </div>
 
         <script type="text/javascript">
 $(function(){ 
 
-$('.allowancedate').datepicker({
+$('.incomedate').datepicker({
     format: 'yyyy-mm-dd',
     startDate: '-60y',
     autoclose: true
@@ -318,10 +318,11 @@ $('.allowancedate').datepicker({
 });
 
 </script>
+
         
         <div class="form-actions form-group">
         
-          <button type="submit" class="btn btn-primary btn-sm">Create Employee Allowance</button>
+          <button type="submit" class="btn btn-primary btn-sm">Create Employee Non Taxable Income</button>
         </div>
 
     </fieldset>

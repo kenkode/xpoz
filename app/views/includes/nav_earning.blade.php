@@ -9,6 +9,14 @@
                     </li>
 
                      <li>
+                        <a href="{{ URL::to('earningsettings') }}"><i class="fa fa-list fa-fw"></i> Earning</a>
+                    </li>
+                    
+                    <li>
+                        <a href="{{ URL::to('nontaxables') }}"><i class="fa fa-list fa-fw"></i> Non Taxable Income</a>
+                    </li>
+
+                     <li>
                         <a href="{{ URL::to('reliefs') }}"><i class="fa fa-list fa-fw"></i> Relief</a>
                     </li>
 

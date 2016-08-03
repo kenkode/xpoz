@@ -541,9 +541,25 @@ class UsersController extends Controller
 
         $roles = Input::get('role');
 
-        $repo = App::make('UserRepository');
+        /*$repo = App::make('UserRepository');
         $user = $repo->register($input);
-         
+         */
+
+        $user = new User;
+
+        $user->username = array_get($input, 'username');
+        $user->email    = array_get($input, 'email');
+        $user->password = array_get($input, 'password');
+        $user->user_type = array_get($input, 'user_type');
+        $user->organization_id = 1;
+
+        // The password confirmation will be removed from model
+        // before saving. This field will be used in Ardent's
+        // auto validation.
+        $user->password_confirmation = array_get($input, 'password_confirmation');
+
+        // Generate a random confirmation code
+        $user->confirmation_code     = md5(uniqid(mt_rand(), true));
          echo '<pre>';
        
      
@@ -555,7 +571,7 @@ class UsersController extends Controller
               
 
             DB::table('assigned_roles')->insert(
-                    array('user_id' => $user_id, 'role_id' => $role->id)
+                    array('user_id' => $user->id, 'role_id' => $role->id)
                 );
                 
                 

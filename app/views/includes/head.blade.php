@@ -67,6 +67,9 @@
 
     {{HTML::script('js/price_format.js') }}
 
+
+    
+
     
    <script type="text/javascript">
 

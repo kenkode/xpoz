@@ -4764,7 +4764,7 @@ class ReportsController extends \BaseController {
 	}
 
     public function paySummary(){
-		
+    
         if(Input::get('format') == "excel"){
         if(Input::get('branch') == 'All' && Input::get('department') == 'All'){
          $total_pay = DB::table('transact')
@@ -4806,14 +4806,73 @@ class ReportsController extends \BaseController {
         $data = DB::table('transact')
             ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
             ->where('financial_month_year' ,'=', Input::get('period'))
+            ->get();
+
+        $data_allowance = DB::table('transact_allowances')
+            ->join('employee', 'transact_allowances.employee_id', '=', 'employee.id')
+            ->where('financial_month_year' ,'=', Input::get('period'))
+             ->select(DB::raw('DISTINCT(allowance_name) as allowance_name'))
             ->get(); 
+
+        $data_nontax = DB::table('transact_nontaxables')
+            ->join('employee', 'transact_nontaxables.employee_id', '=', 'employee.id')
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(nontaxable_name) as nontaxable_name'))
+            ->get();
         
+        $data_earnings = DB::table('transact_earnings')
+            ->join('employee', 'transact_earnings.employee_id', '=', 'employee.id')
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(earning_name) as earning_name'))
+            ->get();
+
+        $data_overtime = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->get();
+
+        $data_overtime_hourly = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->where('overtime_type' ,'=', 'Hourly')
+            ->get();
+
+        $data_overtime_daily = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->where('overtime_type' ,'=', 'Daily')
+            ->get();
+
+        $data_relief = DB::table('transact_reliefs')
+            ->join('employee', 'transact_reliefs.employee_id', '=', 'employee.id')
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(relief_name) as relief_name'))
+            ->get();
+
+        $data_deduction = DB::table('transact_deductions')
+            ->join('employee', 'transact_deductions.employee_id', '=', 'employee.id')
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(deduction_name) as deduction_name'))
+            ->get();
+
         $currency = Currency::find(1);
 
         $organization = Organization::find(1);
 
+        $part = explode("-", Input::get('period'));
+              
+              $m = "";
+
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m."_".$part[1];
+
     
-  Excel::create('Payroll Summary', function($excel) use($data,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency) {
+  Excel::create('Payroll Summary '.$month, function($excel) use($data,$data_nontax,$data_earnings,$data_allowance,$data_overtime,$data_overtime_hourly,$data_overtime_daily,$data_relief,$data_deduction,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency) {
 
     require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/NamedRange.php");
     require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/IOFactory.php");
@@ -4824,7 +4883,7 @@ class ReportsController extends \BaseController {
    $objPHPExcel->setActiveSheetIndex(0); 
     
 
-    $excel->sheet('Payroll Summary', function($sheet) use($data,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency,$objPHPExcel){
+    $excel->sheet('Payroll Summary', function($sheet) use($data,$data_nontax,$data_earnings,$data_allowance,$data_overtime,$data_overtime_hourly,$data_overtime_daily,$data_relief,$data_deduction,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency,$objPHPExcel){
             
               $sheet->row(1, array(
               'BRANCH: ','ALL'
@@ -4872,11 +4931,118 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A6:K6');
+              
 
               $sheet->row(6, array(
               'PAYROLL SUMMARY'
               ));
+
+              
+              
+              $earnings = DB::table('transact_earnings')->get();
+              $allowances = DB::table('transact_allowances')->get();
+              $nontax = DB::table('transact_nontaxables')->get();
+              $reliefs = DB::table('transact_reliefs')->get();
+              $deductions = DB::table('transact_deductions')
+              ->where('financial_month_year' ,'=', Input::get('period'))
+              ->select(DB::raw('DISTINCT(deduction_name) as deduction_name'))
+              ->get();
+
+              $earns = array();
+              $allws = array();
+              $rels  = array();
+              $deds  = array(); 
+        
+
+              
+              $sheet->SetCellValue("A7","PAYROLL NO.");
+              $sheet->SetCellValue("B7","EMPLOYEE");
+              $sheet->SetCellValue("C7","BASIC PAY");
+
+              $row = 7;
+              
+              $colIndex = PHPExcel_Cell::columnIndexFromString('D');
+              
+              $i=0;
+
+              $column = '';
+              
+              for ($column = 'D',$i=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$i<count($data_earnings); $column++,$i++) {
+                $sheet->setCellValue($column.$row, strtoupper($data_earnings[$i]->earning_name));
+              }
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$row,"OVERTIME - HOURLY");
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$row,"OVERTIME - DAILY");
+
+              $colIndexAllw = $colIndex+count($data_earnings)+1;
+
+              $columnLetter = PHPExcel_Cell::stringFromColumnIndex($colIndexAllw); 
+
+             
+              for ($column = $columnLetter,$j=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$j<count($data_allowance); $column++,$j++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_allowance[$j]->allowance_name));
+              } 
+
+              
+               
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$row,"GROSS PAY");
+
+              $colIndexnontax = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)));
+
+              $columnLetter1 = PHPExcel_Cell::stringFromColumnIndex($colIndexnontax+1);          
+
+             
+              for ($column = $columnLetter1,$k=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$k<count($data_nontax); $column++,$k++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_nontax[$k]->nontaxable_name));
+              } 
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$row,"TOTAL INCOME TAX");
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$row,"INCOME TAX RELIEF");
+
+
+              $colIndexrel = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)));
+
+              $columnLetter2 = PHPExcel_Cell::stringFromColumnIndex($colIndexrel+3); 
+             
+              for ($column = $columnLetter2,$l=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$l<count($data_relief); $column++,$l++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_relief[$l]->relief_name));
+              } 
+ 
+              $columnLetter3 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4); 
+
+              $sheet->SetCellValue($columnLetter3.$row,"PAYE");
+
+              $columnLetter4 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5); 
+
+              $sheet->SetCellValue($columnLetter4.$row,"NSSF AMOUNT");
+
+              $columnLetter5 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6); 
+
+              $sheet->SetCellValue($columnLetter5.$row,"NHIF AMOUNT");
+
+              $colIndexded = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)));
+
+              $columnLetter6 = PHPExcel_Cell::stringFromColumnIndex($colIndexded+6); 
+             
+              for ($column = $columnLetter6,$m=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)),$m<count($deductions); $column++,$m++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($deductions[$m]->deduction_name));
+              } 
+
+              $columnLetter4 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7); 
+
+              $sheet->SetCellValue($columnLetter4.$row,"TOTAL DEDUCTIONS");
+
+              $columnLetter5 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8); 
+
+              $sheet->SetCellValue($columnLetter5.$row,"NET PAY");
+
+              $sheet->mergeCells('A6:'.$columnLetter5.'6');
 
               $sheet->row(6, function ($r) {
 
@@ -4885,179 +5051,254 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->row(8, array(
-              'PAYROLL NO.', 'EMPLOYEE','BASIC PAY','ALLOWANCE','GROSS PAY','PAYE','NSSF AMOUNT','NHIF AMOUNT','OTHER DEDUCTIONS','TOTAL DEDUCTIONS','NET PAY'
-              ));
+              $sheet->row(7, function ($r) {
 
-              $sheet->row(8, function ($r) {
-
-             // call cell manipulation methods
               $r->setFontWeight('bold');
  
               });
+
+              $r = 8;
+              $salaries = 0;
+              $totalearning = 0;
+              $totalhourly = 0;
+              $totaldaily = 0;
+              $totalgross = 0;
+              $totalnontax = 0;
+              $totalrelief = 0;
+              $totaltax = 0;
+              $totaltaxrelief = 0;
+              $totalpaye = 0;
+              $totalnssf = 0;
+              $totalnhif = 0;
+              $totaldeduction = 0;
+              $totalnet = 0;
+              
+
+              for($i = 0; $i<count($data); $i++){
+                $name = '';
+
+             if($data[$i]->middle_name == '' || $data[$i]->middle_name == null){
+               $name= $data[$i]->first_name.' '.$data[$i]->last_name;
+             }else{
+               $name=$data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+             }
+                 $sheet->SetCellValue("A".$r,$data[$i]->personal_file_number);
+                 $sheet->SetCellValue("B".$r,$name);
+                 $sheet->SetCellValue("C".$r,$data[$i]->basic_pay);
+                 $salaries = $salaries + $data[$i]->basic_pay;
+                 $r++;
+              }
+
+              $colIndex = PHPExcel_Cell::columnIndexFromString('D');
+              
+              $i=0;
+
+              $re = 8;
+
+              $column = '';
+
+              for($i = 0; $i<count($data); $i++){
+              for ($column = 'D',$c=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$c<count($data_earnings); $column++,$c++) {
+                $sheet->setCellValue($column.$re, Payroll::transactearnings($data[$i]->personal_file_number,$data_earnings[$c]->earning_name,Input::get("period")));
+              }
+              $re++;
+              }
+
+              $roh = 8;
+
+             for($e = 0; $e<count($data); $e++){
+              
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$roh, Payroll::transactovertimes($data[$e]->personal_file_number,'Hourly',Input::get("period")));
+               $totalhourly = $totalhourly + Payroll::transactovertimes($data[$e]->personal_file_number,'Hourly',Input::get("period"));
+               $roh++;
+              } 
+
+              $rod = 8;
+
+              for($b = 0; $b<count($data); $b++){
                
-            $row = 9;
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$rod, Payroll::transactovertimes($data[$b]->personal_file_number,'Daily',Input::get("period")));
+               $totaldaily = $totaldaily + Payroll::transactovertimes($data[$b]->personal_file_number,'Daily',Input::get("period"));
+               $rod++;
+
+              } 
+
+              $colIndexAllw = $colIndex+count($data_earnings)+1;
+
+              $columnLetter = PHPExcel_Cell::stringFromColumnIndex($colIndexAllw); 
+
+              $ra = 8;
+
+             for($n = 0; $n<count($data); $n++){
+              for ($column = $columnLetter,$f=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$f<count($data_allowance); $column++,$f++) {
+               $sheet->setCellValue($column.$ra, Payroll::transactallowances($data[$n]->personal_file_number,$data_allowance[$f]->allowance_name,Input::get("period")));
+              } 
+              $ra++;
+            }
+
+            $rg = 8;
+              for($i = 0; $i<count($data); $i++){
+                $name = '';
+                 $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$rg,$data[$i]->taxable_income);
+                 $totalgross = $totalgross + $data[$i]->taxable_income;
+                 $rg++;
+              }
+
+              $colIndexnontax = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)));
+
+              $columnLetter1 = PHPExcel_Cell::stringFromColumnIndex($colIndexnontax+1); 
+
+              $rnt = 8;         
+
+             for($g=0;$g<count($data);$g++){
+              for ($column = $columnLetter1,$o=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$o<count($data_nontax); $column++,$o++) {
+               
+               $sheet->setCellValue($column.$rnt, Payroll::transactnontaxables($data[$g]->personal_file_number,$data_nontax[$o]->nontaxable_name,Input::get("period")));
+              } 
+
+              $rnt++;
+
+            }
+
+              $relieftotal = 0;
+
+              $colIndexrel = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)));
+
+              $columnLetter2 = PHPExcel_Cell::stringFromColumnIndex($colIndexrel+3); 
+
+              $rel = 8;         
+
+             for($h=0;$h<count($data);$h++){
              
+              for ($column = $columnLetter2,$p=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$p<count($data_relief); $column++,$p++) {
+               
+               $sheet->setCellValue($column.$rel, Payroll::transactreliefs($data[$h]->personal_file_number,$data_relief[$p]->relief_name,Input::get("period")));
+               $relieftotal = $relieftotal + Payroll::transactreliefs($data[$h]->personal_file_number,$data_relief[$p]->relief_name,Input::get("period"));
+              } 
+
+              $rel++;
+              }
+
+              $rtax=8;
+
+              for($w = 0; $w<count($data); $w++){
+
+                $incometaxreliefapply = 0;
+
+                $incometax = 0;
+
+                if($data[$w]->income_tax_applicable=='1'){
+                $incometax = Payroll::totaltransacttax($data[$w]->id,Input::get("period"));
+                }else{
+                  $incometax = 0;
+                }
+
+                if($data[$w]->income_tax_relief_applicable=='1'){
+                $incometaxreliefapply = 1162;
+                }else{
+                  $incometaxreliefapply = 0;
+                }
+
+
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$rtax, $incometax);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$rtax, $incometaxreliefapply);
+               $totaltax = $totaltax + $incometax;
+               $totaltaxrelief = $totaltaxrelief + $incometaxreliefapply;
+               $rtax++;
+
+              }
+
+              $rp=8;
+
+              for($q = 0; $q<count($data); $q++){
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4).$rp, $data[$q]->paye);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5).$rp, $data[$q]->nssf_amount);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6).$rp, $data[$q]->nhif_amount);
+               $totalpaye = $totalpaye + $data[$q]->paye;
+               $totalnssf = $totalnssf + $data[$q]->nssf_amount;
+               $totalnhif = $totalnhif + $data[$q]->nhif_amount;
+               $rp++;
+
+              }
+
+
+              $colIndexded = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)));
+
+              $columnLetter6 = PHPExcel_Cell::stringFromColumnIndex($colIndexded+6); 
+
+              $rded = 8;
+
+              for($v = 0; $v<count($data); $v++){
              
-            for($i = 0; $i<count($data); $i++){
-            
-             $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,number_format(floatval($data[$i]->basic_pay), 2),number_format(floatval($data[$i]->earning_amount), 2),number_format(floatval($data[$i]->taxable_income), 2),number_format(floatval($data[$i]->paye), 2),number_format(floatval($data[$i]->nssf_amount), 2),number_format(floatval($data[$i]->nhif_amount), 2),number_format(floatval($data[$i]->other_deductions), 2),number_format(floatval($data[$i]->total_deductions), 2),number_format(floatval($data[$i]->net), 2)
-             ));
+              for ($column = $columnLetter6,$s=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($data_deduction)),$s<count($data_deduction); $column++,$s++) {
+               
+               $sheet->setCellValue($column.$rded, Payroll::transactdeductions($data[$v]->personal_file_number,$data_deduction[$s]->deduction_name,Input::get("period")));
+              } 
 
-             $sheet->cell('C'.$row, function($cell) {
+               $rded++;
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+              }
 
-              });
+              $rn = 8;
 
-             $sheet->cell('D'.$row, function($cell) {
+              for($u = 0; $u<count($data); $u++){
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7).$rn, $data[$u]->total_deductions);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8).$rn, $data[$u]->net);
+               $totaldeduction = $totaldeduction + $data[$u]->total_deductions;
+               $totalnet = $totalnet + $data[$u]->net;
+               $rn++;
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+              }
+              
+                 $sheet->SetCellValue("B".$r,"TOTALS");
+                 $sheet->SetCellValue("C".$r, $salaries);
+                 for ($column = 'D',$c=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$c<count($data_earnings); $column++,$c++){
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactearnings($data_earnings[$c]->earning_name,'All','All',Input::get("period")));
+                 }
+                 $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$roh, $totalhourly);
+                 $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$rod, $totaldaily);
+                 for ($column = $columnLetter,$f=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$f<count($data_allowance); $column++,$f++) {
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactallowances($data_allowance[$f]->allowance_name,'All','All',Input::get("period")));
+                 } 
 
-              });
+                 $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$r,$totalgross);
 
-             $sheet->cell('E'.$row, function($cell) {
+                 for ($column = $columnLetter1,$o=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$o<count($data_nontax); $column++,$o++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactnontaxables($data_nontax[$o]->nontaxable_name,'All','All',Input::get("period")));
+                } 
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+                 for ($column = $columnLetter2,$p=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$p<count($data_relief); $column++,$p++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactreliefs($data_relief[$p]->relief_name,'All','All',Input::get("period")));
+                } 
 
-              });
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$rtax, $totaltax);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$rtax, $totaltaxrelief);
+               
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4).$rp, $totalpaye);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5).$rp, $totalnssf);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6).$rp, $totalnhif);
+               
+                for ($column = $columnLetter6,$s=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($data_deduction)),$s<count($data_deduction); $column++,$s++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactdeductions($data_deduction[$s]->deduction_name,'All','All',Input::get("period")));
+                } 
 
-             $sheet->cell('F'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('G'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('H'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('I'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('J'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('K'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-             
-             $row++;
-             
-             }       
-             $sheet->row($row, array(
-             '','Total: ',number_format(floatval($total_pay), 2),number_format(floatval($total_earning), 2),number_format(floatval($total_gross), 2),number_format(floatval($total_paye), 2),number_format(floatval($total_nssf), 2),number_format(floatval($total_nhif), 2),number_format(floatval($total_others), 2),number_format(floatval($total_deds), 2),number_format(floatval($total_net), 2)
-             ));
-            $sheet->row($row, function ($r) {
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7).$rn, $totaldeduction);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8).$rn, $totalnet);
+               
+               
+              $sheet->row($r, function ($rls) {
 
              // call cell manipulation methods
-              $r->setFontWeight('bold');
+              $rls->setFontWeight('bold');
  
               });
-            $sheet->cell('C'.$row, function($cell) {
 
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('D'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('E'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('F'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('G'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('H'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('I'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('J'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('K'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->row($row+1, array(
-             '','','','','','','','','','Total Net: ',number_format(floatval($total_net), 2)
-             ));
-            $sheet->row($row+1, function ($r) {
-
-             // call cell manipulation methods
-              $r->setFontWeight('bold');
- 
-              });
-            $sheet->cell('K'.($row+1), function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
              
     });
 
@@ -5104,15 +5345,83 @@ class ReportsController extends \BaseController {
 
         $data = DB::table('transact')
             ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+            ->where('branch_id' ,'=', Input::get('branch'))
             ->where('financial_month_year' ,'=', Input::get('period'))
+            ->get();
+
+        $data_allowance = DB::table('transact_allowances')
+            ->join('employee', 'transact_allowances.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+             ->select(DB::raw('DISTINCT(allowance_name) as allowance_name'))
             ->get(); 
+
+        $data_nontax = DB::table('transact_nontaxables')
+            ->join('employee', 'transact_nontaxables.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(nontaxable_name) as nontaxable_name'))
+            ->get();
         
+        $data_earnings = DB::table('transact_earnings')
+            ->join('employee', 'transact_earnings.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(earning_name) as earning_name'))
+            ->get();
+
+        $data_overtime = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->get();
+
+        $data_overtime_hourly = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->where('overtime_type' ,'=', 'Hourly')
+            ->get();
+
+        $data_overtime_daily = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->where('overtime_type' ,'=', 'Daily')
+            ->get();
+
+        $data_relief = DB::table('transact_reliefs')
+            ->join('employee', 'transact_reliefs.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(relief_name) as relief_name'))
+            ->get();
+
+        $data_deduction = DB::table('transact_deductions')
+            ->join('employee', 'transact_deductions.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(deduction_name) as deduction_name'))
+            ->get();
+
         $currency = Currency::find(1);
 
         $organization = Organization::find(1);
 
+        $part = explode("-", Input::get('period'));
+              
+              $m = "";
+
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m."_".$part[1];
+
     
-  Excel::create('Payroll Summary', function($excel) use($data,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$sels,$organization,$currency) {
+  Excel::create('Payroll Summary '.$month, function($excel) use($sels,$data,$data_nontax,$data_earnings,$data_allowance,$data_overtime,$data_overtime_hourly,$data_overtime_daily,$data_relief,$data_deduction,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency) {
 
     require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/NamedRange.php");
     require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/IOFactory.php");
@@ -5123,10 +5432,10 @@ class ReportsController extends \BaseController {
    $objPHPExcel->setActiveSheetIndex(0); 
     
 
-    $excel->sheet('Payroll Summary', function($sheet) use($data,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$sels,$organization,$currency,$objPHPExcel){
+    $excel->sheet('Payroll Summary', function($sheet) use($sels,$data,$data_nontax,$data_earnings,$data_allowance,$data_overtime,$data_overtime_hourly,$data_overtime_daily,$data_relief,$data_deduction,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency,$objPHPExcel){
             
               $sheet->row(1, array(
-              'BRANCH: ', $sels->name
+              'BRANCH: ',strtoupper($sels->name)
               ));
               
               $sheet->cell('A1', function($cell) {
@@ -5171,11 +5480,118 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A6:K6');
+              
 
               $sheet->row(6, array(
               'PAYROLL SUMMARY'
               ));
+
+              
+              
+              $earnings = DB::table('transact_earnings')->get();
+              $allowances = DB::table('transact_allowances')->get();
+              $nontax = DB::table('transact_nontaxables')->get();
+              $reliefs = DB::table('transact_reliefs')->get();
+              $deductions = DB::table('transact_deductions')
+              ->where('financial_month_year' ,'=', Input::get('period'))
+              ->select(DB::raw('DISTINCT(deduction_name) as deduction_name'))
+              ->get();
+
+              $earns = array();
+              $allws = array();
+              $rels  = array();
+              $deds  = array(); 
+        
+
+              
+              $sheet->SetCellValue("A7","PAYROLL NO.");
+              $sheet->SetCellValue("B7","EMPLOYEE");
+              $sheet->SetCellValue("C7","BASIC PAY");
+
+              $row = 7;
+              
+              $colIndex = PHPExcel_Cell::columnIndexFromString('D');
+              
+              $i=0;
+
+              $column = '';
+              
+              for ($column = 'D',$i=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$i<count($data_earnings); $column++,$i++) {
+                $sheet->setCellValue($column.$row, strtoupper($data_earnings[$i]->earning_name));
+              }
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$row,"OVERTIME - HOURLY");
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$row,"OVERTIME - DAILY");
+
+              $colIndexAllw = $colIndex+count($data_earnings)+1;
+
+              $columnLetter = PHPExcel_Cell::stringFromColumnIndex($colIndexAllw); 
+
+             
+              for ($column = $columnLetter,$j=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$j<count($data_allowance); $column++,$j++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_allowance[$j]->allowance_name));
+              } 
+
+              
+               
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$row,"GROSS PAY");
+
+              $colIndexnontax = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)));
+
+              $columnLetter1 = PHPExcel_Cell::stringFromColumnIndex($colIndexnontax+1);          
+
+             
+              for ($column = $columnLetter1,$k=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$k<count($data_nontax); $column++,$k++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_nontax[$k]->nontaxable_name));
+              } 
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$row,"TOTAL INCOME TAX");
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$row,"INCOME TAX RELIEF");
+
+
+              $colIndexrel = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)));
+
+              $columnLetter2 = PHPExcel_Cell::stringFromColumnIndex($colIndexrel+3); 
+             
+              for ($column = $columnLetter2,$l=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$l<count($data_relief); $column++,$l++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_relief[$l]->relief_name));
+              } 
+ 
+              $columnLetter3 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4); 
+
+              $sheet->SetCellValue($columnLetter3.$row,"PAYE");
+
+              $columnLetter4 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5); 
+
+              $sheet->SetCellValue($columnLetter4.$row,"NSSF AMOUNT");
+
+              $columnLetter5 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6); 
+
+              $sheet->SetCellValue($columnLetter5.$row,"NHIF AMOUNT");
+
+              $colIndexded = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)));
+
+              $columnLetter6 = PHPExcel_Cell::stringFromColumnIndex($colIndexded+6); 
+             
+              for ($column = $columnLetter6,$m=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)),$m<count($deductions); $column++,$m++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($deductions[$m]->deduction_name));
+              } 
+
+              $columnLetter4 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7); 
+
+              $sheet->SetCellValue($columnLetter4.$row,"TOTAL DEDUCTIONS");
+
+              $columnLetter5 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8); 
+
+              $sheet->SetCellValue($columnLetter5.$row,"NET PAY");
+
+              $sheet->mergeCells('A6:'.$columnLetter5.'6');
 
               $sheet->row(6, function ($r) {
 
@@ -5184,179 +5600,254 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->row(8, array(
-              'PAYROLL NO.', 'EMPLOYEE','BASIC PAY','ALLOWANCE','GROSS PAY','PAYE','NSSF AMOUNT','NHIF AMOUNT','OTHER DEDUCTIONS','TOTAL DEDUCTIONS','NET PAY'
-              ));
+              $sheet->row(7, function ($r) {
 
-              $sheet->row(8, function ($r) {
-
-             // call cell manipulation methods
               $r->setFontWeight('bold');
  
               });
+
+              $r = 8;
+              $salaries = 0;
+              $totalearning = 0;
+              $totalhourly = 0;
+              $totaldaily = 0;
+              $totalgross = 0;
+              $totalnontax = 0;
+              $totalrelief = 0;
+              $totaltax = 0;
+              $totaltaxrelief = 0;
+              $totalpaye = 0;
+              $totalnssf = 0;
+              $totalnhif = 0;
+              $totaldeduction = 0;
+              $totalnet = 0;
+              
+
+              for($i = 0; $i<count($data); $i++){
+                $name = '';
+
+             if($data[$i]->middle_name == '' || $data[$i]->middle_name == null){
+               $name= $data[$i]->first_name.' '.$data[$i]->last_name;
+             }else{
+               $name=$data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+             }
+                 $sheet->SetCellValue("A".$r,$data[$i]->personal_file_number);
+                 $sheet->SetCellValue("B".$r,$name);
+                 $sheet->SetCellValue("C".$r,$data[$i]->basic_pay);
+                 $salaries = $salaries + $data[$i]->basic_pay;
+                 $r++;
+              }
+
+              $colIndex = PHPExcel_Cell::columnIndexFromString('D');
+              
+              $i=0;
+
+              $re = 8;
+
+              $column = '';
+
+              for($i = 0; $i<count($data); $i++){
+              for ($column = 'D',$c=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$c<count($data_earnings); $column++,$c++) {
+                $sheet->setCellValue($column.$re, Payroll::transactearnings($data[$i]->personal_file_number,$data_earnings[$c]->earning_name,Input::get("period")));
+              }
+              $re++;
+              }
+
+              $roh = 8;
+
+             for($e = 0; $e<count($data); $e++){
+              
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$roh, Payroll::transactovertimes($data[$e]->personal_file_number,'Hourly',Input::get("period")));
+               $totalhourly = $totalhourly + Payroll::transactovertimes($data[$e]->personal_file_number,'Hourly',Input::get("period"));
+               $roh++;
+              } 
+
+              $rod = 8;
+
+              for($b = 0; $b<count($data); $b++){
                
-            $row = 9;
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$rod, Payroll::transactovertimes($data[$b]->personal_file_number,'Daily',Input::get("period")));
+               $totaldaily = $totaldaily + Payroll::transactovertimes($data[$b]->personal_file_number,'Daily',Input::get("period"));
+               $rod++;
+
+              } 
+
+              $colIndexAllw = $colIndex+count($data_earnings)+1;
+
+              $columnLetter = PHPExcel_Cell::stringFromColumnIndex($colIndexAllw); 
+
+              $ra = 8;
+
+             for($n = 0; $n<count($data); $n++){
+              for ($column = $columnLetter,$f=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$f<count($data_allowance); $column++,$f++) {
+               $sheet->setCellValue($column.$ra, Payroll::transactallowances($data[$n]->personal_file_number,$data_allowance[$f]->allowance_name,Input::get("period")));
+              } 
+              $ra++;
+            }
+
+            $rg = 8;
+              for($i = 0; $i<count($data); $i++){
+                $name = '';
+                 $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$rg,$data[$i]->taxable_income);
+                 $totalgross = $totalgross + $data[$i]->taxable_income;
+                 $rg++;
+              }
+
+              $colIndexnontax = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)));
+
+              $columnLetter1 = PHPExcel_Cell::stringFromColumnIndex($colIndexnontax+1); 
+
+              $rnt = 8;         
+
+             for($g=0;$g<count($data);$g++){
+              for ($column = $columnLetter1,$o=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$o<count($data_nontax); $column++,$o++) {
+               
+               $sheet->setCellValue($column.$rnt, Payroll::transactnontaxables($data[$g]->personal_file_number,$data_nontax[$o]->nontaxable_name,Input::get("period")));
+              } 
+
+              $rnt++;
+
+            }
+
+              $relieftotal = 0;
+
+              $colIndexrel = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)));
+
+              $columnLetter2 = PHPExcel_Cell::stringFromColumnIndex($colIndexrel+3); 
+
+              $rel = 8;         
+
+             for($h=0;$h<count($data);$h++){
              
+              for ($column = $columnLetter2,$p=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$p<count($data_relief); $column++,$p++) {
+               
+               $sheet->setCellValue($column.$rel, Payroll::transactreliefs($data[$h]->personal_file_number,$data_relief[$p]->relief_name,Input::get("period")));
+               $relieftotal = $relieftotal + Payroll::transactreliefs($data[$h]->personal_file_number,$data_relief[$p]->relief_name,Input::get("period"));
+              } 
+
+              $rel++;
+              }
+
+              $rtax=8;
+
+              for($w = 0; $w<count($data); $w++){
+
+                $incometaxreliefapply = 0;
+
+                $incometax = 0;
+
+                if($data[$w]->income_tax_applicable=='1'){
+                $incometax = Payroll::totaltransacttax($data[$w]->id,Input::get("period"));
+                }else{
+                  $incometax = 0;
+                }
+
+                if($data[$w]->income_tax_relief_applicable=='1'){
+                $incometaxreliefapply = 1162;
+                }else{
+                  $incometaxreliefapply = 0;
+                }
+
+
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$rtax, $incometax);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$rtax, $incometaxreliefapply);
+               $totaltax = $totaltax + $incometax;
+               $totaltaxrelief = $totaltaxrelief + $incometaxreliefapply;
+               $rtax++;
+
+              }
+
+              $rp=8;
+
+              for($q = 0; $q<count($data); $q++){
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4).$rp, $data[$q]->paye);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5).$rp, $data[$q]->nssf_amount);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6).$rp, $data[$q]->nhif_amount);
+               $totalpaye = $totalpaye + $data[$q]->paye;
+               $totalnssf = $totalnssf + $data[$q]->nssf_amount;
+               $totalnhif = $totalnhif + $data[$q]->nhif_amount;
+               $rp++;
+
+              }
+
+
+              $colIndexded = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)));
+
+              $columnLetter6 = PHPExcel_Cell::stringFromColumnIndex($colIndexded+6); 
+
+              $rded = 8;
+
+              for($v = 0; $v<count($data); $v++){
              
-            for($i = 0; $i<count($data); $i++){
-            
-             $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,number_format(floatval($data[$i]->basic_pay), 2),number_format(floatval($data[$i]->earning_amount), 2),number_format(floatval($data[$i]->taxable_income), 2),number_format(floatval($data[$i]->paye), 2),number_format(floatval($data[$i]->nssf_amount), 2),number_format(floatval($data[$i]->nhif_amount), 2),number_format(floatval($data[$i]->other_deductions), 2),number_format(floatval($data[$i]->total_deductions), 2),number_format(floatval($data[$i]->net), 2)
-             ));
+              for ($column = $columnLetter6,$s=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($data_deduction)),$s<count($data_deduction); $column++,$s++) {
+               
+               $sheet->setCellValue($column.$rded, Payroll::transactdeductions($data[$v]->personal_file_number,$data_deduction[$s]->deduction_name,Input::get("period")));
+              } 
 
-             $sheet->cell('C'.$row, function($cell) {
+               $rded++;
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+              }
 
-              });
+              $rn = 8;
 
-             $sheet->cell('D'.$row, function($cell) {
+              for($u = 0; $u<count($data); $u++){
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7).$rn, $data[$u]->total_deductions);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8).$rn, $data[$u]->net);
+               $totaldeduction = $totaldeduction + $data[$u]->total_deductions;
+               $totalnet = $totalnet + $data[$u]->net;
+               $rn++;
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+              }
+              
+                 $sheet->SetCellValue("B".$r,"TOTALS");
+                 $sheet->SetCellValue("C".$r, $salaries);
+                 for ($column = 'D',$c=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$c<count($data_earnings); $column++,$c++){
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactearnings($data_earnings[$c]->earning_name,Input::get('branch'),'All',Input::get("period")));
+                 }
+                 $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$roh, $totalhourly);
+                 $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$rod, $totaldaily);
+                 for ($column = $columnLetter,$f=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$f<count($data_allowance); $column++,$f++) {
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactallowances($data_allowance[$f]->allowance_name,Input::get('branch'),'All',Input::get("period")));
+                 } 
 
-              });
+                 $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$r,$totalgross);
 
-             $sheet->cell('E'.$row, function($cell) {
+                 for ($column = $columnLetter1,$o=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$o<count($data_nontax); $column++,$o++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactnontaxables($data_nontax[$o]->nontaxable_name,Input::get('branch'),'All',Input::get("period")));
+                } 
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+                 for ($column = $columnLetter2,$p=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$p<count($data_relief); $column++,$p++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactreliefs($data_relief[$p]->relief_name,Input::get('branch'),'All',Input::get("period")));
+                } 
 
-              });
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$rtax, $totaltax);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$rtax, $totaltaxrelief);
+               
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4).$rp, $totalpaye);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5).$rp, $totalnssf);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6).$rp, $totalnhif);
+               
+                for ($column = $columnLetter6,$s=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($data_deduction)),$s<count($data_deduction); $column++,$s++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactdeductions($data_deduction[$s]->deduction_name,Input::get('branch'),'All',Input::get("period")));
+                } 
 
-             $sheet->cell('F'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('G'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('H'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('I'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('J'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('K'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-             
-             $row++;
-             
-             }       
-             $sheet->row($row, array(
-             '','Total: ',number_format(floatval($total_pay), 2),number_format(floatval($total_earning), 2),number_format(floatval($total_gross), 2),number_format(floatval($total_paye), 2),number_format(floatval($total_nssf), 2),number_format(floatval($total_nhif), 2),number_format(floatval($total_others), 2),number_format(floatval($total_deds), 2),number_format(floatval($total_net), 2)
-             ));
-            $sheet->row($row, function ($r) {
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7).$rn, $totaldeduction);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8).$rn, $totalnet);
+               
+               
+              $sheet->row($r, function ($rls) {
 
              // call cell manipulation methods
-              $r->setFontWeight('bold');
+              $rls->setFontWeight('bold');
  
               });
-            $sheet->cell('C'.$row, function($cell) {
 
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('D'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('E'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('F'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('G'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('H'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('I'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('J'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('K'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->row($row+1, array(
-             '','','','','','','','','','Total Net: ',number_format(floatval($total_net), 2)
-             ));
-            $sheet->row($row+1, function ($r) {
-
-             // call cell manipulation methods
-              $r->setFontWeight('bold');
- 
-              });
-            $sheet->cell('K'.($row+1), function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
              
     });
 
@@ -5364,7 +5855,7 @@ class ReportsController extends \BaseController {
   }else if(Input::get('branch') == 'All'){
           $sels = DB::table('departments')->find(Input::get('department')); 
 
-               $total_pay = DB::table('transact')
+          $total_pay = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
         ->sum('transact.basic_pay');
 
@@ -5402,15 +5893,83 @@ class ReportsController extends \BaseController {
 
         $data = DB::table('transact')
             ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+            ->where('department_id' ,'=', Input::get('department'))
             ->where('financial_month_year' ,'=', Input::get('period'))
+            ->get();
+
+        $data_allowance = DB::table('transact_allowances')
+            ->join('employee', 'transact_allowances.employee_id', '=', 'employee.id')
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(allowance_name) as allowance_name'))
             ->get(); 
+
+        $data_nontax = DB::table('transact_nontaxables')
+            ->join('employee', 'transact_nontaxables.employee_id', '=', 'employee.id')
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(nontaxable_name) as nontaxable_name'))
+            ->get();
         
+        $data_earnings = DB::table('transact_earnings')
+            ->join('employee', 'transact_earnings.employee_id', '=', 'employee.id')
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(earning_name) as earning_name'))
+            ->get();
+
+        $data_overtime = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->get();
+
+        $data_overtime_hourly = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->where('overtime_type' ,'=', 'Hourly')
+            ->get();
+
+        $data_overtime_daily = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->where('overtime_type' ,'=', 'Daily')
+            ->get();
+
+        $data_relief = DB::table('transact_reliefs')
+            ->join('employee', 'transact_reliefs.employee_id', '=', 'employee.id')
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(relief_name) as relief_name'))
+            ->get();
+
+        $data_deduction = DB::table('transact_deductions')
+            ->join('employee', 'transact_deductions.employee_id', '=', 'employee.id')
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(deduction_name) as deduction_name'))
+            ->get();
+
         $currency = Currency::find(1);
 
         $organization = Organization::find(1);
 
+        $part = explode("-", Input::get('period'));
+              
+              $m = "";
+
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m."_".$part[1];
+
     
-  Excel::create('Payroll Summary', function($excel) use($data,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$sels,$organization,$currency) {
+  Excel::create('Payroll Summary '.$month, function($excel) use($sels,$data,$data_nontax,$data_earnings,$data_allowance,$data_overtime,$data_overtime_hourly,$data_overtime_daily,$data_relief,$data_deduction,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency) {
 
     require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/NamedRange.php");
     require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/IOFactory.php");
@@ -5421,10 +5980,10 @@ class ReportsController extends \BaseController {
    $objPHPExcel->setActiveSheetIndex(0); 
     
 
-    $excel->sheet('Payroll Summary', function($sheet) use($data,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$sels,$organization,$currency,$objPHPExcel){
+    $excel->sheet('Payroll Summary', function($sheet) use($sels,$data,$data_nontax,$data_earnings,$data_allowance,$data_overtime,$data_overtime_hourly,$data_overtime_daily,$data_relief,$data_deduction,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency,$objPHPExcel){
             
               $sheet->row(1, array(
-              'BRANCH: ', 'ALL'
+              'BRANCH: ','ALL'
               ));
               
               $sheet->cell('A1', function($cell) {
@@ -5435,7 +5994,7 @@ class ReportsController extends \BaseController {
               });
                
                $sheet->row(2, array(
-              'DEPARTMENT: ', $sels->department_name
+              'DEPARTMENT: ',strtoupper($sels->department_name)
               ));
               
               $sheet->cell('A2', function($cell) {
@@ -5469,11 +6028,118 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A6:K6');
+              
 
               $sheet->row(6, array(
               'PAYROLL SUMMARY'
               ));
+
+              
+              
+              $earnings = DB::table('transact_earnings')->get();
+              $allowances = DB::table('transact_allowances')->get();
+              $nontax = DB::table('transact_nontaxables')->get();
+              $reliefs = DB::table('transact_reliefs')->get();
+              $deductions = DB::table('transact_deductions')
+              ->where('financial_month_year' ,'=', Input::get('period'))
+              ->select(DB::raw('DISTINCT(deduction_name) as deduction_name'))
+              ->get();
+
+              $earns = array();
+              $allws = array();
+              $rels  = array();
+              $deds  = array(); 
+        
+
+              
+              $sheet->SetCellValue("A7","PAYROLL NO.");
+              $sheet->SetCellValue("B7","EMPLOYEE");
+              $sheet->SetCellValue("C7","BASIC PAY");
+
+              $row = 7;
+              
+              $colIndex = PHPExcel_Cell::columnIndexFromString('D');
+              
+              $i=0;
+
+              $column = '';
+              
+              for ($column = 'D',$i=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$i<count($data_earnings); $column++,$i++) {
+                $sheet->setCellValue($column.$row, strtoupper($data_earnings[$i]->earning_name));
+              }
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$row,"OVERTIME - HOURLY");
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$row,"OVERTIME - DAILY");
+
+              $colIndexAllw = $colIndex+count($data_earnings)+1;
+
+              $columnLetter = PHPExcel_Cell::stringFromColumnIndex($colIndexAllw); 
+
+             
+              for ($column = $columnLetter,$j=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$j<count($data_allowance); $column++,$j++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_allowance[$j]->allowance_name));
+              } 
+
+              
+               
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$row,"GROSS PAY");
+
+              $colIndexnontax = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)));
+
+              $columnLetter1 = PHPExcel_Cell::stringFromColumnIndex($colIndexnontax+1);          
+
+             
+              for ($column = $columnLetter1,$k=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$k<count($data_nontax); $column++,$k++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_nontax[$k]->nontaxable_name));
+              } 
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$row,"TOTAL INCOME TAX");
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$row,"INCOME TAX RELIEF");
+
+
+              $colIndexrel = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)));
+
+              $columnLetter2 = PHPExcel_Cell::stringFromColumnIndex($colIndexrel+3); 
+             
+              for ($column = $columnLetter2,$l=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$l<count($data_relief); $column++,$l++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_relief[$l]->relief_name));
+              } 
+ 
+              $columnLetter3 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4); 
+
+              $sheet->SetCellValue($columnLetter3.$row,"PAYE");
+
+              $columnLetter4 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5); 
+
+              $sheet->SetCellValue($columnLetter4.$row,"NSSF AMOUNT");
+
+              $columnLetter5 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6); 
+
+              $sheet->SetCellValue($columnLetter5.$row,"NHIF AMOUNT");
+
+              $colIndexded = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)));
+
+              $columnLetter6 = PHPExcel_Cell::stringFromColumnIndex($colIndexded+6); 
+             
+              for ($column = $columnLetter6,$m=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)),$m<count($deductions); $column++,$m++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($deductions[$m]->deduction_name));
+              } 
+
+              $columnLetter4 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7); 
+
+              $sheet->SetCellValue($columnLetter4.$row,"TOTAL DEDUCTIONS");
+
+              $columnLetter5 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8); 
+
+              $sheet->SetCellValue($columnLetter5.$row,"NET PAY");
+
+              $sheet->mergeCells('A6:'.$columnLetter5.'6');
 
               $sheet->row(6, function ($r) {
 
@@ -5482,179 +6148,254 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->row(8, array(
-              'PAYROLL NO.', 'EMPLOYEE','BASIC PAY','ALLOWANCE','GROSS PAY','PAYE','NSSF AMOUNT','NHIF AMOUNT','OTHER DEDUCTIONS','TOTAL DEDUCTIONS','NET PAY'
-              ));
+              $sheet->row(7, function ($r) {
 
-              $sheet->row(8, function ($r) {
-
-             // call cell manipulation methods
               $r->setFontWeight('bold');
  
               });
+
+              $r = 8;
+              $salaries = 0;
+              $totalearning = 0;
+              $totalhourly = 0;
+              $totaldaily = 0;
+              $totalgross = 0;
+              $totalnontax = 0;
+              $totalrelief = 0;
+              $totaltax = 0;
+              $totaltaxrelief = 0;
+              $totalpaye = 0;
+              $totalnssf = 0;
+              $totalnhif = 0;
+              $totaldeduction = 0;
+              $totalnet = 0;
+              
+
+              for($i = 0; $i<count($data); $i++){
+                $name = '';
+
+             if($data[$i]->middle_name == '' || $data[$i]->middle_name == null){
+               $name= $data[$i]->first_name.' '.$data[$i]->last_name;
+             }else{
+               $name=$data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+             }
+                 $sheet->SetCellValue("A".$r,$data[$i]->personal_file_number);
+                 $sheet->SetCellValue("B".$r,$name);
+                 $sheet->SetCellValue("C".$r,$data[$i]->basic_pay);
+                 $salaries = $salaries + $data[$i]->basic_pay;
+                 $r++;
+              }
+
+              $colIndex = PHPExcel_Cell::columnIndexFromString('D');
+              
+              $i=0;
+
+              $re = 8;
+
+              $column = '';
+
+              for($i = 0; $i<count($data); $i++){
+              for ($column = 'D',$c=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$c<count($data_earnings); $column++,$c++) {
+                $sheet->setCellValue($column.$re, Payroll::transactearnings($data[$i]->personal_file_number,$data_earnings[$c]->earning_name,Input::get("period")));
+              }
+              $re++;
+              }
+
+              $roh = 8;
+
+             for($e = 0; $e<count($data); $e++){
+              
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$roh, Payroll::transactovertimes($data[$e]->personal_file_number,'Hourly',Input::get("period")));
+               $totalhourly = $totalhourly + Payroll::transactovertimes($data[$e]->personal_file_number,'Hourly',Input::get("period"));
+               $roh++;
+              } 
+
+              $rod = 8;
+
+              for($b = 0; $b<count($data); $b++){
                
-            $row = 9;
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$rod, Payroll::transactovertimes($data[$b]->personal_file_number,'Daily',Input::get("period")));
+               $totaldaily = $totaldaily + Payroll::transactovertimes($data[$b]->personal_file_number,'Daily',Input::get("period"));
+               $rod++;
+
+              } 
+
+              $colIndexAllw = $colIndex+count($data_earnings)+1;
+
+              $columnLetter = PHPExcel_Cell::stringFromColumnIndex($colIndexAllw); 
+
+              $ra = 8;
+
+             for($n = 0; $n<count($data); $n++){
+              for ($column = $columnLetter,$f=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$f<count($data_allowance); $column++,$f++) {
+               $sheet->setCellValue($column.$ra, Payroll::transactallowances($data[$n]->personal_file_number,$data_allowance[$f]->allowance_name,Input::get("period")));
+              } 
+              $ra++;
+            }
+
+            $rg = 8;
+              for($i = 0; $i<count($data); $i++){
+                $name = '';
+                 $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$rg,$data[$i]->taxable_income);
+                 $totalgross = $totalgross + $data[$i]->taxable_income;
+                 $rg++;
+              }
+
+              $colIndexnontax = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)));
+
+              $columnLetter1 = PHPExcel_Cell::stringFromColumnIndex($colIndexnontax+1); 
+
+              $rnt = 8;         
+
+             for($g=0;$g<count($data);$g++){
+              for ($column = $columnLetter1,$o=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$o<count($data_nontax); $column++,$o++) {
+               
+               $sheet->setCellValue($column.$rnt, Payroll::transactnontaxables($data[$g]->personal_file_number,$data_nontax[$o]->nontaxable_name,Input::get("period")));
+              } 
+
+              $rnt++;
+
+            }
+
+              $relieftotal = 0;
+
+              $colIndexrel = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)));
+
+              $columnLetter2 = PHPExcel_Cell::stringFromColumnIndex($colIndexrel+3); 
+
+              $rel = 8;         
+
+             for($h=0;$h<count($data);$h++){
              
+              for ($column = $columnLetter2,$p=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$p<count($data_relief); $column++,$p++) {
+               
+               $sheet->setCellValue($column.$rel, Payroll::transactreliefs($data[$h]->personal_file_number,$data_relief[$p]->relief_name,Input::get("period")));
+               $relieftotal = $relieftotal + Payroll::transactreliefs($data[$h]->personal_file_number,$data_relief[$p]->relief_name,Input::get("period"));
+              } 
+
+              $rel++;
+              }
+
+              $rtax=8;
+
+              for($w = 0; $w<count($data); $w++){
+
+                $incometaxreliefapply = 0;
+
+                $incometax = 0;
+
+                if($data[$w]->income_tax_applicable=='1'){
+                $incometax = Payroll::totaltransacttax($data[$w]->id,Input::get("period"));
+                }else{
+                  $incometax = 0;
+                }
+
+                if($data[$w]->income_tax_relief_applicable=='1'){
+                $incometaxreliefapply = 1162;
+                }else{
+                  $incometaxreliefapply = 0;
+                }
+
+
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$rtax, $incometax);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$rtax, $incometaxreliefapply);
+               $totaltax = $totaltax + $incometax;
+               $totaltaxrelief = $totaltaxrelief + $incometaxreliefapply;
+               $rtax++;
+
+              }
+
+              $rp=8;
+
+              for($q = 0; $q<count($data); $q++){
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4).$rp, $data[$q]->paye);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5).$rp, $data[$q]->nssf_amount);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6).$rp, $data[$q]->nhif_amount);
+               $totalpaye = $totalpaye + $data[$q]->paye;
+               $totalnssf = $totalnssf + $data[$q]->nssf_amount;
+               $totalnhif = $totalnhif + $data[$q]->nhif_amount;
+               $rp++;
+
+              }
+
+
+              $colIndexded = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)));
+
+              $columnLetter6 = PHPExcel_Cell::stringFromColumnIndex($colIndexded+6); 
+
+              $rded = 8;
+
+              for($v = 0; $v<count($data); $v++){
              
-            for($i = 0; $i<count($data); $i++){
-            
-             $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,number_format(floatval($data[$i]->basic_pay), 2),number_format(floatval($data[$i]->earning_amount), 2),number_format(floatval($data[$i]->taxable_income), 2),number_format(floatval($data[$i]->paye), 2),number_format(floatval($data[$i]->nssf_amount), 2),number_format(floatval($data[$i]->nhif_amount), 2),number_format(floatval($data[$i]->other_deductions), 2),number_format(floatval($data[$i]->total_deductions), 2),number_format(floatval($data[$i]->net), 2)
-             ));
+              for ($column = $columnLetter6,$s=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($data_deduction)),$s<count($data_deduction); $column++,$s++) {
+               
+               $sheet->setCellValue($column.$rded, Payroll::transactdeductions($data[$v]->personal_file_number,$data_deduction[$s]->deduction_name,Input::get("period")));
+              } 
 
-             $sheet->cell('C'.$row, function($cell) {
+               $rded++;
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+              }
 
-              });
+              $rn = 8;
 
-             $sheet->cell('D'.$row, function($cell) {
+              for($u = 0; $u<count($data); $u++){
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7).$rn, $data[$u]->total_deductions);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8).$rn, $data[$u]->net);
+               $totaldeduction = $totaldeduction + $data[$u]->total_deductions;
+               $totalnet = $totalnet + $data[$u]->net;
+               $rn++;
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+              }
+              
+                 $sheet->SetCellValue("B".$r,"TOTALS");
+                 $sheet->SetCellValue("C".$r, $salaries);
+                 for ($column = 'D',$c=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$c<count($data_earnings); $column++,$c++){
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactearnings($data_earnings[$c]->earning_name,'All',Input::get('department'),Input::get("period")));
+                 }
+                 $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$roh, $totalhourly);
+                 $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$rod, $totaldaily);
+                 for ($column = $columnLetter,$f=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$f<count($data_allowance); $column++,$f++) {
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactallowances($data_allowance[$f]->allowance_name,'All',Input::get('department'),Input::get("period")));
+                 } 
 
-              });
+                 $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$r,$totalgross);
 
-             $sheet->cell('E'.$row, function($cell) {
+                 for ($column = $columnLetter1,$o=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$o<count($data_nontax); $column++,$o++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactnontaxables($data_nontax[$o]->nontaxable_name,'All',Input::get('department'),Input::get("period")));
+                } 
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+                 for ($column = $columnLetter2,$p=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$p<count($data_relief); $column++,$p++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactreliefs($data_relief[$p]->relief_name,'All',Input::get('department'),Input::get("period")));
+                } 
 
-              });
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$rtax, $totaltax);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$rtax, $totaltaxrelief);
+               
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4).$rp, $totalpaye);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5).$rp, $totalnssf);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6).$rp, $totalnhif);
+               
+                for ($column = $columnLetter6,$s=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($data_deduction)),$s<count($data_deduction); $column++,$s++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactdeductions($data_deduction[$s]->deduction_name,'All',Input::get('department'),Input::get("period")));
+                } 
 
-             $sheet->cell('F'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('G'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('H'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('I'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('J'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('K'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-             
-             $row++;
-             
-             }       
-             $sheet->row($row, array(
-             '','Total: ',number_format(floatval($total_pay), 2),number_format(floatval($total_earning), 2),number_format(floatval($total_gross), 2),number_format(floatval($total_paye), 2),number_format(floatval($total_nssf), 2),number_format(floatval($total_nhif), 2),number_format(floatval($total_others), 2),number_format(floatval($total_deds), 2),number_format(floatval($total_net), 2)
-             ));
-            $sheet->row($row, function ($r) {
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7).$rn, $totaldeduction);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8).$rn, $totalnet);
+               
+               
+              $sheet->row($r, function ($rls) {
 
              // call cell manipulation methods
-              $r->setFontWeight('bold');
+              $rls->setFontWeight('bold');
  
               });
-            $sheet->cell('C'.$row, function($cell) {
 
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('D'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('E'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('F'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('G'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('H'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('I'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('J'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('K'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->row($row+1, array(
-             '','','','','','','','','','Total Net: ',number_format(floatval($total_net), 2)
-             ));
-            $sheet->row($row+1, function ($r) {
-
-             // call cell manipulation methods
-              $r->setFontWeight('bold');
- 
-              });
-            $sheet->cell('K'.($row+1), function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
              
     });
 
@@ -5663,7 +6404,7 @@ class ReportsController extends \BaseController {
              $selBr = DB::table('branches')->find(Input::get('branch')); 
              $selDt = DB::table('departments')->find(Input::get('department')); 
 
-               $total_pay = DB::table('transact')
+            $total_pay = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
         ->sum('transact.basic_pay');
 
@@ -5701,15 +6442,92 @@ class ReportsController extends \BaseController {
 
         $data = DB::table('transact')
             ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
             ->where('financial_month_year' ,'=', Input::get('period'))
+            ->get();
+
+        $data_allowance = DB::table('transact_allowances')
+            ->join('employee', 'transact_allowances.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(allowance_name) as allowance_name'))
             ->get(); 
+
+        $data_nontax = DB::table('transact_nontaxables')
+            ->join('employee', 'transact_nontaxables.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(nontaxable_name) as nontaxable_name'))
+            ->get();
         
+        $data_earnings = DB::table('transact_earnings')
+            ->join('employee', 'transact_earnings.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(earning_name) as earning_name'))
+            ->get();
+
+        $data_overtime = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->get();
+
+        $data_overtime_hourly = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->where('overtime_type' ,'=', 'Hourly')
+            ->get();
+
+        $data_overtime_daily = DB::table('transact_overtimes')
+            ->join('employee', 'transact_overtimes.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->where('overtime_type' ,'=', 'Daily')
+            ->get();
+
+        $data_relief = DB::table('transact_reliefs')
+            ->join('employee', 'transact_reliefs.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(relief_name) as relief_name'))
+            ->get();
+
+        $data_deduction = DB::table('transact_deductions')
+            ->join('employee', 'transact_deductions.employee_id', '=', 'employee.id')
+            ->where('branch_id' ,'=', Input::get('branch'))
+            ->where('department_id' ,'=', Input::get('department'))
+            ->where('financial_month_year' ,'=', Input::get('period'))
+            ->select(DB::raw('DISTINCT(deduction_name) as deduction_name'))
+            ->get();
+
         $currency = Currency::find(1);
 
         $organization = Organization::find(1);
 
+        $part = explode("-", Input::get('period'));
+              
+              $m = "";
+
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m."_".$part[1];
+
     
-  Excel::create('Payroll Summary', function($excel) use($data,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$selBr,$selDt,$organization,$currency) {
+  Excel::create('Payroll Summary '.$month, function($excel) use($selBr,$selDt,$data,$data_nontax,$data_earnings,$data_allowance,$data_overtime,$data_overtime_hourly,$data_overtime_daily,$data_relief,$data_deduction,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency) {
 
     require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/NamedRange.php");
     require_once(base_path()."/vendor/phpoffice/phpexcel/Classes/PHPExcel/IOFactory.php");
@@ -5720,10 +6538,10 @@ class ReportsController extends \BaseController {
    $objPHPExcel->setActiveSheetIndex(0); 
     
 
-    $excel->sheet('Payroll Summary', function($sheet) use($data,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$selBr,$selDt,$organization,$currency,$objPHPExcel){
+    $excel->sheet('Payroll Summary', function($sheet) use($selBr,$selDt,$data,$data_nontax,$data_earnings,$data_allowance,$data_overtime,$data_overtime_hourly,$data_overtime_daily,$data_relief,$data_deduction,$total_pay,$total_earning,$total_gross,$total_paye,$total_nssf,$total_nhif,$total_others,$total_deds,$total_net,$organization,$currency,$objPHPExcel){
             
               $sheet->row(1, array(
-              'BRANCH: ', $selBr->name
+              'BRANCH: ',strtoupper($selBr->name)
               ));
               
               $sheet->cell('A1', function($cell) {
@@ -5734,7 +6552,7 @@ class ReportsController extends \BaseController {
               });
                
                $sheet->row(2, array(
-              'DEPARTMENT: ', $selDt->department_name
+              'DEPARTMENT: ',strtoupper($selDt->department_name)
               ));
               
               $sheet->cell('A2', function($cell) {
@@ -5768,11 +6586,118 @@ class ReportsController extends \BaseController {
 
               });
 
-              $sheet->mergeCells('A6:K6');
+              
 
               $sheet->row(6, array(
               'PAYROLL SUMMARY'
               ));
+
+              
+              
+              $earnings = DB::table('transact_earnings')->get();
+              $allowances = DB::table('transact_allowances')->get();
+              $nontax = DB::table('transact_nontaxables')->get();
+              $reliefs = DB::table('transact_reliefs')->get();
+              $deductions = DB::table('transact_deductions')
+              ->where('financial_month_year' ,'=', Input::get('period'))
+              ->select(DB::raw('DISTINCT(deduction_name) as deduction_name'))
+              ->get();
+
+              $earns = array();
+              $allws = array();
+              $rels  = array();
+              $deds  = array(); 
+        
+
+              
+              $sheet->SetCellValue("A7","PAYROLL NO.");
+              $sheet->SetCellValue("B7","EMPLOYEE");
+              $sheet->SetCellValue("C7","BASIC PAY");
+
+              $row = 7;
+              
+              $colIndex = PHPExcel_Cell::columnIndexFromString('D');
+              
+              $i=0;
+
+              $column = '';
+              
+              for ($column = 'D',$i=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$i<count($data_earnings); $column++,$i++) {
+                $sheet->setCellValue($column.$row, strtoupper($data_earnings[$i]->earning_name));
+              }
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$row,"OVERTIME - HOURLY");
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$row,"OVERTIME - DAILY");
+
+              $colIndexAllw = $colIndex+count($data_earnings)+1;
+
+              $columnLetter = PHPExcel_Cell::stringFromColumnIndex($colIndexAllw); 
+
+             
+              for ($column = $columnLetter,$j=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$j<count($data_allowance); $column++,$j++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_allowance[$j]->allowance_name));
+              } 
+
+              
+               
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$row,"GROSS PAY");
+
+              $colIndexnontax = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)));
+
+              $columnLetter1 = PHPExcel_Cell::stringFromColumnIndex($colIndexnontax+1);          
+
+             
+              for ($column = $columnLetter1,$k=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$k<count($data_nontax); $column++,$k++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_nontax[$k]->nontaxable_name));
+              } 
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$row,"TOTAL INCOME TAX");
+
+              $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$row,"INCOME TAX RELIEF");
+
+
+              $colIndexrel = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)));
+
+              $columnLetter2 = PHPExcel_Cell::stringFromColumnIndex($colIndexrel+3); 
+             
+              for ($column = $columnLetter2,$l=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$l<count($data_relief); $column++,$l++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($data_relief[$l]->relief_name));
+              } 
+ 
+              $columnLetter3 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4); 
+
+              $sheet->SetCellValue($columnLetter3.$row,"PAYE");
+
+              $columnLetter4 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5); 
+
+              $sheet->SetCellValue($columnLetter4.$row,"NSSF AMOUNT");
+
+              $columnLetter5 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6); 
+
+              $sheet->SetCellValue($columnLetter5.$row,"NHIF AMOUNT");
+
+              $colIndexded = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)));
+
+              $columnLetter6 = PHPExcel_Cell::stringFromColumnIndex($colIndexded+6); 
+             
+              for ($column = $columnLetter6,$m=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)),$m<count($deductions); $column++,$m++) {
+               
+               $sheet->setCellValue($column.$row, strtoupper($deductions[$m]->deduction_name));
+              } 
+
+              $columnLetter4 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7); 
+
+              $sheet->SetCellValue($columnLetter4.$row,"TOTAL DEDUCTIONS");
+
+              $columnLetter5 = PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8); 
+
+              $sheet->SetCellValue($columnLetter5.$row,"NET PAY");
+
+              $sheet->mergeCells('A6:'.$columnLetter5.'6');
 
               $sheet->row(6, function ($r) {
 
@@ -5781,179 +6706,254 @@ class ReportsController extends \BaseController {
               $r->setAlignment('center');
               });
 
-              $sheet->row(8, array(
-              'PAYROLL NO.', 'EMPLOYEE','BASIC PAY','ALLOWANCE','GROSS PAY','PAYE','NSSF AMOUNT','NHIF AMOUNT','OTHER DEDUCTIONS','TOTAL DEDUCTIONS','NET PAY'
-              ));
+              $sheet->row(7, function ($r) {
 
-              $sheet->row(8, function ($r) {
-
-             // call cell manipulation methods
               $r->setFontWeight('bold');
  
               });
+
+              $r = 8;
+              $salaries = 0;
+              $totalearning = 0;
+              $totalhourly = 0;
+              $totaldaily = 0;
+              $totalgross = 0;
+              $totalnontax = 0;
+              $totalrelief = 0;
+              $totaltax = 0;
+              $totaltaxrelief = 0;
+              $totalpaye = 0;
+              $totalnssf = 0;
+              $totalnhif = 0;
+              $totaldeduction = 0;
+              $totalnet = 0;
+              
+
+              for($i = 0; $i<count($data); $i++){
+                $name = '';
+
+             if($data[$i]->middle_name == '' || $data[$i]->middle_name == null){
+               $name= $data[$i]->first_name.' '.$data[$i]->last_name;
+             }else{
+               $name=$data[$i]->first_name.' '.$data[$i]->middle_name.' '.$data[$i]->last_name;
+             }
+                 $sheet->SetCellValue("A".$r,$data[$i]->personal_file_number);
+                 $sheet->SetCellValue("B".$r,$name);
+                 $sheet->SetCellValue("C".$r,$data[$i]->basic_pay);
+                 $salaries = $salaries + $data[$i]->basic_pay;
+                 $r++;
+              }
+
+              $colIndex = PHPExcel_Cell::columnIndexFromString('D');
+              
+              $i=0;
+
+              $re = 8;
+
+              $column = '';
+
+              for($i = 0; $i<count($data); $i++){
+              for ($column = 'D',$c=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$c<count($data_earnings); $column++,$c++) {
+                $sheet->setCellValue($column.$re, Payroll::transactearnings($data[$i]->personal_file_number,$data_earnings[$c]->earning_name,Input::get("period")));
+              }
+              $re++;
+              }
+
+              $roh = 8;
+
+             for($e = 0; $e<count($data); $e++){
+              
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$roh, Payroll::transactovertimes($data[$e]->personal_file_number,'Hourly',Input::get("period")));
+               $totalhourly = $totalhourly + Payroll::transactovertimes($data[$e]->personal_file_number,'Hourly',Input::get("period"));
+               $roh++;
+              } 
+
+              $rod = 8;
+
+              for($b = 0; $b<count($data); $b++){
                
-            $row = 9;
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$rod, Payroll::transactovertimes($data[$b]->personal_file_number,'Daily',Input::get("period")));
+               $totaldaily = $totaldaily + Payroll::transactovertimes($data[$b]->personal_file_number,'Daily',Input::get("period"));
+               $rod++;
+
+              } 
+
+              $colIndexAllw = $colIndex+count($data_earnings)+1;
+
+              $columnLetter = PHPExcel_Cell::stringFromColumnIndex($colIndexAllw); 
+
+              $ra = 8;
+
+             for($n = 0; $n<count($data); $n++){
+              for ($column = $columnLetter,$f=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$f<count($data_allowance); $column++,$f++) {
+               $sheet->setCellValue($column.$ra, Payroll::transactallowances($data[$n]->personal_file_number,$data_allowance[$f]->allowance_name,Input::get("period")));
+              } 
+              $ra++;
+            }
+
+            $rg = 8;
+              for($i = 0; $i<count($data); $i++){
+                $name = '';
+                 $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$rg,$data[$i]->taxable_income);
+                 $totalgross = $totalgross + $data[$i]->taxable_income;
+                 $rg++;
+              }
+
+              $colIndexnontax = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)));
+
+              $columnLetter1 = PHPExcel_Cell::stringFromColumnIndex($colIndexnontax+1); 
+
+              $rnt = 8;         
+
+             for($g=0;$g<count($data);$g++){
+              for ($column = $columnLetter1,$o=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$o<count($data_nontax); $column++,$o++) {
+               
+               $sheet->setCellValue($column.$rnt, Payroll::transactnontaxables($data[$g]->personal_file_number,$data_nontax[$o]->nontaxable_name,Input::get("period")));
+              } 
+
+              $rnt++;
+
+            }
+
+              $relieftotal = 0;
+
+              $colIndexrel = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)));
+
+              $columnLetter2 = PHPExcel_Cell::stringFromColumnIndex($colIndexrel+3); 
+
+              $rel = 8;         
+
+             for($h=0;$h<count($data);$h++){
              
+              for ($column = $columnLetter2,$p=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$p<count($data_relief); $column++,$p++) {
+               
+               $sheet->setCellValue($column.$rel, Payroll::transactreliefs($data[$h]->personal_file_number,$data_relief[$p]->relief_name,Input::get("period")));
+               $relieftotal = $relieftotal + Payroll::transactreliefs($data[$h]->personal_file_number,$data_relief[$p]->relief_name,Input::get("period"));
+              } 
+
+              $rel++;
+              }
+
+              $rtax=8;
+
+              for($w = 0; $w<count($data); $w++){
+
+                $incometaxreliefapply = 0;
+
+                $incometax = 0;
+
+                if($data[$w]->income_tax_applicable=='1'){
+                $incometax = Payroll::totaltransacttax($data[$w]->id,Input::get("period"));
+                }else{
+                  $incometax = 0;
+                }
+
+                if($data[$w]->income_tax_relief_applicable=='1'){
+                $incometaxreliefapply = 1162;
+                }else{
+                  $incometaxreliefapply = 0;
+                }
+
+
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$rtax, $incometax);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$rtax, $incometaxreliefapply);
+               $totaltax = $totaltax + $incometax;
+               $totaltaxrelief = $totaltaxrelief + $incometaxreliefapply;
+               $rtax++;
+
+              }
+
+              $rp=8;
+
+              for($q = 0; $q<count($data); $q++){
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4).$rp, $data[$q]->paye);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5).$rp, $data[$q]->nssf_amount);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6).$rp, $data[$q]->nhif_amount);
+               $totalpaye = $totalpaye + $data[$q]->paye;
+               $totalnssf = $totalnssf + $data[$q]->nssf_amount;
+               $totalnhif = $totalnhif + $data[$q]->nhif_amount;
+               $rp++;
+
+              }
+
+
+              $colIndexded = PHPExcel_Cell::columnIndexFromString(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)));
+
+              $columnLetter6 = PHPExcel_Cell::stringFromColumnIndex($colIndexded+6); 
+
+              $rded = 8;
+
+              for($v = 0; $v<count($data); $v++){
              
-            for($i = 0; $i<count($data); $i++){
-            
-             $sheet->row($row, array(
-             $data[$i]->personal_file_number,$data[$i]->first_name.' '.$data[$i]->last_name,number_format(floatval($data[$i]->basic_pay), 2),number_format(floatval($data[$i]->earning_amount), 2),number_format(floatval($data[$i]->taxable_income), 2),number_format(floatval($data[$i]->paye), 2),number_format(floatval($data[$i]->nssf_amount), 2),number_format(floatval($data[$i]->nhif_amount), 2),number_format(floatval($data[$i]->other_deductions), 2),number_format(floatval($data[$i]->total_deductions), 2),number_format(floatval($data[$i]->net), 2)
-             ));
+              for ($column = $columnLetter6,$s=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($data_deduction)),$s<count($data_deduction); $column++,$s++) {
+               
+               $sheet->setCellValue($column.$rded, Payroll::transactdeductions($data[$v]->personal_file_number,$data_deduction[$s]->deduction_name,Input::get("period")));
+              } 
 
-             $sheet->cell('C'.$row, function($cell) {
+               $rded++;
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+              }
 
-              });
+              $rn = 8;
 
-             $sheet->cell('D'.$row, function($cell) {
+              for($u = 0; $u<count($data); $u++){
+               
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7).$rn, $data[$u]->total_deductions);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8).$rn, $data[$u]->net);
+               $totaldeduction = $totaldeduction + $data[$u]->total_deductions;
+               $totalnet = $totalnet + $data[$u]->net;
+               $rn++;
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+              }
+              
+                 $sheet->SetCellValue("B".$r,"TOTALS");
+                 $sheet->SetCellValue("C".$r, $salaries);
+                 for ($column = 'D',$c=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)),$c<count($data_earnings); $column++,$c++){
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactearnings($data_earnings[$c]->earning_name,Input::get('branch'),Input::get('department'),Input::get("period")));
+                 }
+                 $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)-1).$roh, $totalhourly);
+                 $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)).$rod, $totaldaily);
+                 for ($column = $columnLetter,$f=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+1+count($data_earnings)+count($data_allowance)),$f<count($data_allowance); $column++,$f++) {
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactallowances($data_allowance[$f]->allowance_name,Input::get('branch'),Input::get('department'),Input::get("period")));
+                 } 
 
-              });
+                 $sheet->SetCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+1).$r,$totalgross);
 
-             $sheet->cell('E'.$row, function($cell) {
+                 for ($column = $columnLetter1,$o=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)),$o<count($data_nontax); $column++,$o++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactnontaxables($data_nontax[$o]->nontaxable_name,Input::get('branch'),Input::get('department'),Input::get("period")));
+                } 
 
-               // manipulate the cell
-                $cell->setAlignment('right');
+                 for ($column = $columnLetter2,$p=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)),$p<count($data_relief); $column++,$p++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactreliefs($data_relief[$p]->relief_name,Input::get('branch'),Input::get('department'),Input::get("period")));
+                } 
 
-              });
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+2).$rtax, $totaltax);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+3).$rtax, $totaltaxrelief);
+               
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+4).$rp, $totalpaye);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+5).$rp, $totalnssf);
+                $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+6).$rp, $totalnhif);
+               
+                for ($column = $columnLetter6,$s=0; $column != PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($data_deduction)),$s<count($data_deduction); $column++,$s++) {
+               
+                 $sheet->setCellValue($column.$r, Payroll::totaltransactdeductions($data_deduction[$s]->deduction_name,Input::get('branch'),Input::get('department'),Input::get("period")));
+                } 
 
-             $sheet->cell('F'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('G'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('H'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('I'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('J'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('K'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-             
-             $row++;
-             
-             }       
-             $sheet->row($row, array(
-             '','Total: ',number_format(floatval($total_pay), 2),number_format(floatval($total_earning), 2),number_format(floatval($total_gross), 2),number_format(floatval($total_paye), 2),number_format(floatval($total_nssf), 2),number_format(floatval($total_nhif), 2),number_format(floatval($total_others), 2),number_format(floatval($total_deds), 2),number_format(floatval($total_net), 2)
-             ));
-            $sheet->row($row, function ($r) {
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+7).$rn, $totaldeduction);
+               $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($colIndex+count($data_earnings)+count($data_allowance)+count($data_nontax)+count($data_relief)+count($deductions)+8).$rn, $totalnet);
+               
+               
+              $sheet->row($r, function ($rls) {
 
              // call cell manipulation methods
-              $r->setFontWeight('bold');
+              $rls->setFontWeight('bold');
  
               });
-            $sheet->cell('C'.$row, function($cell) {
 
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('D'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('E'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('F'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('G'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('H'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('I'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('J'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->cell('K'.$row, function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
-
-             $sheet->row($row+1, array(
-             '','','','','','','','','','Total Net: ',number_format(floatval($total_net), 2)
-             ));
-            $sheet->row($row+1, function ($r) {
-
-             // call cell manipulation methods
-              $r->setFontWeight('bold');
- 
-              });
-            $sheet->cell('K'.($row+1), function($cell) {
-
-               // manipulate the cell
-                $cell->setAlignment('right');
-
-              });
              
     });
 
@@ -5961,61 +6961,73 @@ class ReportsController extends \BaseController {
   }
   }else{
     $period = Input::get("period");
-		$selBranch = Input::get("branch");
-		$selDept = Input::get("department");
+    $selBranch = Input::get("branch");
+    $selDept = Input::get("department");
 
 
         if(Input::get('branch') == 'All' && Input::get('department') == 'All'){
-		 $total_pay = DB::table('transact')
+     $total_pay = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('transact.basic_pay');
+    ->sum('transact.basic_pay');
 
-		 $total_earning = DB::table('transact')
+     $total_earning = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('earning_amount');
+    ->sum('earning_amount');
 
-		 $total_gross = DB::table('transact')
+     $total_gross = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('taxable_income');
+    ->sum('taxable_income');
         
         $total_paye = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('paye');
+    ->sum('paye');
 
-		 $total_nssf = DB::table('transact')
+     $total_nssf = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('nssf_amount');
+    ->sum('nssf_amount');
 
-		 $total_nhif = DB::table('transact')
+     $total_nhif = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('nhif_amount');
+    ->sum('nhif_amount');
 
-		$total_others = DB::table('transact')
+    $total_others = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('other_deductions');
+    ->sum('other_deductions');
 
-		$total_deds = DB::table('transact')
+    $total_deds = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('total_deductions');
+    ->sum('total_deductions');
 
-		$total_net = DB::table('transact')
+    $total_net = DB::table('transact')
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('net');
+    ->sum('net');
 
-		$currencies = DB::table('currencies')
+    $currencies = DB::table('currencies')
             ->select('shortname')
             ->get();
 
-		$sums = DB::table('transact')
+    $sums = DB::table('transact')
             ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
             ->where('financial_month_year' ,'=', Input::get('period'))
             ->get(); 
 
-		$organization = Organization::find(1);
+    $organization = Organization::find(1);
 
-		$pdf = PDF::loadView('pdf.summaryReport', compact('sums','selBranch','selDept','total_pay','total_earning','total_gross','total_paye','total_nssf','total_nhif','total_others','total_deds','total_net','currencies','period','organization'))->setPaper('a4')->setOrientation('landscape');
- 	
-		return $pdf->stream('Payroll_summary_'.$period.'.pdf');
+    $part = explode("-", Input::get('period'));
+              
+              $m = "";
+
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m."_".$part[1];
+
+    $pdf = PDF::loadView('pdf.summaryReport', compact('sums','selBranch','selDept','total_pay','total_earning','total_gross','total_paye','total_nssf','total_nhif','total_others','total_deds','total_net','currencies','period','organization'))->setPaper('a4')->setOrientation('landscape');
+  
+    return $pdf->stream('Payroll_summary_'.$month.'.pdf');
 
         }else if(Input::get('department') == 'All'){
          $sels = DB::table('branches')->find(Input::get('branch')); 
@@ -6024,72 +7036,84 @@ class ReportsController extends \BaseController {
          ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('branch_id' ,'=', Input::get('branch'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('transact.basic_pay');
+     ->sum('transact.basic_pay');
 
-		 $total_earning = DB::table('transact')
-		->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		->where('branch_id' ,'=', Input::get('branch'))
+     $total_earning = DB::table('transact')
+    ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    ->where('branch_id' ,'=', Input::get('branch'))
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('earning_amount');
+    ->sum('earning_amount');
 
-		 $total_gross = DB::table('transact')
-		->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		->where('branch_id' ,'=', Input::get('branch'))
+     $total_gross = DB::table('transact')
+    ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    ->where('branch_id' ,'=', Input::get('branch'))
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('taxable_income');
+    ->sum('taxable_income');
         
         $total_paye = DB::table('transact')
         ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
         ->where('branch_id' ,'=', Input::get('branch'))
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('paye');
+    ->sum('paye');
 
-		 $total_nssf = DB::table('transact')
-		->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		->where('branch_id' ,'=', Input::get('branch'))
+     $total_nssf = DB::table('transact')
+    ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    ->where('branch_id' ,'=', Input::get('branch'))
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('nssf_amount');
+    ->sum('nssf_amount');
 
-		 $total_nhif = DB::table('transact')
-		->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		->where('branch_id' ,'=', Input::get('branch'))
+     $total_nhif = DB::table('transact')
+    ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    ->where('branch_id' ,'=', Input::get('branch'))
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('nhif_amount');
+    ->sum('nhif_amount');
 
-		$total_others = DB::table('transact')
-	    ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		->where('branch_id' ,'=', Input::get('branch'))
+    $total_others = DB::table('transact')
+      ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    ->where('branch_id' ,'=', Input::get('branch'))
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('other_deductions');
+    ->sum('other_deductions');
 
-		$total_deds = DB::table('transact')
-	    ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		->where('branch_id' ,'=', Input::get('branch'))
+    $total_deds = DB::table('transact')
+      ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    ->where('branch_id' ,'=', Input::get('branch'))
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('total_deductions');
+    ->sum('total_deductions');
 
-		$total_net = DB::table('transact')
-		->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		->where('branch_id' ,'=', Input::get('branch'))
+    $total_net = DB::table('transact')
+    ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    ->where('branch_id' ,'=', Input::get('branch'))
         ->where('financial_month_year' ,'=', Input::get('period'))
-		->sum('net');
+    ->sum('net');
 
-		$currencies = DB::table('currencies')
+    $currencies = DB::table('currencies')
             ->select('shortname')
             ->get();
 
-		$sums = DB::table('transact')
+    $sums = DB::table('transact')
             ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
             ->join('branches', 'employee.branch_id', '=', 'branches.id')
             ->where('branch_id' ,'=', Input::get('branch'))
             ->where('financial_month_year' ,'=', Input::get('period'))
             ->get(); 
 
-		$organization = Organization::find(1);
+    $organization = Organization::find(1);
 
-		$pdf = PDF::loadView('pdf.summaryReport', compact('sums','selBranch','selDept','sels','total_pay','total_earning','total_gross','total_paye','total_nssf','total_nhif','total_others','total_deds','total_net','currencies','period','organization'))->setPaper('a4')->setOrientation('landscape');
+    $part = explode("-", Input::get('period'));
+              
+              $m = "";
+
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m."_".$part[1];
+
+    $pdf = PDF::loadView('pdf.summaryReport', compact('sums','selBranch','selDept','sels','total_pay','total_earning','total_gross','total_paye','total_nssf','total_nhif','total_others','total_deds','total_net','currencies','period','organization'))->setPaper('a4')->setOrientation('landscape');
   
-    return $pdf->stream('Payroll_summary_'.$period.'.pdf');
+    return $pdf->stream('Payroll_summary_'.$month.'.pdf');
 
         } else if(Input::get('branch') == 'All'){
           $sels = DB::table('departments')->find(Input::get('department')); 
@@ -6098,72 +7122,84 @@ class ReportsController extends \BaseController {
          ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		     ->sum('transact.basic_pay');
+         ->sum('transact.basic_pay');
 
-		 $total_earning = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     $total_earning = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('earning_amount');
+     ->sum('earning_amount');
 
-		 $total_gross = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     $total_gross = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('taxable_income');
+     ->sum('taxable_income');
         
         $total_paye = DB::table('transact')
          ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('paye');
+     ->sum('paye');
 
-		 $total_nssf = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     $total_nssf = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('nssf_amount');
+     ->sum('nssf_amount');
 
-		 $total_nhif = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     $total_nhif = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('nhif_amount');
+     ->sum('nhif_amount');
 
-		$total_others = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    $total_others = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('other_deductions');
+     ->sum('other_deductions');
 
-		$total_deds = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    $total_deds = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('total_deductions');
+     ->sum('total_deductions');
 
-		$total_net = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+    $total_net = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('net');
+     ->sum('net');
 
-		$currencies = DB::table('currencies')
+    $currencies = DB::table('currencies')
             ->select('shortname')
             ->get();
 
-		$sums = DB::table('transact')
+    $sums = DB::table('transact')
          ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->join('departments', 'employee.department_id', '=', 'departments.id')
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
          ->get(); 
 
-		$organization = Organization::find(1);
+    $organization = Organization::find(1);
 
-		$pdf = PDF::loadView('pdf.summaryReport', compact('sums','selBranch','selDept','sels','total_pay','total_earning','total_gross','total_paye','total_nssf','total_nhif','total_others','total_deds','total_net','currencies','period','organization'))->setPaper('a4')->setOrientation('landscape');
- 	
-		return $pdf->stream('Payroll_summary_'.$period.'.pdf');
+    $part = explode("-", Input::get('period'));
+              
+              $m = "";
+
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m."_".$part[1];
+
+    $pdf = PDF::loadView('pdf.summaryReport', compact('sums','selBranch','selDept','sels','total_pay','total_earning','total_gross','total_paye','total_nssf','total_nhif','total_others','total_deds','total_net','currencies','period','organization'))->setPaper('a4')->setOrientation('landscape');
+  
+    return $pdf->stream('Payroll_summary_'.$month.'.pdf');
 
 
         }   else if(Input::get('branch') != 'All' && Input::get('department') != 'All'){
@@ -6175,69 +7211,69 @@ class ReportsController extends \BaseController {
          ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('transact.basic_pay');
+     ->sum('transact.basic_pay');
 
-		 $total_earning = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		 ->where('branch_id' ,'=', Input::get('branch'))
+     $total_earning = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('earning_amount');
+     ->sum('earning_amount');
 
-		 $total_gross = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		 ->where('branch_id' ,'=', Input::get('branch'))
+     $total_gross = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('taxable_income');
+     ->sum('taxable_income');
         
         $total_paye = DB::table('transact')
          ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('paye');
+     ->sum('paye');
 
-		 $total_nssf = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		 ->where('branch_id' ,'=', Input::get('branch'))
+     $total_nssf = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('nssf_amount');
+     ->sum('nssf_amount');
 
-		 $total_nhif = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		 ->where('branch_id' ,'=', Input::get('branch'))
+     $total_nhif = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('nhif_amount');
+     ->sum('nhif_amount');
 
-		$total_others = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		 ->where('branch_id' ,'=', Input::get('branch'))
+    $total_others = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('other_deductions');
+     ->sum('other_deductions');
 
-		$total_deds = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		 ->where('branch_id' ,'=', Input::get('branch'))
+    $total_deds = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('total_deductions');
+     ->sum('total_deductions');
 
-		$total_net = DB::table('transact')
-		 ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
-		 ->where('branch_id' ,'=', Input::get('branch'))
+    $total_net = DB::table('transact')
+     ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
+     ->where('branch_id' ,'=', Input::get('branch'))
          ->where('department_id' ,'=', Input::get('department'))
          ->where('financial_month_year' ,'=', Input::get('period'))
-		 ->sum('net');
+     ->sum('net');
 
-		$currencies = DB::table('currencies')
+    $currencies = DB::table('currencies')
             ->select('shortname')
             ->get();
 
-		$sums = DB::table('transact')
+    $sums = DB::table('transact')
          ->join('employee', 'transact.employee_id', '=', 'employee.personal_file_number')
          ->join('branches', 'employee.branch_id', '=', 'branches.id')
          ->join('departments', 'employee.department_id', '=', 'departments.id')
@@ -6246,18 +7282,29 @@ class ReportsController extends \BaseController {
          ->where('financial_month_year' ,'=', Input::get('period'))
          ->get(); 
 
-		$organization = Organization::find(1);
+    $organization = Organization::find(1);
 
-		$pdf = PDF::loadView('pdf.summaryReport', compact('sums','selBranch','selDept','selBr','selDt','total_pay','total_earning','total_gross','total_paye','total_nssf','total_nhif','total_others','total_deds','total_net','currencies','period','organization'))->setPaper('a4')->setOrientation('landscape');
- 	
-		return $pdf->stream('Payroll_summary_'.$period.'.pdf');
+    $part = explode("-", Input::get('period'));
+              
+              $m = "";
 
-        }                     	
-		
-	}
+              if(strlen($part[0]) == 1){
+                $m = "0".$part[0];
+              }else{
+                $m = $part[0];
+              }
+              
+              $month = $m."_".$part[1];
+
+    $pdf = PDF::loadView('pdf.summaryReport', compact('sums','selBranch','selDept','selBr','selDt','total_pay','total_earning','total_gross','total_paye','total_nssf','total_nhif','total_others','total_deds','total_net','currencies','period','organization'))->setPaper('a4')->setOrientation('landscape');
+  
+    return $pdf->stream('Payroll_summary_'.$month.'.pdf');
+
+        }                       
+    
+  }
 
 }
-
 
 	public function remittance(){
 

@@ -1,17 +1,16 @@
+<?php
+
+function asMoney($value) {
+  return number_format($value, 2);
+}
+
+?>
+
 @extends('layouts.payroll')
 
-{{ HTML::style('bootstrap-select-master/dist/css/bootstrap-select.css') }}
-{{ HTML::script('media/jquery-1.12.0.min.js') }}
-{{ HTML::script('bootstrap-select-master/dist/js/bootstrap-select.js') }}
-
-<style type="text/css">
-.dropdown-menu {
-    margin-left: -190px;
-}
-</style>
+{{HTML::script('media/jquery-1.8.0.min.js') }}
 
 <script type="text/javascript">
-
  function totalBalance() {
       var instals = document.getElementById("instalments").value;
       var amt = document.getElementById("amount").value.replace(/,/g,'');
@@ -34,8 +33,17 @@ function totalB() {
 
 <script type="text/javascript">
 $(document).ready(function(){
-$('#insts').hide();
-$('#bal').hide();
+
+$('#formular option#instals').each(function() {
+    if (this.selected){
+       $('#insts').show();
+       $('#bal').show();
+     }else{
+       $('#insts').hide();
+       $('#bal').hide();
+     }
+});
+
 $('#formular').change(function(){
 if($(this).val() == "Instalments"){
     $('#insts').show();
@@ -46,16 +54,17 @@ if($(this).val() == "Instalments"){
 }
 
 });
+
 });
 </script>
 
-@section('content')
 
+@section('content')
 <br/>
 
 <div class="row">
     <div class="col-lg-12">
-  <h3>New Employee Allowance</h3>
+  <h3>Update Employee Non Taxable Income</h3>
 
 <hr>
 </div>  
@@ -74,7 +83,7 @@ if($(this).val() == "Instalments"){
             @endforeach
         </div>
         @endif
-        
+
   {{ HTML::style('jquery-ui-1.11.4.custom/jquery-ui.css') }}
   {{ HTML::script('jquery-ui-1.11.4.custom/jquery-ui.js') }}
 
@@ -105,7 +114,7 @@ if($(this).val() == "Instalments"){
     
   </style>
 
-  <script>
+ <script>
   $(function() {
     var dialog, form,
  
@@ -127,7 +136,7 @@ if($(this).val() == "Instalments"){
     function checkLength( o) {
       if ( o.val().length == 0 ) {
         o.addClass( "ui-state-error" );
-        updateTips( "Please insert allowance type!" );
+        updateTips( "Please insert non taxable income!" );
         return false;
       } else {
         return true;
@@ -150,7 +159,7 @@ if($(this).val() == "Instalments"){
  
       valid = valid && checkLength( name );
  
-      valid = valid && checkRegexp( name, /^[a-z]([0-9a-z_\s])+$/i, "Please insert a valid name for allowance type." );
+      valid = valid && checkRegexp( name, /^[a-z]([0-9a-z_\s])+$/i, "Please insert a valid name for non taxable income." );
  
       if ( valid ) {
 
@@ -170,18 +179,18 @@ if($(this).val() == "Instalments"){
        }*/
 
         $.ajax({
-            url     : "{{URL::to('createAllowance')}}",
+            url     : "{{URL::to('createNontaxable')}}",
                       type    : "POST",
                       async   : false,
                       data    : {
                               'name'  : name.val()
                       },
                       success : function(s){
-                         $('#allowance').append($('<option>', {
+                         $('#income').append($('<option>', {
                          value: s,
                          text: name.val(),
                          selected:true
-                         }));
+                        }));
                       }        
         });
         
@@ -212,7 +221,7 @@ if($(this).val() == "Instalments"){
       addUser();
     });
  
-    $('#allowance').change(function(){
+    $('#income').change(function(){
     if($(this).val() == "cnew"){
     dialog.dialog( "open" );
     }
@@ -223,8 +232,8 @@ if($(this).val() == "Instalments"){
  
    {{ HTML::script('datepicker/js/bootstrap-datepicker.min.js') }}
 
-<div id="dialog-form" title="Create new allowance type">
-  <p class="validateTips">Please insert Allowance Type.</p>
+<div id="dialog-form" title="Create new non taxable income">
+  <p class="validateTips">Please insert non taxable income.</p>
  
   <form>
     <fieldset>
@@ -236,92 +245,82 @@ if($(this).val() == "Instalments"){
     </fieldset>
   </form>
 </div>
- 
 
-         <form method="POST" action="{{{ URL::to('employee_allowances') }}}" accept-charset="UTF-8">
+
+         <form method="POST" action="{{{ URL::to('employeenontaxables/update/'.$nontax->id) }}}" accept-charset="UTF-8">
    
     <fieldset>
-
-       <div class="form-group">
-                        <label for="username">Employee <span style="color:red">*</span></label>
-                        <select name="employee" class="form-control selectpicker" data-live-search="true">
-                           <option></option>
-                            @foreach($employees as $employee)
-                            <option value="{{ $employee->id }}"> {{ $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name }}</option>
-                            @endforeach
-                        </select>
-                
-                    </div>                    
-
-                    <div class="form-group">
-                        <label for="username">Allowance Type <span style="color:red">*</span></label>
-                        <select name="allowance" id="allowance" class="form-control">
-                            <option id="blanko"></option>
-                            <option value="cnew">Create New</option>
-                            @foreach($allowances as $allowance)
-                            <option value="{{ $allowance->id }}"> {{ $allowance->allowance_name }}</option>
-                            @endforeach
-
-                        </select>
+        <div class="form-group">
+         <div class="form-group">
+            <label for="username">Employee</label>
+            <input class="form-control" placeholder="" type="text" readonly name="employee" id="employee" value="{{ $nontax->employee->first_name.' '.$nontax->employee->last_name }}">
+        </div>  
                 
                     </div>
 
-                     <div class="form-group">
+
+        <div class="form-group">
+         <label for="username">Non Taxable Income <span style="color:red">*</span></label>
+                        <select name="income" id="income" class="form-control">
+                           <option></option>
+                           <option value="cnew">Create New</option>
+                            @foreach($nontaxables as $nontaxable)
+                            <option value="{{ $nontaxable->id }}"<?= ($nontax->nontaxable_id==$nontaxable->id)?'selected="selected"':''; ?>> {{ $nontaxable->name }}</option>
+                            @endforeach
+                        </select>
+                
+        </div>          
+
+         <div class="form-group">
                         <label for="username">Formular <span style="color:red">*</span></label>
                         <select name="formular" id="formular" class="form-control forml">
                             <option></option>
-                            <option value="One Time">One Time</option>
-                            <option value="Recurring">Recurring</option>
-                            <option value="Instalments">Instalments</option>
+                            <option value="One Time"<?= ($nontax->formular=='One Time')?'selected="selected"':''; ?>>One Time</option>
+                            <option value="Recurring"<?= ($nontax->formular=='Recurring')?'selected="selected"':''; ?>>Recurring</option>
+                            <option id="instals" value="Instalments"<?= ($nontax->formular=='Instalments')?'selected="selected"':''; ?>>Instalments</option>
                         </select>
                 
                     </div>
 
-        <div class="form-group insts" id="insts">
+        <div class="form-group" id="insts">
             <label for="username">Instalments </label>
-            <input class="form-control" placeholder="" onkeypress="totalB(),getdate()" onkeyup="totalB(),getdate()" type="text" name="instalments" id="instalments" value="{{{ Input::old('instalments') }}}">
+            <input class="form-control" placeholder="" onkeypress="totalB(),getdate()" onkeyup="totalB(),getdate()" type="text" name="instalments" id="instalments" value="{{ $nontax->instalments}}">
         </div>
-
+        
         <div class="form-group">
-            <label for="username">Amount <span style="color:red">*</span> </label>
+            <label for="username">Amount <span style="color:red">*</span></label>
             <div class="input-group">
             <span class="input-group-addon">{{$currency->shortname}}</span>
-            <input class="form-control" placeholder="" onkeypress="totalBalance()" onkeyup="totalBalance()" type="text" name="amount" id="amount" value="{{{ Input::old('amount') }}}">
-           </div>
+            <input class="form-control" placeholder="" onkeypress="totalBalance()" onkeyup="totalBalance()" type="text" name="amount" id="amount" value="{{ $nontax->nontaxable_amount}}">
+            </div>
         </div>
         
         <div class="form-group bal_amt" id="bal">
             <label for="username">Total </label>
             <div class="input-group">
             <span class="input-group-addon">{{$currency->shortname}}</span>
-            <input class="form-control" placeholder="" readonly="readonly" type="text" name="balance" id="balance" value="{{{ Input::old('balance') }}}">
-            </div>
+            <input class="form-control" placeholder="" readonly="readonly" type="text" name="balance" id="balance" value="{{ asMoney((double)$nontax->nontaxable_amount * (double)$nontax->instalments)}}">
+           </div>
         </div>
-
         
+        <?php
+       $d=strtotime($nontax->nontaxable_date);
+
+       $d1=strtotime($nontax->end_date);
+       ?>
+
         <div class="form-group">
-                        <label for="username">Allowance Date <span style="color:red">*</span></label>
+                        <label for="username"> Date <span style="color:red">*</span></label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
-                        <input class="form-control allowancedate" readonly="readonly" placeholder="" type="text" name="adate" id="adate" value="{{{ Input::old('adate') }}}">
+                        <input class="form-control expiry" readonly="readonly" placeholder="" type="text" name="idate" id="idate" value="{{ $nontax->nontaxable_date }}">
                         </div>
         </div>
-
-        <script type="text/javascript">
-$(function(){ 
-
-$('.allowancedate').datepicker({
-    format: 'yyyy-mm-dd',
-    startDate: '-60y',
-    autoclose: true
-});
-});
-
-</script>
         
+
         <div class="form-actions form-group">
         
-          <button type="submit" class="btn btn-primary btn-sm">Create Employee Allowance</button>
+          <button type="submit" class="btn btn-primary btn-sm">Update Employee Non Taxable Income</button>
         </div>
 
     </fieldset>
@@ -331,5 +330,6 @@ $('.allowancedate').datepicker({
   </div>
 
 </div>
+
 
 @stop

@@ -1705,6 +1705,26 @@ Route::get('other_earnings/edit/{id}', 'EarningsController@edit');
 Route::get('other_earnings/view/{id}', 'EarningsController@view');
 
 /*
+* employee nontaxables routes
+*/
+
+Route::resource('employeenontaxables', 'EmployeeNonTaxableController');
+Route::post('employeenontaxables/update/{id}', 'EmployeeNonTaxableController@update');
+Route::get('employeenontaxables/delete/{id}', 'EmployeeNonTaxableController@destroy');
+Route::get('employeenontaxables/edit/{id}', 'EmployeeNonTaxableController@edit');
+Route::get('employeenontaxables/view/{id}', 'EmployeeNonTaxableController@view');
+Route::post('createNontaxable', 'EmployeeNonTaxableController@createnontaxable');
+
+/*
+* nontaxables routes
+*/
+
+Route::resource('nontaxables', 'NonTaxablesController');
+Route::post('nontaxables/update/{id}', 'NonTaxablesController@update');
+Route::get('nontaxables/delete/{id}', 'NonTaxablesController@destroy');
+Route::get('nontaxables/edit/{id}', 'NonTaxablesController@edit');
+
+/*
 * employee reliefs routes
 */
 
@@ -1793,6 +1813,11 @@ Route::get('reports/employees', function(){
     return View::make('employees.reports');
 });
 
+Route::resource('earningsettings', 'EarningsettingsController');
+Route::post('earningsettings/update/{id}', 'EarningsettingsController@update');
+Route::get('earningsettings/delete/{id}', 'EarningsettingsController@destroy');
+Route::get('earningsettings/edit/{id}', 'EarningsettingsController@edit');
+
 
 Route::get('reports/selectEmployeeStatus', 'ReportsController@selstate');
 Route::post('reports/employeelist', 'ReportsController@employees');
@@ -1805,6 +1830,8 @@ Route::post('payrollReports/allowances', 'ReportsController@allowances');
 Route::get('payrollReports/selectDeduction', 'ReportsController@employee_deductions');
 Route::post('payrollReports/deductions', 'ReportsController@deductions');
 Route::get('payrollReports/selectPayePeriod', 'ReportsController@period_paye');
+Route::get('payrollReports/selectnontaxableincome', 'ReportsController@employeenontaxableselect');
+Route::post('payrollReports/nontaxables', 'ReportsController@employeenontaxables');
 Route::post('payrollReports/payeReturns', 'ReportsController@payeReturns');
 Route::get('payrollReports/selectRemittancePeriod', 'ReportsController@period_rem');
 Route::post('payrollReports/payRemittances', 'ReportsController@payeRems');

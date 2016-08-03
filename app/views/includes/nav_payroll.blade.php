@@ -23,6 +23,10 @@
                   </li>
 
                   <li>
+                    <a href="{{ URL::to('employeenontaxables') }}"><i class="glyphicon glyphicon-credit-card fa-fw"></i>Non Taxable Income</a>
+                  </li>  
+
+                  <li>
                     <a href="{{ URL::to('employee_relief') }}"><i class="glyphicon glyphicon-credit-card fa-fw"></i>Relief</a>
                   </li>    
                
