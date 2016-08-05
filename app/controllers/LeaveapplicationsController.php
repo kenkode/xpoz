@@ -155,6 +155,18 @@ class LeaveapplicationsController extends \BaseController {
 
 	}
 
+	public function cssleaveapprove($id){
+
+		$leaveapplication = Leaveapplication::find($id);
+
+		
+
+		return View::make('css.employeeleave', compact('leaveapplication'));
+
+
+
+	}
+
 
 	public function doApprove($id){
 
@@ -177,6 +189,32 @@ class LeaveapplicationsController extends \BaseController {
 
 
 		
+
+	}
+
+	public function supervisorapprove($id){
+
+	    $leaveapplication = Leaveapplication::findOrFail($id);
+
+	    $leaveapplication->is_supervisor_approved = 1;
+
+	    $leaveapplication->update();
+
+		return Redirect::to('css/subordinateleave')->withFlashMessage('Successfully Approved subordinate leave!');
+
+
+	}
+
+	public function supervisorreject($id){
+
+	    $leaveapplication = Leaveapplication::findOrFail($id);
+
+	    $leaveapplication->is_supervisor_approved = 0;
+
+	    $leaveapplication->update();
+
+		return Redirect::to('css/subordinateleave')->withFlashMessage('Successfully rejected subordinate leave!');
+
 
 	}
 

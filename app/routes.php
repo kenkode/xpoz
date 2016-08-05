@@ -64,10 +64,11 @@ Route::get('/dashboard', function()
         if(Confide::user()->user_type == 'member'){
 
           $employee_id = DB::table('employee')->where('personal_file_number', '=', Confide::user()->username)->pluck('id');
-
+          
+          $c = Supervisor::where('employee_id', $employee_id)->count();
              
           $employee = Employee::findorfail($employee_id);
-           return View::make('empdash', compact('employee'));
+           return View::make('empdash', compact('employee','c'));
 
 
 
@@ -320,7 +321,11 @@ Route::get('leaveapplications/edit/{id}', 'LeaveapplicationsController@edit');
 Route::get('leaveapplications/delete/{id}', 'LeaveapplicationsController@destroy');
 Route::post('leaveapplications/update/{id}', 'LeaveapplicationsController@update');
 Route::get('leaveapplications/approve/{id}', 'LeaveapplicationsController@approve');
+Route::get('employeeleave/view/{id}', 'LeaveapplicationsController@cssleaveapprove');
+
 Route::post('leaveapplications/approve/{id}', 'LeaveapplicationsController@doapprove');
+Route::get('supervisorapproval/{id}', 'LeaveapplicationsController@supervisorapprove');
+Route::get('supervisorreject/{id}', 'LeaveapplicationsController@supervisorreject');
 Route::get('leaveapplications/cancel', 'LeaveapplicationsController@cancel');
 Route::get('leaveapplications/reject/{id}', 'LeaveapplicationsController@reject');
 Route::get('leaveapplications/show/{id}', 'LeaveapplicationsController@show');
@@ -2723,6 +2728,18 @@ Route::get('css/leave', function(){
    $leaveapplications = DB::table('leaveapplications')->where('employee_id', '=', $employee->id)->get();
 
   return View::make('css.leave', compact('employee', 'leaveapplications'));
+});
+
+Route::get('css/subordinateleave', function(){
+
+  $employeeid = DB::table('employee')->where('personal_file_number', '=', Confide::user()->username)->pluck('id');
+   $c = Supervisor::where('supervisor_id', $employeeid)->count();
+    
+  $employee = Employee::findorfail($employeeid);
+
+   //$leaveapplications = DB::table('leaveapplications')->where('employee_id', '=', $employee->id)->get();
+
+  return View::make('css.approveleave', compact('c','leaveapplications'));
 });
 
 
