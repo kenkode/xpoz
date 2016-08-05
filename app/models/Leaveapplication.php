@@ -54,7 +54,7 @@ class Leaveapplication extends \Eloquent {
 		$application->organization()->associate($organization);
 		$application->save();
 
-
+                /*
 
 		$name = $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name;
 
@@ -64,7 +64,7 @@ class Leaveapplication extends \Eloquent {
     		
     		$message->to($organization->email )->subject( 'Leave Application' );
 		});
-
+               */
 
 	}
 
