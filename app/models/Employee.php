@@ -127,6 +127,11 @@ class Employee extends Eloquent {
 		return $this->belongsTo('Jobgroup');
 	}
 
+	public function supervisor(){
+
+		return $this->hasMany('Supervisor');
+	}
+
 
 	public function allowances(){
 		return $this->belongsTo('EAllowances');
@@ -163,6 +168,14 @@ class Employee extends Eloquent {
 
 		$employee = Employee::findOrFail($id);
 		$name = $employee->personal_file_number.'-'.$employee->first_name.' '.$employee->last_name;
+
+		return $name;
+	}
+
+	public static function getName($id){
+
+		$employee = Employee::findOrFail($id);
+		$name = $employee->first_name.' '.$employee->last_name;
 
 		return $name;
 	}

@@ -27,13 +27,14 @@ class EmployeesController extends \BaseController {
 	{
 		//
 		$branches = Branch::all();
+		$employees = Employee::all();
 		$departments = Department::all();
 		$jgroups = Jobgroup::all();
 		$etypes = EType::all();
 		$banks = Bank::all();
 		$bbranches = BBranch::all();
 		$educations = Education::all();
-		return View::make('employees.create', compact('branches','departments','etypes','jgroups','banks','bbranches','educations'));
+		return View::make('employees.create', compact('employees','branches','departments','etypes','jgroups','banks','bbranches','educations'));
 	}
 
 
@@ -189,6 +190,17 @@ class EmployeesController extends \BaseController {
 
 		$employee->save();
 
+        if(Input::get('supervisor') != null){
+
+		$supervisor = new Supervisor;
+
+		$supervisor->supervisor_id = Input::get('supervisor');
+
+		$supervisor->employee_id = $employee->id;
+        
+        $supervisor->save();
+        }
+
 		 Audit::logaudit('Employee', 'create', 'created: '.$employee->personal_file_number.'-'.$employee->first_name.' '.$employee->last_name);
 
 		return Redirect::route('employees.index')->withFlashMessage('Employee successfully created!');
@@ -228,7 +240,10 @@ class EmployeesController extends \BaseController {
 		$banks = Bank::all();
 		$bbranches = BBranch::all();
 		$educations = Education::all();
-		return View::make('employees.edit', compact('branches','educations','departments','etypes','jgroups','banks','bbranches','employee'));
+		$supervisor = Supervisor::where('employee_id',$id)->first();
+		$count = Supervisor::where('employee_id',$id)->count();
+		$subordinates = Employee::all();
+		return View::make('employees.edit', compact('count','supervisor','subordinates','branches','educations','departments','etypes','jgroups','banks','bbranches','employee'));
 	}
 
 	/**
@@ -386,6 +401,32 @@ class EmployeesController extends \BaseController {
 
 		$employee->update();
 
+		$c = Supervisor::where('employee_id', $employee->id)->count();
+
+
+		if($c>0){
+
+		$supervisor = Supervisor::where('employee_id',$employee->id)->first();
+
+		$supervisor->supervisor_id = Input::get('supervisor');
+
+		$supervisor->employee_id = $employee->id;
+        
+        $supervisor->update();
+        }
+
+
+		else if(Input::get('supervisor') != null){
+
+		$supervisor = new Supervisor;
+
+		$supervisor->supervisor_id = Input::get('supervisor');
+
+		$supervisor->employee_id = $employee->id;
+        
+        $supervisor->save();
+        }
+
 		 Audit::logaudit('Employee', 'update', 'updated: '.$employee->personal_file_number.'-'.$employee->first_name.' '.$employee->last_name);
 
 		 if(Confide::user()->user_type == 'member'){
@@ -451,6 +492,8 @@ class EmployeesController extends \BaseController {
 
 		$appraisals = Appraisal::where('employee_id', $id)->get();
 
+		$c = Supervisor::where('employee_id', $id)->count();
+
         $contacts = Emergencycontact::where('employee_id', $id)->get();
 
         $occurences = Occurence::where('employee_id', $id)->get();
@@ -465,7 +508,7 @@ class EmployeesController extends \BaseController {
 
 		$organization = Organization::find(1);
 
-		return View::make('employees.view', compact('employee','appraisals','contacts','documents','occurences','properties','benefits','count'));
+		return View::make('employees.view', compact('c','employee','appraisals','contacts','documents','occurences','properties','benefits','count'));
 		
 	}
 
@@ -474,6 +517,8 @@ class EmployeesController extends \BaseController {
 		$employee = Employee::find($id);
 
 		$appraisals = Appraisal::where('employee_id', $id)->get();
+
+		$c = Supervisor::where('employee_id', $id)->count();
 
         $kins = Nextofkin::where('employee_id', $id)->get();
 
@@ -489,7 +534,7 @@ class EmployeesController extends \BaseController {
      
 		$organization = Organization::find(1);
 
-		return View::make('employees.viewdeactive', compact('employee','appraisals','kins','documents','occurences','properties','benefits','count'));
+		return View::make('employees.viewdeactive', compact('c','employee','appraisals','kins','documents','occurences','properties','benefits','count'));
 		
 	}
 

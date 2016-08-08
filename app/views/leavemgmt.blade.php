@@ -41,7 +41,7 @@
    
 
         @foreach($leaveapplications as $leaveapplication)
-        @if($leaveapplication->status == 'applied')
+        @if($leaveapplication->status == 'applied' && $leaveapplication->is_supervisor_approved == 1)
          <tr>
 
           <td>{{$leaveapplication->employee->personal_file_number}}</td>

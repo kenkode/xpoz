@@ -52,9 +52,15 @@ class Leaveapplication extends \Eloquent {
 		$application->employee()->associate($employee);
 		$application->leavetype()->associate($leavetype);
 		$application->organization()->associate($organization);
+		$application->is_supervisor_approved = 0;
 		$application->save();
 
-                /*
+
+
+
+
+
+        /*
 
 		$name = $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name;
 
@@ -64,7 +70,11 @@ class Leaveapplication extends \Eloquent {
     		
     		$message->to($organization->email )->subject( 'Leave Application' );
 		});
+
                */
+
+     
+
 
 	}
 

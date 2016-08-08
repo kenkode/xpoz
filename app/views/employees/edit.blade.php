@@ -208,6 +208,23 @@ $(document).ready(function() {
                     </div>
 
                     <div class="form-group">
+                        <label for="username">Assign Supervisor</label>
+                        <select name="supervisor" id="supervisor" class="form-control">
+                            <option></option>
+                            @if($count>0)
+                            @foreach($subordinates as $subordinate)
+                            <option value="{{ $subordinate->id }}"<?= ($subordinate->id==$supervisor->supervisor_id)?'selected="selected"':''; ?>> {{ $subordinate->first_name.' '.$subordinate->last_name }}</option>
+                            @endforeach
+                            @else
+                            @foreach($subordinates as $subordinate)
+                            <option value="{{ $subordinate->id }}"> {{ $subordinate->first_name.' '.$subordinate->last_name }}</option>
+                            @endforeach
+                            @endif
+                        </select>
+                
+                    </div>
+
+                    <div class="form-group">
                         <label for="username">Date joined <span style="color:red">*</span></label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
