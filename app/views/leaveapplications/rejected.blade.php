@@ -47,7 +47,7 @@
           <td>{{$leaveapplication->date_rejected}}</td>
            <td>{{$leaveapplication->applied_start_date}}</td>
             <td>{{$leaveapplication->applied_end_date}}</td>
-            <td>{{Leaveapplication::getLeaveDays($leaveapplication->applied_end_date,$leaveapplication->applied_start_date)}}</td>
+            <td>{{Leaveapplication::getLeaveDays($leaveapplication->applied_end_date,$leaveapplication->applied_start_date)+1}}</td>
 
 
           <td>

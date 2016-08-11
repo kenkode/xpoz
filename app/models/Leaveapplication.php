@@ -264,6 +264,49 @@ return $interval->days;
 		return $amount;
 	}
 
+	public static function checkBalance($id, $lid,$d){
+
+    $total = 0;
+    $balance = 0;
+
+    $currentyear = date('Y');
+
+    $employee = DB::table('employee')
+                       ->where('id',$id)
+                       ->first();
+
+		$joined_year = date('Y', strtotime($employee->date_joined));
+
+		if($currentyear == $joined_year){
+			$years = 1;
+		} else {
+
+			$years = $currentyear - $joined_year;
+
+		}
+
+		
+	//$entitled = ($years * $leavetype->days);
+
+    $leavedays = DB::table('leavetypes')
+                       ->where('id',$lid)
+                       ->first();
+    
+
+    $leaveapplications = DB::table('leaveapplications')
+                       ->join('leavetypes','leaveapplications.leavetype_id','=','leavetypes.id')
+                       ->where('employee_id',$id)
+                       ->where('leavetype_id',$lid)
+                       ->where('date_approved','<>','')
+                       ->get();
+    foreach ($leaveapplications as $leaveapplication) {
+      $total+=Leaveapplication::getLeaveDays($leaveapplication->applied_start_date, $leaveapplication->applied_end_date);
+    }
+    $balance = ($years * $leavedays->days)-$total-$d;
+
+		return $balance;
+	}
+
 
 	public static function RedeemLeaveDays($employee, $leavetype){
 
@@ -278,7 +321,32 @@ return $interval->days;
 
 
 
+	public static function getEndDate($startdate,$days){
 
+		$sdate = $startdate;
+		$chkdate = $sdate;
+		$i = $days;
+    do{
+    $wk = Leaveapplication::checkWeekend($chkdate);
+    $hol = Leaveapplication::checkHoliday($chkdate);
+    if($wk == false && $hol == false){
+    $edate = $chkdate;
+    $add_days = 1;
+    $chkdate = date('Y-m-d', strtotime($chkdate.' +'.$add_days.' days'));
+    $i=$i-1;
+    }else if($hol == true || $wk == true){
+    $add_days = 1;
+    $chkdate = date('Y-m-d',strtotime($chkdate.' +'.$add_days.' days'));
+    } /*else {
+    $add_days = 1;
+    $chkdate = date('Y-m-d',strtotime($chkdate.' +'.$add_days.' days')); 
+    }*/
+    } while($i > 0);
+
+        return $edate;
+
+
+	}
 
 
 

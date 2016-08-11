@@ -75,7 +75,7 @@
                         <label for="username">End Date <span style="color:red">*</span></label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
-                        <input required class="form-control enddate" readonly="readonly" placeholder="" type="text" name="applied_end_date" id="applied_end_date" value="">
+                        <input required class="form-control enddate datepicker21" readonly="readonly" placeholder="" type="text" name="applied_end_date" id="applied_end_date" value="">
                     </div>
        </div>
 
@@ -104,9 +104,31 @@
 $(document).ready(function(){
 
     $('#days').keyup(function(){
+    
 
+/*var numAdd = 30;
+var dataAvui = new Date($("#appliedstartdate").val());
+for (var i=0;i<=numAdd;i++)
+{ 
+    var dataTemp = dataAvui;
+    console.dir(dataTemp.toString());
+    dataTemp.setDate(dataTemp.getDate() + 1);
+    if(dataTemp.getDay() == 6){
+        dataTemp.setDate(dataTemp.getDate() + 2);
+    }else if(dataTemp.getDay() == 0){
+        dataTemp.setDate(dataTemp.getDate() + 1);
+    }
+
+    dataAvui = dataTemp;
+}
+*/
+ 
+    
        var date = new Date($("#appliedstartdate").val()),
            days = parseInt($("#days").val(), 10);
+
+
+        date.setDate(date.getDate() - 1);
 
         if(!isNaN(date.getTime())){
             date.setDate(date.getDate() + days);
@@ -119,19 +141,25 @@ $(document).ready(function(){
          $.get("{{ url('api/getDays')}}", 
          { employee: $('#employee').val(),
            leave: $('#leave').val(),
-           option: $('#days').val()
+           option: $('#days').val(),
+           sdate:$('#appliedstartdate').val()
          }, 
          function(data) {
-         if(data<0){
+          //alert(data);
+         if(data < 0){
           console.log(data);
           alert("Days given exceed assigned leave days! Current employee balance is "+(parseInt($("#days").val())+parseInt(data)));
           $('#days').val(0);
           $('#applied_end_date').val('');
+         }else{
+          $('#applied_end_date').val(data);
          }
          
       });
 
     });
+
+   
 
 
     //From: http://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object

@@ -326,7 +326,7 @@ Route::get('employeeleave/view/{id}', 'LeaveapplicationsController@cssleaveappro
 Route::post('leaveapplications/approve/{id}', 'LeaveapplicationsController@doapprove');
 Route::get('supervisorapproval/{id}', 'LeaveapplicationsController@supervisorapprove');
 Route::get('supervisorreject/{id}', 'LeaveapplicationsController@supervisorreject');
-Route::get('leaveapplications/cancel', 'LeaveapplicationsController@cancel');
+Route::get('leaveapplications/cancel/{id}', 'LeaveapplicationsController@cancel');
 Route::get('leaveapplications/reject/{id}', 'LeaveapplicationsController@reject');
 Route::get('leaveapplications/show/{id}', 'LeaveapplicationsController@show');
 
@@ -2664,25 +2664,20 @@ Route::get('api/getDays', function(){
     $id = Input::get('employee');
     $lid = Input::get('leave');
     $d = Input::get('option');
-    $total = 0;
-    $balance = 0;
- 
-    $leavedays = DB::table('leavetypes')
-                       ->where('id',$lid)
-                       ->first();
+    $sdate = Input::get('sdate');
     
+    Leaveapplication::checkBalance($id, $lid,$d);
+    if(Leaveapplication::checkBalance($id, $lid,$d)<0){
+     return Leaveapplication::checkBalance($id, $lid,$d);
+    }else{
 
-    $leaveapplications = DB::table('leaveapplications')
-                       ->join('leavetypes','leaveapplications.leavetype_id','=','leavetypes.id')
-                       ->where('employee_id',$id)
-                       ->where('leavetype_id',$lid)
-                       ->where('date_approved','<>','')
-                       ->get();
-    foreach ($leaveapplications as $leaveapplication) {
-      $total+=Leaveapplication::getLeaveDays($leaveapplication->applied_start_date, $leaveapplication->applied_end_date);
+    $enddate = Leaveapplication::getEndDate($sdate,$d);
+
+    return $enddate;
+    //Leaveapplication::checkHoliday($sdate);
     }
-    $balance = $leavedays->days-$total-$d;
-    return $balance;
+    
+    //return Leaveapplication::checkBalance($id, $lid,$d);
 });
 
 Route::get('api/score', function(){
@@ -3319,5 +3314,13 @@ Route::get('movements/checkout/{id}', function($id){
 
   return View::make('move', compact('item'));
 
+});
+
+
+Route::get('enddate', function(){
+
+  $enddate = Leaveapplication::getEndDate();
+
+  return $enddate;
 });
 
