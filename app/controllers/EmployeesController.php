@@ -242,7 +242,7 @@ class EmployeesController extends \BaseController {
 		$educations = Education::all();
 		$supervisor = Supervisor::where('employee_id',$id)->first();
 		$count = Supervisor::where('employee_id',$id)->count();
-		$subordinates = Employee::where('id','!=',$id)->get();
+		$subordinates = Employee::all();
 		return View::make('employees.edit', compact('count','supervisor','subordinates','branches','educations','departments','etypes','jgroups','banks','bbranches','employee'));
 	}
 

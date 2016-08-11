@@ -85,12 +85,12 @@
                   <li>
                     <a href="#"><i class="glyphicon glyphicon-upload fa-fw"></i>  Migrate</a>
                   </li>    -->
-
+@if(Confide::user()->hasRole('SUPERADMIN') || Confide::user()->hasRole('ACCOUNTS MANAGER'))
                   <li>
 
                     <a href="{{ URL::to('assets') }}"><i class="glyphicon glyphicon-list fa-fw"></i>  Asset Register</a>
                   </li> 
-
+@endif
 
                   <li>
 
