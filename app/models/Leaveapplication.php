@@ -53,6 +53,17 @@ class Leaveapplication extends \Eloquent {
 		$application->leavetype()->associate($leavetype);
 		$application->organization()->associate($organization);
 		$application->is_supervisor_approved = 0;
+		if(array_get($data, 'weekends') == null){
+          $application->is_weekend = 0;
+		}else{
+		  $application->is_weekend = 1;	
+		}
+		if(array_get($data, 'holidays') == null){
+          $application->is_holiday = 0;
+		}else{
+		  $application->is_holiday = 1;	
+		}
+		
 		$application->save();
 
 
@@ -94,7 +105,8 @@ class Leaveapplication extends \Eloquent {
 		$application->status = 'amended';
 		$application->date_amended = date('Y-m-d');
 		$application->leavetype()->associate($leavetype);
-		
+		$application->is_weekend = array_get($data, 'weekends');
+		$application->is_holiday = array_get($data, 'holidays');
 		$application->update();
 
 	}
@@ -160,6 +172,9 @@ class Leaveapplication extends \Eloquent {
 	}
 
 
+
+
+	
 	public static function getLeaveDays($start_date, $end_date){
 
 		$start = new DateTime($start_date);
@@ -173,12 +188,46 @@ class Leaveapplication extends \Eloquent {
 		//$diff=date_diff($end, $start);
 
 
-        $interval = $end->diff($start);
+         $interval = $end->diff($start);
 
          $interval->format('%m');
-return $interval->days;
+         $days = $interval->days;
+
+         return $days;
 
 		//return strtotime($diff);
+
+		
+	}
+
+	public static function getDays($start_date, $end_date,$weekends,$holidays){
+
+        $start = new DateTime($start_date);
+		$end = new DateTime($end_date);
+
+         $interval = $end->diff($start);
+
+         $interval->format('%m');
+         $days = $interval->days;
+
+         if($weekends == 1 && $holidays == 0){
+           $weekendcount = Leaveapplication::getHoliday($start_date, $end_date);
+
+           return $days - $weekendcount;
+         }
+         if($weekends == 0 && $holidays == 1){
+           $holidaycount = Leaveapplication::getWeekend($start_date, $end_date);
+
+           return $days - $holidaycount;
+         }
+         if($weekends == 1 && $holidays == 1){
+           return $days;
+         }
+         if($weekends == 0 && $holidays == 0){
+           $weekendholidaycount = Leaveapplication::getHoliday($start_date, $end_date)+ Leaveapplication::getWeekend($start_date, $end_date);
+
+           return $days - $weekendholidaycount;
+         }
 
 		
 	}
@@ -328,13 +377,128 @@ return $interval->days;
 		Earning::insert($employee->id, 'Leave earning', 'redeemed leave days', $amount);
 	}
 
+	public static function getWeekend($startdate, $end_date){
 
 
-	public static function getEndDate($startdate,$days){
 
-		$sdate = $startdate;
+		$count = 0;
+		$start = new DateTime($startdate);
+		$end = new DateTime($end_date);
+
+		
+        $interval = $end->diff($start);
+
+        $interval->format('%m');
+		$days = $interval->days;
+		
+		$chkdate = $end_date;
+
+		do {
+
+			$weekend = Leaveapplication::checkWeekend($chkdate);
+
+			if($weekend == true){
+				
+				$count = $count +1;
+				$add_days = 1;
+    			$chkdate = date('Y-m-d', strtotime($chkdate.' +'.$add_days.' days'));
+    			$days = $days - 1;
+			} else {
+				
+				$days = $days - 1;
+				$add_days = 1;
+    			$chkdate = date('Y-m-d', strtotime($chkdate.' +'.$add_days.' days'));
+			}
+
+
+		} while($days > 0);
+
+		return $count;
+
+		//print_r($count);
+		
+	}
+
+    public static function getHoliday($startdate, $end_date){
+
+
+
+		$count = 0;
+		$start = new DateTime($startdate);
+		$end = new DateTime($end_date);
+
+		
+        $interval = $end->diff($start);
+
+        $interval->format('%m');
+		$days = $interval->days;
+		
+		$chkdate = $end_date;
+
+		do {
+
+			$hol = Leaveapplication::checkHoliday($chkdate);
+
+			if($hol == true){
+				
+				$count = $count +1;
+				$add_days = 1;
+    			$chkdate = date('Y-m-d', strtotime($chkdate.' +'.$add_days.' days'));
+    			$days = $days - 1;
+			} else {
+				
+				$days = $days - 1;
+				$add_days = 1;
+    			$chkdate = date('Y-m-d', strtotime($chkdate.' +'.$add_days.' days'));
+			}
+
+
+		} while($days > 0);
+
+		return $count;
+
+		//print_r($count);
+		
+	}
+
+
+	public static function getEndDate($startdate,$days,$weekends,$holidays){
+
+		$sdate =$startdate;
 		$chkdate = $sdate;
 		$i = $days;
+		$edate = $sdate;
+
+    if($holidays == 1 && $weekends == 0){
+    do{
+    $hol = Leaveapplication::checkWeekend($chkdate);
+    if($hol == false){
+    $edate = $chkdate;
+    $add_days = 1;
+    $chkdate = date('Y-m-d', strtotime($chkdate.' +'.$add_days.' days'));
+    $i=$i-1;
+    }else if($hol == true){
+    $add_days = 1;
+    $chkdate = date('Y-m-d',strtotime($chkdate.' +'.$add_days.' days'));
+    } 
+    } while($i > 0);
+    }if($weekends == 1 && $holidays == 0){
+    do{
+    $wk = Leaveapplication::checkHoliday($chkdate);
+    if($wk == false){
+    $edate = $chkdate;
+    $add_days = 1;
+    $chkdate = date('Y-m-d', strtotime($chkdate.' +'.$add_days.' days'));
+    $i=$i-1;
+    }else if($wk == true){
+    $add_days = 1;
+    $chkdate = date('Y-m-d',strtotime($chkdate.' +'.$add_days.' days'));
+    } 
+    } while($i > 0);
+    }if($weekends == 1 && $holidays == 1){
+    $edate = Leaveapplication::getLeaveDays($leaveapplication->approved_end_date,$leaveapplication->approved_start_date)+1;
+    }if($weekends == 0 && $holidays == 0){
+
     do{
     $wk = Leaveapplication::checkWeekend($chkdate);
     $hol = Leaveapplication::checkHoliday($chkdate);
@@ -346,18 +510,11 @@ return $interval->days;
     }else if($hol == true || $wk == true){
     $add_days = 1;
     $chkdate = date('Y-m-d',strtotime($chkdate.' +'.$add_days.' days'));
-    } /*else {
-    $add_days = 1;
-    $chkdate = date('Y-m-d',strtotime($chkdate.' +'.$add_days.' days')); 
-    }*/
+    } 
     } while($i > 0);
-
-        return $edate;
-
+    }
+    return $edate;
 
 	}
-
-
-
 
 }

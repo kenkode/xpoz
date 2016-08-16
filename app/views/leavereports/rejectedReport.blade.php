@@ -134,7 +134,7 @@ body {
         <td> {{ $rej->date_rejected }}</td>
         <td> {{ $rej->applied_start_date }}</td>
         <td> {{ $rej->applied_end_date }}</td>
-        <td> {{ Leaveapplication::getLeaveDays($rej->applied_start_date, $rej->applied_end_date)}}</td>
+        <td> {{ Leaveapplication::getDays($rej->applied_end_date,$rej->applied_start_date,$rej->is_weekend,$rej->is_holiday)+1}}</td>
         </tr>
       <?php $i++; ?>
    

@@ -2665,13 +2665,15 @@ Route::get('api/getDays', function(){
     $lid = Input::get('leave');
     $d = Input::get('option');
     $sdate = Input::get('sdate');
+    $weekends = Input::get('weekends');
+    $holidays = Input::get('holidays');
     
     Leaveapplication::checkBalance($id, $lid,$d);
     if(Leaveapplication::checkBalance($id, $lid,$d)<0){
      return Leaveapplication::checkBalance($id, $lid,$d);
     }else{
 
-    $enddate = Leaveapplication::getEndDate($sdate,$d);
+    $enddate = Leaveapplication::getEndDate($sdate,$d,$weekends,$holidays);
 
     return $enddate;
     //Leaveapplication::checkHoliday($sdate);
@@ -2679,6 +2681,8 @@ Route::get('api/getDays', function(){
     
     //return Leaveapplication::checkBalance($id, $lid,$d);
 });
+
+
 
 Route::get('api/score', function(){
     $id = Input::get('option');

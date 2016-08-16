@@ -45,9 +45,9 @@
           <td>{{$leaveapplication->employee->first_name." ".$leaveapplication->employee->last_name." ".$leaveapplication->employee->middle_name}}</td>
           <td>{{$leaveapplication->leavetype->name}}</td>
           <td>{{$leaveapplication->date_approved}}</td>
-           <td>{{$leaveapplication->approved_start_date}}</td>
-            <td>{{$leaveapplication->approved_end_date}}</td>
-            <td>{{Leaveapplication::getLeaveDays($leaveapplication->approved_end_date,$leaveapplication->approved_start_date)+1}}</td>
+          <td>{{$leaveapplication->approved_start_date}}</td>
+          <td>{{$leaveapplication->approved_end_date}}</td>
+          <td>{{Leaveapplication::getDays($leaveapplication->applied_end_date,$leaveapplication->applied_start_date,$leaveapplication->is_weekend,$leaveapplication->is_holiday)+1}}</td>
 
 
           <td>

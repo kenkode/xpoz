@@ -36,23 +36,6 @@
             <input class="form-control" placeholder="" type="text" name="days" id="days" value="{{{ Input::old('days') }}}">
         </div>
         
-
-        
-        
-        
-        
-
-        
-
-
-
-
-
-
-
-        
-      
-        
         <div class="form-actions form-group">
         
           <button type="submit" class="btn btn-primary btn-sm">Create</button>

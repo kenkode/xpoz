@@ -134,7 +134,7 @@ body {
         <td> {{ $emp->date_approved }}</td>
         <td> {{ $emp->approved_start_date }}</td>
         <td> {{ $emp->approved_end_date }}</td>
-        <td> {{ Leaveapplication::getLeaveDays($emp->applied_start_date, $emp->applied_end_date)}}</td>
+        <td> {{ Leaveapplication::getDays($emp->applied_end_date,$emp->applied_start_date,$emp->is_weekend,$emp->is_holiday)+1}}</td>
         </tr>
       <?php $i++; ?>
    
