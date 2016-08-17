@@ -3328,3 +3328,8 @@ Route::get('enddate', function(){
   return $enddate;
 });
 
+Route::get('api/pay', function(){
+    $id = Input::get('option');
+    $employee = Employee::find($id);
+    return number_format($employee->basic_pay,2);
+});

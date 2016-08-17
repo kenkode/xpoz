@@ -151,11 +151,11 @@ var tt = $('#ddate').val();
 
                     <div class="form-group">
                         <label for="username">Earning Type <span style="color:red">*</span></label>
-                        <select name="earning" class="form-control">
+                        <select name="earning" id="earning" class="form-control">
                             <option></option>
-                            <option value="Bonus"<?= ($earning->earnings_name=='Bonus')?'selected="selected"':''; ?>>Bonus</option>
-                            <option value="Commission"<?= ($earning->earnings_name=='Commission')?'selected="selected"':''; ?>>Commission</option>
-                            <option value="Others"<?= ($earning->earnings_name=='Others')?'selected="selected"':''; ?>>Others</option>
+                            @foreach($earningsettings as $earningsetting)
+                            <option value="{{ $earningsetting->id }}"<?= ($earning->earning_id==$earningsetting->id)?'selected="selected"':''; ?>> {{ $earningsetting->earning_name }}</option>
+                            @endforeach
                         </select>
                 
                     </div>

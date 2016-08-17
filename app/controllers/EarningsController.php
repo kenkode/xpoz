@@ -11,7 +11,9 @@ class EarningsController extends \BaseController {
 	{
 		$earnings = DB::table('employee')
 		          ->join('earnings', 'employee.id', '=', 'earnings.employee_id')
+		          ->join('earningsettings', 'earnings.earning_id', '=', 'earningsettings.id')
 		          ->where('in_employment','=','Y')
+		          ->select('earnings.id','first_name','middle_name','last_name','earnings_amount','earning_name')
 		          ->get();
 
 		Audit::logaudit('Earnings', 'view', 'viewed earnings');
@@ -30,7 +32,9 @@ class EarningsController extends \BaseController {
 		$employees = DB::table('employee')
 		          ->where('in_employment','=','Y')
 		          ->get();
-		return View::make('other_earnings.create',compact('employees'));
+		$earnings = Earningsetting::all();
+		$currency = Currency::find(1);
+		return View::make('other_earnings.create',compact('employees','earnings','currency'));
 	}
 
 	/**
@@ -51,7 +55,7 @@ class EarningsController extends \BaseController {
 
 		$earning->employee_id = Input::get('employee');
 
-		$earning->earnings_name = Input::get('earning');
+		$earning->earning_id = Input::get('earning');
 
 		$earning->narrative = Input::get('narrative');
 
@@ -130,8 +134,9 @@ class EarningsController extends \BaseController {
 		          ->where('in_employment','=','Y')
 		          ->where('earnings.id','=',$id)
 		          ->first();
-
-		return View::make('other_earnings.edit', compact('earning','employees'));
+$earningsettings = Earningsetting::all();
+       $currency = Currency::find(1);
+		return View::make('other_earnings.edit', compact('earning','employees','earningsettings','currency'));
 	}
 
 	/**
@@ -151,7 +156,7 @@ class EarningsController extends \BaseController {
 			return Redirect::back()->withErrors($validator)->withInput();
 		}
 
-		$earning->earnings_name = Input::get('earning');
+		$earning->earning_id = Input::get('earning');
 
 		$earning->narrative = Input::get('narrative');
 

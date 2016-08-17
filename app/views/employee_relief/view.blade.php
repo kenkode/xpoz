@@ -13,7 +13,7 @@ function asMoney($value) {
 	<div class="col-lg-12">
 
 
-<a class="btn btn-info btn-sm "  href="{{ URL::to('employee_relief/view/'.$rel->id)}}">update details</a>
+<a class="btn btn-info btn-sm "  href="{{ URL::to('employee_relief/edit/'.$rel->id)}}">update details</a>
 
 <hr>
 </div>	

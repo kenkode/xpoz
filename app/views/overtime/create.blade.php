@@ -1,8 +1,6 @@
 @extends('layouts.payroll')
 
-{{ HTML::style('bootstrap-select-master/dist/css/bootstrap-select.css') }}
 {{ HTML::script('media/jquery-1.12.0.min.js') }}
-{{ HTML::script('bootstrap-select-master/dist/js/bootstrap-select.js') }}
 
 <style type="text/css">
 .dropdown-menu {

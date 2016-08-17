@@ -194,7 +194,7 @@ $(document).ready(function() {
         </div>
 
         <div class="form-group">
-                        <label for="username">Earning Date <span style="color:red">*</span></label>
+                        <label for="username">Overtime Date <span style="color:red">*</span></label>
                         <div class="right-inner-addon ">
                         <i class="glyphicon glyphicon-calendar"></i>
                         <input class="form-control expiry" readonly="readonly" placeholder="" type="text" name="odate" id="odate" value="{{ $overtime->overtime_date }}">

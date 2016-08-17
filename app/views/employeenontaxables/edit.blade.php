@@ -263,7 +263,6 @@ if($(this).val() == "Instalments"){
          <label for="username">Non Taxable Income <span style="color:red">*</span></label>
                         <select name="income" id="income" class="form-control">
                            <option></option>
-                           <option value="cnew">Create New</option>
                             @foreach($nontaxables as $nontaxable)
                             <option value="{{ $nontaxable->id }}"<?= ($nontax->nontaxable_id==$nontaxable->id)?'selected="selected"':''; ?>> {{ $nontaxable->name }}</option>
                             @endforeach
@@ -291,8 +290,13 @@ if($(this).val() == "Instalments"){
             <label for="username">Amount <span style="color:red">*</span></label>
             <div class="input-group">
             <span class="input-group-addon">{{$currency->shortname}}</span>
-            <input class="form-control" placeholder="" onkeypress="totalBalance()" onkeyup="totalBalance()" type="text" name="amount" id="amount" value="{{ $nontax->nontaxable_amount}}">
-            </div>
+            <input class="form-control" placeholder="" onkeypress="totalBalance()" onkeyup="totalBalance()" type="text" name="amount" id="amount" value="{{ $nontax->nontaxable_amount*100}}">
+           <script type="text/javascript">
+           $(document).ready(function() {
+           $('#amount').priceFormat();
+           });
+           </script> 
+           </div>
         </div>
         
         <div class="form-group bal_amt" id="bal">

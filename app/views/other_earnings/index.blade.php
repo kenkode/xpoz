@@ -64,7 +64,7 @@ function asMoney($value) {
 
           <td> {{ $i }}</td>
           <td>{{ $earning->first_name.' '.$earning->last_name }}</td>
-          <td>{{ $earning->earnings_name }}</td>
+          <td>{{ $earning->earning_name }}</td>
           <td align="right">{{ asMoney((double)$earning->earnings_amount) }}</td>
           <td>
 

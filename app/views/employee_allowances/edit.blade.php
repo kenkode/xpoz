@@ -260,7 +260,6 @@ if($(this).val() == "Instalments"){
                         <label for="username">Allowance Type <span style="color:red">*</span></label>
                         <select name="allowance" id="allowance" class="form-control">
                             <option></option>
-                            <option value="cnew">Create New</option>
                             @foreach($allowances as $allowance)
                             <option value="{{$allowance->id }}"<?= ($eallw->allowance_id==$allowance->id)?'selected="selected"':''; ?>> {{ $allowance->allowance_name }}</option>
                             @endforeach
@@ -291,6 +290,11 @@ if($(this).val() == "Instalments"){
             <div class="input-group">
             <span class="input-group-addon">{{$currency->shortname}}</span>
             <input class="form-control" placeholder="" type="text" onkeypress="totalBalance()" onkeyup="totalBalance()" name="amount" id="amount" value="{{ $eallw->allowance_amount}}">
+           <script type="text/javascript">
+           $(document).ready(function() {
+           $('#amount').priceFormat();
+           });
+           </script> 
            </div>
         </div>
 
