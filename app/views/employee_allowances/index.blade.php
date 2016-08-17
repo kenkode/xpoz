@@ -57,15 +57,6 @@ function asMoney($value) {
 
       </thead>
 
-      <tfoot>
-
-        <th>#</th>
-        <th>Employee</th>
-        <th>Allowance Type</th>
-        <th>Amount</th>
-
-      </tfoot>
-
       <tbody>
 
         <?php $i = 1; ?>
