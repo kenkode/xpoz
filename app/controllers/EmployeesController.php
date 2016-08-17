@@ -190,7 +190,7 @@ class EmployeesController extends \BaseController {
 
 		$employee->save();
 
-        if(Input::get('supervisor') != null){
+        if(Input::get('supervisor') != null || Input::get('supervisor') != ""){
 
 		$supervisor = new Supervisor;
 
@@ -416,7 +416,7 @@ class EmployeesController extends \BaseController {
         }
 
 
-		else if(Input::get('supervisor') != null){
+		else if(Input::get('supervisor') != null || Input::get('supervisor') != ""){
 
 		$supervisor = new Supervisor;
 
