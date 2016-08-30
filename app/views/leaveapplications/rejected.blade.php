@@ -52,7 +52,8 @@
 
           <td>
            <a href="{{URL::to('leaveapplications/edit/'.$leaveapplication->id)}}">Amend</a> 
-         
+           &nbsp;|
+          <a href="{{URL::to('leaveapplications/cancel/'.$leaveapplication->id)}}">Cancel</a>
           </td>
 
            </tr>

@@ -52,7 +52,8 @@
    </tr>
    
     <tr>
-   <td><strong>Leave Days</strong></td><td>{{Leaveapplication::getLeaveDays($leaveapplication->applied_start_date, $leaveapplication->applied_end_date)}}</td>
+   <td><strong>Leave Days</strong></td><td>{{Leaveapplication::getDays($leaveapplication->applied_end_date,$leaveapplication->applied_start_date,$leaveapplication->is_weekend,$leaveapplication->is_holiday)+1}}</td>
+                
      
    </tr>
    

@@ -74,7 +74,7 @@
                                 ->whereIn('employee_id',$arr)
                                 ->where('status', '=', 'applied')
                                 ->where('is_supervisor_approved', '=', 0)
-                                ->select('leaveapplications.id as id','leavetype_id','first_name','last_name','application_date','applied_start_date','applied_end_date')
+                                ->select('leaveapplications.id as id','leavetype_id','first_name','last_name','application_date','applied_start_date','applied_end_date','is_weekend','is_holiday')
                                 ->get();
           ?>
           @foreach($leaveapplications as $application)
@@ -86,9 +86,9 @@
                 <td>{{date('d-M-Y', strtotime($application->application_date))}}</td>
                 <td>{{date('d-M-Y', strtotime($application->applied_start_date))}}</td>
                 <td>{{date('d-M-Y', strtotime($application->applied_end_date))}}</td>
-                <td>{{Leaveapplication::getLeaveDays($application->applied_start_date, $application->applied_end_date)}}</td>
+                <td>{{Leaveapplication::getDays($application->applied_end_date,$application->applied_start_date,$application->is_weekend,$application->is_holiday)+1}}</td>
+                
                 <td>
-
                   <div class="btn-group">
                   <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     Action <span class="caret"></span>
