@@ -1884,7 +1884,7 @@ Route::group(['before' => 'leave_mgmt'], function() {
 
 Route::get('leavemgmt', function(){
 
-  $leaveapplications = Leaveapplication::all();
+  $leaveapplications = Leaveapplication::orderBy('application_date', 'desc')->get();
 
   return View::make('leavemgmt', compact('leaveapplications'));
 
