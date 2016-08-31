@@ -81,11 +81,17 @@
     $('#app').DataTable();
     $('#occ').DataTable();
     $('#prop').DataTable();
-    $('#mobile').DataTable();
-    $('#rejected').DataTable();
+    $('#mobile').DataTable({
+        "bSort": false
+    });
+    $('#rejected').DataTable({
+        "bSort": false
+    });
     $('#app').DataTable();
     $('#disbursed').DataTable();
-    $('#amended').DataTable();
+    $('#amended').DataTable({
+        "bSort": false
+    });
 
 
     

@@ -37,7 +37,7 @@
 
 
 
-      <table class="table table-condensed table-bordered" id="users">
+      <table class="table table-condensed table-bordered" id="mobile">
 
          
           <thead>
@@ -75,6 +75,7 @@
                                 ->where('status', '=', 'applied')
                                 ->where('is_supervisor_approved', '=', 0)
                                 ->select('leaveapplications.id as id','leavetype_id','first_name','last_name','application_date','applied_start_date','applied_end_date','is_weekend','is_holiday')
+                                ->orderBy('application_date', 'desc')
                                 ->get();
           ?>
           @foreach($leaveapplications as $application)

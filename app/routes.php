@@ -349,7 +349,7 @@ Route::get('leaveapplicationenddate', function(){
 
 Route::get('leaveapprovals', function(){
 
-  $leaveapplications = Leaveapplication::all();
+  $leaveapplications = Leaveapplication::where('status','approved')->orderBy('date_approved', 'desc')->get();
 
   return View::make('leaveapplications.approved', compact('leaveapplications'));
 
@@ -359,7 +359,7 @@ Route::group(['before' => 'amend_application'], function() {
 
 Route::get('leaveamends', function(){
 
-  $leaveapplications = Leaveapplication::all();
+  $leaveapplications = Leaveapplication::orderBy('date_amended', 'desc')->get();
 
   return View::make('leaveapplications.amended', compact('leaveapplications'));
 
@@ -371,7 +371,7 @@ Route::group(['before' => 'reject_application'], function() {
 
 Route::get('leaverejects', function(){
 
-  $leaveapplications = Leaveapplication::all();
+  $leaveapplications = Leaveapplication::orderBy('date_rejected', 'desc')->get();
 
   return View::make('leaveapplications.rejected', compact('leaveapplications'));
 
@@ -2724,7 +2724,7 @@ Route::get('css/leave', function(){
 
   $employee = Employee::findorfail($employeeid);
 
-   $leaveapplications = DB::table('leaveapplications')->where('employee_id', '=', $employee->id)->get();
+   $leaveapplications = DB::table('leaveapplications')->where('employee_id', '=', $employee->id)->orderBy('application_date', 'desc')->get();
 
   return View::make('css.leave', compact('employee', 'leaveapplications'));
 });

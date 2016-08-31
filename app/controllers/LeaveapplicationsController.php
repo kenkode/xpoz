@@ -9,7 +9,7 @@ class LeaveapplicationsController extends \BaseController {
 	 */
 	public function index()
 	{
-		$leaveapplications = Leaveapplication::all();
+		$leaveapplications = Leaveapplication::orderBy('application_date', 'desc')->get();
 
 		return Redirect::to('leavemgmt');
 	}
