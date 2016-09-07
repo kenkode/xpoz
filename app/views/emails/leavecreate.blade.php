@@ -2,7 +2,7 @@
 Hello, 
 </p>
 
-<p>A new Leave application has been submitted: </p>
+<p>A new Leave application applied by {{$name}}: </p>
 <br>
 
 <table>
@@ -32,7 +32,7 @@ Hello,
 
 
 	<tr>
-		<td>Days</td><td>{{Leaveapplication::getLeaveDays($application->applied_start_date, $application->applied_end_date )}}</td>
+		<td>Days</td><td>{{Leaveapplication::getLeaveDays($application->applied_start_date, $application->applied_end_date ) + 1}}</td>
 	</tr>
 
 </tbody>

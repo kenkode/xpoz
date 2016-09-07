@@ -4,14 +4,12 @@ class Leaveapplication extends \Eloquent {
 
 	// Add your validation rules here
 	public static $rules = [
-		'applied_start_date' => 'required',
-		'applied_end_date' => 'required|after:applied_start_date'
+		'applied_start_date' => 'required'
 	];
 
     public static $messages = array(
         'applied_start_date.required'=>'Please select start date!',
         'applied_end_date.required'=>'Please select end date!',
-        'applied_start_date.after'=>'End date cannot be before start date!',
     );
 
 	// Don't forget to fill this array
@@ -66,26 +64,18 @@ class Leaveapplication extends \Eloquent {
 		
 		$application->save();
 
+        $supervisor = Supervisor::where('employee_id',$application->employee_id)->first();
 
-
-
-
-
-        /*
+        $employee = Employee::where('id',$supervisor->supervisor_id)->first();
 
 		$name = $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name;
 
 
-		Mail::send( 'emails.leavecreate', array('application'=>$application, 'name'=>$name), function( $message ) use ($organization)
+		Mail::send( 'emails.leavecreate', array('application'=>$application, 'name'=>$name), function( $message ) use ($employee)
 		{
     		
-    		$message->to($organization->email )->subject( 'Leave Application' );
+    		$message->to($employee->email_office )->subject( 'Leave Application' );
 		});
-
-               */
-
-     
-
 
 	}
 
