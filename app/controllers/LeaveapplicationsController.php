@@ -96,7 +96,7 @@ class LeaveapplicationsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit($url,$id)
 	{
 		$leaveapplication = Leaveapplication::find($id);
 
@@ -104,7 +104,9 @@ class LeaveapplicationsController extends \BaseController {
 
 		$leavetypes = Leavetype::all();
 
-		return View::make('leaveapplications.edit', compact('leaveapplication', 'employees', 'leavetypes'));
+		$pageurl = $url;
+
+		return View::make('leaveapplications.edit', compact('leaveapplication', 'employees', 'leavetypes','pageurl'));
 	}
 
 	/**
@@ -126,7 +128,7 @@ class LeaveapplicationsController extends \BaseController {
 
 		Leaveapplication::amendLeaveApplication($data, $id);
 
-		return Redirect::to('leavemgmt');
+		return Redirect::to(Input::get('pageurl'));
 	}
 
 	/**
@@ -143,19 +145,19 @@ class LeaveapplicationsController extends \BaseController {
 	}
 
 
-	public function approve($id){
+	public function approve($pageurl,$id){
 
 		$leaveapplication = Leaveapplication::find($id);
 
 		
 
-		return View::make('leaveapplications.approve', compact('leaveapplication'));
+		return View::make('leaveapplications.approve', compact('leaveapplication','pageurl'));
 
 
 
 	}
 
-	public function cssleaveapprove($id){
+	public function cssleaveapprove($url,$id){
 
 		$leaveapplication = Leaveapplication::find($id);
 
@@ -182,7 +184,7 @@ class LeaveapplicationsController extends \BaseController {
 
 				Leaveapplication::approveLeaveApplication($data, $id);
 
-		return Redirect::route('leaveapplications.index');
+	   return Redirect::to(Input::get('pageurl'));
 
 
 			//}
@@ -219,17 +221,17 @@ class LeaveapplicationsController extends \BaseController {
 	}
 
 
-	public function reject($id){
+	public function reject($pageurl,$id){
 
 		Leaveapplication::rejectLeaveApplication($id);
-		return Redirect::route('leaveapplications.index');
+		return Redirect::to($pageurl);
 
 	}
 
-	public function cancel($id){
+	public function cancel($pageurl,$id){
 
 		Leaveapplication::cancelLeaveApplication($id);
-		return Redirect::route('leaveapplications.index');
+		return Redirect::to($pageurl);
 
 	}
 

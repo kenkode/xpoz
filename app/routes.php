@@ -317,17 +317,17 @@ Route::post('leavetypes/update/{id}', 'LeavetypesController@update');
 
 
 Route::resource('leaveapplications', 'LeaveapplicationsController');
-Route::get('leaveapplications/edit/{id}', 'LeaveapplicationsController@edit');
+Route::get('leaveapplications/edit/{url}/{id}', 'LeaveapplicationsController@edit');
 Route::get('leaveapplications/delete/{id}', 'LeaveapplicationsController@destroy');
 Route::post('leaveapplications/update/{id}', 'LeaveapplicationsController@update');
-Route::get('leaveapplications/approve/{id}', 'LeaveapplicationsController@approve');
+Route::get('leaveapplications/approve/{url}/{id}', 'LeaveapplicationsController@approve');
 Route::get('employeeleave/view/{id}', 'LeaveapplicationsController@cssleaveapprove');
 
 Route::post('leaveapplications/approve/{id}', 'LeaveapplicationsController@doapprove');
 Route::get('supervisorapproval/{id}', 'LeaveapplicationsController@supervisorapprove');
 Route::get('supervisorreject/{id}', 'LeaveapplicationsController@supervisorreject');
-Route::get('leaveapplications/cancel/{id}', 'LeaveapplicationsController@cancel');
-Route::get('leaveapplications/reject/{id}', 'LeaveapplicationsController@reject');
+Route::get('leaveapplications/cancel/{url}/{id}', 'LeaveapplicationsController@cancel');
+Route::get('leaveapplications/reject/{url}/{id}', 'LeaveapplicationsController@reject');
 Route::get('leaveapplications/show/{id}', 'LeaveapplicationsController@show');
 
 Route::get('leaveapplications/approvals', 'LeaveapplicationsController@approvals');

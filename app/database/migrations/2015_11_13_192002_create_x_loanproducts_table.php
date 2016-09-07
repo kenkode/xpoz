@@ -22,6 +22,7 @@ class CreateXLoanproductsTable extends Migration {
 			$table->timestamps();
 			$table->string('amortization')->nullable()->default('EI');
 			$table->integer('period')->nullable();
+			$table->float('auto_loan_limit',15,2)->nullable();
 			$table->string('currency');
 		});
 	}

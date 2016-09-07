@@ -26,6 +26,8 @@ class CreateXMembersTable extends Migration {
 			$table->text('address', 65535)->nullable();
 			$table->integer('group_id')->unsigned()->nullable()->index('members_group_id_foreign');
 			$table->integer('branch_id')->unsigned()->index('members_branch_id_foreign');
+			$table->integer('bank_id')->unsigned()->nullable()->index('members_bank_id_foreign');
+			$table->integer('bank_branch_id')->unsigned()->nullable()->index('members_bank_branch_id_foreign');
 			$table->float('monthly_remittance_amount', 15)->nullable();
 			$table->timestamps();
 			$table->boolean('is_active')->nullable()->default(1);

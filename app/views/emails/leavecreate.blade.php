@@ -32,8 +32,8 @@ Hello,
 
 
 	<tr>
-		<td>Days</td><td>{{Leaveapplication::getLeaveDays($application->applied_start_date, $application->applied_end_date ) + 1}}</td>
-	</tr>
+		<td>Days</td><td>{{Leaveapplication::getDays($application->applied_end_date,$application->applied_start_date,$application->is_weekend,$application->is_holiday)+1}}</td>
+     </tr>
 
 </tbody>
 	

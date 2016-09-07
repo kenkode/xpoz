@@ -19,6 +19,7 @@ class CreateXKinsTable extends Migration {
 			$table->string('rship')->nullable();
 			$table->float('goodwill', 10, 0)->nullable();
 			$table->string('id_number')->nullable();
+			$table->text('contact')->nullable();
 			$table->integer('member_id')->unsigned()->index('kins_member_id_foreign');
 			$table->timestamps();
 		});

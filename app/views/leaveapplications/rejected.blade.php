@@ -51,9 +51,9 @@
 
 
           <td>
-           <a href="{{URL::to('leaveapplications/edit/'.$leaveapplication->id)}}">Amend</a> 
+           <a href="{{URL::to('leaveapplications/edit/leaverejects/'.$leaveapplication->id)}}">Amend</a> 
            &nbsp;|
-          <a href="{{URL::to('leaveapplications/cancel/'.$leaveapplication->id)}}">Cancel</a>
+          <a href="{{URL::to('leaveapplications/cancel/leaverejects/'.$leaveapplication->id)}}">Cancel</a>
           </td>
 
            </tr>

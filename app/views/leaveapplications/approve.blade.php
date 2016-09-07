@@ -62,7 +62,8 @@
    
     <fieldset>
 
-        
+        <input required class="form-control" readonly="readonly" placeholder="" type="hidden" name="pageurl" id="pageurl" value="{{$pageurl}}">
+         
         <div class="form-group">
                         <label for="username">Approved Start Date <span style="color:red">*</span></label>
                         <div class="right-inner-addon ">

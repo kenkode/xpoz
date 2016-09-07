@@ -336,9 +336,7 @@ class Leaveapplication extends \Eloquent {
 		
 	//$entitled = ($years * $leavetype->days);
 
-    $leavedays = DB::table('leavetypes')
-                       ->where('id',$lid)
-                       ->first();
+    
     
 
     $leaveapplications = DB::table('leaveapplications')
@@ -349,8 +347,21 @@ class Leaveapplication extends \Eloquent {
                        ->get();
     foreach ($leaveapplications as $leaveapplication) {
       $total+=Leaveapplication::getLeaveDays($leaveapplication->applied_start_date, $leaveapplication->applied_end_date);
+   
     }
-    $balance = ($years * $leavedays->days)-$total-$d;
+    $balance = 0;
+    if($lid == 1){
+      $leavedays = DB::table('leavetypes')
+                       ->where('id',1)
+                       ->first();
+      $balance = ($years * $leavedays->days)-$total-$d;
+    }else{
+      $leavedays = DB::table('leavetypes')
+                       ->where('id',$lid)
+                       ->first();
+      $balance = $leavedays->days-$d;
+    }
+    
 
 		return $balance;
 	}

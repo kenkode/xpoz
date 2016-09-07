@@ -28,7 +28,8 @@
      <form method="POST" action="{{{ URL::to('leaveapplications/update/'.$leaveapplication->id) }}}" accept-charset="UTF-8">
    
     <fieldset>
-
+        <input required class="form-control" readonly="readonly" placeholder="" type="hidden" name="pageurl" id="pageurl" value="{{$pageurl}}">
+                    
         <div class="form-group">
             <label for="username">Employee</label>
             <select class="form-control" name="employee_id" id="employee">

@@ -55,12 +55,12 @@
 
 <td>{{Leaveapplication::getBalanceDays($leaveapplication->employee, $leaveapplication->leavetype)}}</td>
           <td>
-           <a href="{{URL::to('leaveapplications/edit/'.$leaveapplication->id)}}">Amend</a> &nbsp; |
+           <a href="{{URL::to('leaveapplications/edit/leavemgmt/'.$leaveapplication->id)}}">Amend</a> &nbsp; |
            @if(Leaveapplication::getBalanceDays($leaveapplication->employee, $leaveapplication->leavetype) >= Leaveapplication::getLeaveDays($leaveapplication->applied_end_date,$leaveapplication->applied_start_date))
-          <a href="{{URL::to('leaveapplications/approve/'.$leaveapplication->id)}}">Approve</a> &nbsp;
+          <a href="{{URL::to('leaveapplications/approve/leavemgmt/'.$leaveapplication->id)}}">Approve</a> &nbsp;
           @endif
-          |&nbsp;<a href="{{URL::to('leaveapplications/reject/'.$leaveapplication->id)}}">Reject</a> &nbsp;|
-          <a href="{{URL::to('leaveapplications/cancel/'.$leaveapplication->id)}}">Cancel</a>
+          |&nbsp;<a href="{{URL::to('leaveapplications/reject/leavemgmt/'.$leaveapplication->id)}}">Reject</a> &nbsp;|
+          <a href="{{URL::to('leaveapplications/cancel/leavemgmt/'.$leaveapplication->id)}}">Cancel</a>
           </td>
 
            </tr>
