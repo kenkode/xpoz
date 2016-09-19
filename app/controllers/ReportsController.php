@@ -321,10 +321,12 @@ class ReportsController extends \BaseController {
 
 		$employee = Employee::find($id);
 
-		$organization = Organization::find(1);
+		$benefits = Employeebenefit::where('jobgroup_id', $employee->job_group_id)->get();
 
-		$pdf = PDF::loadView('pdf.individualemployee', compact( 'employee','organization'))->setPaper('a4')->setOrientation('potrait');
- 	
+    $organization = Organization::find(Confide::user()->organization_id);
+
+    $pdf = PDF::loadView('pdf.individualemployee', compact( 'employee','organization','benefits'))->setPaper('a4')->setOrientation('potrait');
+  
 		//dd($organization);
 
 		return $pdf->stream($employee->first_name.' '.$employee->last_name.'.pdf');

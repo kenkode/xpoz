@@ -157,7 +157,7 @@ class LeaveapplicationsController extends \BaseController {
 
 	}
 
-	public function cssleaveapprove($url,$id){
+	public function cssleaveapprove($id){
 
 		$leaveapplication = Leaveapplication::find($id);
 
