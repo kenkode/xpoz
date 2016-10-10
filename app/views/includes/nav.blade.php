@@ -1,12 +1,19 @@
+<style type="text/css" media="screen">
+    .navbar-static-top{
+        position: fixed;
+        width: 100%;
+        background: #DD4F4F;
+        border: none;
+        outline: none;
+        //box-shadow: 0px 1px 3px rgba(0,0,0,0.3);
+    }    
+</style>
 
 <body>
 
-
-    
-
     <div id="wrapper">
 
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 50px">
             <div class="navbar-header"  >
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -17,7 +24,7 @@
 
                
 
-                <a class="navbar-brand"  href="{{ URL::to('/')}}" > </a>
+                <a class="navbar-brand"  href="{{ URL::to('/')}}" ><font color='white'><b>{{Organization::getOrganizationName()}}</b></font></a>
             </div>
             <!-- /.navbar-header -->
 
@@ -131,7 +138,7 @@
 
                 <!-- /.dropdown -->
                
-                <li class="dropdown" style="background-color:white;">
+                <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-user fa-fw"></i>  {{ Confide::user()->username}} <i class="fa fa-caret-down"></i>
                     </a>
