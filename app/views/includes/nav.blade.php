@@ -6,7 +6,14 @@
         border: none;
         outline: none;
         //box-shadow: 0px 1px 3px rgba(0,0,0,0.3);
-    }    
+    }  
+    .lg  {
+        position: relative;
+        top:40%;
+        transform:translateY(-30%); 
+    }
+    
+
 </style>
 
 <body>
@@ -22,9 +29,9 @@
                     <span class="icon-bar"></span>
                 </button>
 
-               
+               <?php $organization = Organization::find(1);?>
 
-                <a class="navbar-brand"  href="{{ URL::to('/')}}" ><font color='white'><b>{{Organization::getOrganizationName()}}</b></font></a>
+                <a class="navbar-brand lg"  href="{{ URL::to('/')}}" ><img src="{{ asset('public/uploads/logos/'.$organization->logo) }}" alt="LOGO" width="10%"/>&emsp;<font color='white'><b>{{Organization::getOrganizationName()}}</b></font></a>
             </div>
             <!-- /.navbar-header -->
 

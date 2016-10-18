@@ -53,7 +53,7 @@
           <div class="col-md-2 quicklink">
             <a class="btn btn-default btn-icon input-block-level" href="{{URL::to('leavemgmt')}}" style="background: #9B59B6">
               <i class="fa fa-tasks fa-2x"></i>
-              <div>Manage Leaves</div>
+              <div>Manage Leave</div>
               
             </a>
           </div>

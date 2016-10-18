@@ -109,7 +109,8 @@ $('.datepicker').datepicker({
     format: 'yyyy-mm-dd',
     startDate: '-60y',
     endDate: '+0d',
-    autoclose: true
+    autoclose: true,
+    orientation: "bottom"
 });
 });
 
@@ -121,6 +122,7 @@ $(function(){
 $('.datepicker3').datepicker({
     format: 'yyyy-mm-dd',
     startDate: '-60y',
+    orientation: "bottom",
     autoclose: true
 });
 });
@@ -133,6 +135,7 @@ $('.datepicker1').datepicker({
     format: 'yyyy-mm-dd',
     startDate: '-60y',
     endDate: '-18y',
+    orientation: "bottom",
     autoclose: true
 });
 });
@@ -144,7 +147,8 @@ $('.datepicker2').datepicker({
     format: "m-yyyy",
     startView: "months", 
     minViewMode: "months",
-    autoclose: true
+    autoclose: true,
+    orientation: "bottom"
 });
 });
 </script>
@@ -155,7 +159,7 @@ $('.datepicker2').datepicker({
 $(function(){
 $('.datepicker21').datepicker({
     format: "yyyy-mm-dd",
-   
+    orientation: "bottom",
     autoclose: true
 });
 });
@@ -166,6 +170,7 @@ $(function(){
 $('.datepicker4').datepicker({
     format: "yyyy-mm-dd",
     startDate: '0y',
+    orientation: "bottom",
     autoclose: true
 });
 });
@@ -178,7 +183,8 @@ $('.datepicker40').datepicker({
     format: 'd/m/yyyy',
     startDate: '-60y',
     endDate: '+0d',
-    autoclose: true
+    autoclose: true,
+    orientation: "bottom"
 });
 });
 
@@ -190,7 +196,8 @@ $(function(){
 $('.expiry').datepicker({
     format: 'yyyy-mm-dd',
     startDate: '-60y',
-    autoclose: true
+    autoclose: true,
+    orientation: "bottom"
 });
 });
 

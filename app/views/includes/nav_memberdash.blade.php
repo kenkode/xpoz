@@ -1,3 +1,10 @@
+<style type="text/css">
+.lg  {
+        position: relative;
+        top:40%;
+        transform:translateY(-30%); 
+    }
+</style>
 <body>
 
 
@@ -11,10 +18,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <?php 
-                    $organization = DB::table('organizations')->where('id', '=', 1)->pluck('name');
-                ?> 
-                <a class="navbar-brand"  href="{{ URL::to('/')}}" ><font color='white'><b><?php echo $organization; ?></b></font></a>
+                
+                <?php $organization = Organization::find(1);?>
+
+                <a class="navbar-brand lg"  href="{{ URL::to('/')}}" ><img src="{{ asset('public/uploads/logos/'.$organization->logo) }}" alt="LOGO" width="10%"/>&emsp;<font color='white'><b>{{$organization->name}}</b></font></a>
             </div>
             <!-- /.navbar-header -->
 
