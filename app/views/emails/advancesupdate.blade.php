@@ -8,7 +8,7 @@ Hello,
 <table>
 
 <thead style="background-color:gray; color:white;">
-	<th colspan="2">Application Details</th>
+	<th colspan="2">Advance Details</th>
 </thead>
 <tbody>
 	<tr>
@@ -22,12 +22,12 @@ Hello,
 	</tr>
 
 	<tr>
-		<td>Type</td><td>{{$advance->type}}</td>
+		<td>Type:</td><td>{{$advance->type}}</td>
 	</tr>
 
 
 	<tr>
-		<td>Amount</td><td>{{$advance->amount}}</td>
+		<td>Amount:</td><td>Ksh. {{number_format($advance->amount,2)}}</td>
 	</tr>
 
 </tbody>

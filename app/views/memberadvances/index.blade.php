@@ -84,11 +84,12 @@
           
                   <ul class="dropdown-menu" role="menu">
                     <li><a target="_blank" href="{{URL::to('memberadvances/view/'.$advance->id)}}">View</a></li>
-                  
+                    @if($advance->status == 'Pending')
                     <li><a href="{{URL::to('memberadvances/approve/'.$advance->id)}}">Approve</a></li>
-
+                     @endif
+                    @if($advance->status == 'Pending')
                     <li><a href="{{URL::to('memberadvances/reject/'.$advance->id)}}">Reject</a></li>
-                  
+                    @endif
                   </ul>
               </div>
 

@@ -36,7 +36,7 @@ class MemAdvancesController extends \BaseController {
         $employee = Employee::findOrFail($memberadvance->employee_id);
 
 		$memberadvance->status = 'Approved';
-		$memberadvance->is_admin_visible = 0;
+		$memberadvance->is_admin_visible = 1;
 		
 		$memberadvance->update();
 
@@ -64,6 +64,15 @@ class MemAdvancesController extends \BaseController {
 
 		$ded->save();
 
+		$name = $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name;
+
+
+		Mail::send( 'emails.approval', array('advance'=>$memberadvance, 'name'=>$name, 'employee'=>$employee), function( $message ) use ($employee)
+		{
+    		
+    		$message->to($employee->email_office)->subject( 'Salary Advance Approval' );
+		});
+
 
 		Audit::logaudit('Memberadvance', 'approve', 'Approved: '.Confide::user()->username.' approved advance');
 
@@ -87,9 +96,18 @@ class MemAdvancesController extends \BaseController {
         $employee = Employee::findOrFail($memberadvance->employee_id);
 
 		$memberadvance->status = 'Rejected';
-		$memberadvance->is_admin_visible = 0;
+		$memberadvance->is_admin_visible = 1;
 		
 		$memberadvance->update();
+
+		$name = $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name;
+
+
+		Mail::send( 'emails.rejection', array('advance'=>$memberadvance, 'name'=>$name, 'employee'=>$employee), function( $message ) use ($employee)
+		{
+    		
+    		$message->to($employee->email_office)->subject( 'Salary Advance Rejection' );
+		});
 
 		
 		Audit::logaudit('Memberadvance', 'reject', 'Rejected: '.Confide::user()->username.' rejected advance');
