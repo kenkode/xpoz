@@ -27,7 +27,7 @@ Hello,
 
 
 	<tr>
-		<td>Amount</td><td>{{$advance->amount}}</td>
+		<td>Amount</td><td>Ksh. {{number_format($advance->amount,2)}}</td>
 	</tr>
 
 </tbody>
