@@ -43,6 +43,13 @@
 
 
 <div class="row">
+
+
+    <div class="alert alert-info">
+     Only 2 advances are permitted per fiscal year
+     </div>
+   
+
   
 <a href="{{URL::to('css/advances/create')}}" class="btn btn-info">New Advance</a>
 <br><br>

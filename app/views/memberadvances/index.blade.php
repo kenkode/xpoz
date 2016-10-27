@@ -55,6 +55,8 @@
          
           <thead>
             <th>#</th>
+            <th>Name</th>
+            <th>Department</th>
             <th>Type</th>
             <th>Amount</th>
             <th>Date</th>
@@ -67,6 +69,8 @@
           @foreach($advances as $advance)
             <tr>
                 <td>{{$i}}</td>
+                <td>{{Employee::getName($advance->employee_id)}}</td>
+                <td>{{Employee::getDept($advance->employee_id)}}</td>
                 <td>{{$advance->type}}</td>
                 <td>{{$advance->amount}}</td>
                 <td>{{$advance->date}}</td>
