@@ -164,7 +164,7 @@ input {
 <div style="margin-left:-15px;"class="checkbox">
 <label>
 <span>The amount I am requesting is</span>
-<input type="checkbox" value="{{{ $advance->type }}}"<?= ($advance->type=='paycheque')?'checked="checked"':''; ?>>Full paycheque<input type="checkbox" value="{{{ $advance->type }}}"<?= ($advance->type=='fixed')?'checked="checked"':''; ?>>Fixed Ksh <u>{{number_format($advance->amount,2)}}</u>
+<input type="checkbox" value="{{{ $advance->type }}}"<?= ($advance->type=='Full paycheque')?'checked="checked"':''; ?>>Full paycheque<input type="checkbox" value="{{{ $advance->type }}}"<?= ($advance->type=='Fixed')?'checked="checked"':''; ?>>Fixed Ksh <u>{{number_format($advance->amount,2)}}</u>
 </label>
 </div>   
 
