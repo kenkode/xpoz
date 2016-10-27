@@ -119,6 +119,19 @@ $('.datepicker').datepicker({
 <script type="text/javascript">
 
 $(function(){
+$('.datepicker60').datepicker({
+    format: 'yyyy-mm-dd',
+    startDate: '-60y',
+    autoclose: true,
+    orientation: "bottom"
+});
+});
+
+</script>
+
+<script type="text/javascript">
+
+$(function(){
 $('.datepicker3').datepicker({
     format: 'yyyy-mm-dd',
     startDate: '-60y',

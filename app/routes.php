@@ -2716,6 +2716,20 @@ Route::get('css/payslips', function(){
   return View::make('css.payslip', compact('employee'));
 });
 
+Route::resource('css/advances', 'MemberAdvancesController');
+Route::get('css/advances/edit/{id}', 'MemberAdvancesController@edit');
+Route::post('css/advances/update/{id}', 'MemberAdvancesController@update');
+Route::get('css/advances/delete/{id}', 'MemberAdvancesController@destroy');
+Route::get('css/advances/view/{id}', 'MemberAdvancesController@view');
+Route::get('css/advances/create', 'MemberAdvancesController@create');
+
+Route::resource('memberadvances', 'MemAdvancesController');
+Route::get('memberadvances/approve/{id}', 'MemAdvancesController@approve');
+Route::get('memberadvances/memapprove/{id}', 'MemAdvancesController@memapprove');
+Route::get('memberadvances/reject/{id}', 'MemAdvancesController@reject');
+Route::get('memberadvances/memrej/{id}', 'MemAdvancesController@memrej');
+Route::get('memberadvances/view/{id}', 'MemAdvancesController@view');
+
 
 Route::get('css/leave', function(){
 
