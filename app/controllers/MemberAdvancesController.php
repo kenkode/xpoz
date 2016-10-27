@@ -66,6 +66,16 @@ class MemberAdvancesController extends \BaseController {
 		
 		$memberadvance->save();
 
+
+		$name = $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name;
+
+
+		Mail::send( 'emails.advances', array('advance'=>$memberadvance, 'name'=>$name, 'employee'=>$employee), function( $message ) use ($employee)
+		{
+    		
+    		$message->to('info@xpose.co.ke')->subject( 'Salary Advance Application' );
+		});
+
 		Audit::logaudit('Memberadvance', 'applied', 'Applied: '.$employee->personal_file_number.' : '.$employee->last_name.' '.$employee->first_name.' applied advance of KES '.Input::get('amount').' type '.Input::get('type'));
 
 		return Redirect::to('css/advances')->withFlashMessage('Advance successfully created!');
@@ -126,6 +136,15 @@ class MemberAdvancesController extends \BaseController {
 		$memberadvance->fiscal_year = date('Y');
 		
 		$memberadvance->update();
+
+        $name = $employee->first_name.' '.$employee->middle_name.' '.$employee->last_name;
+
+
+		Mail::send( 'emails.advancesupdate', array('advance'=>$memberadvance, 'name'=>$name, 'employee'=>$employee), function( $message ) use ($employee)
+		{
+    		
+    		$message->to('info@xpose.co.ke')->subject( 'Salary Advance Application Update' );
+		});
 
 		Audit::logaudit('Memberadvance', 'update', 'Updated: '.$employee->personal_file_number.' : '.$employee->last_name.' '.$employee->first_name.' updated advance');
 
