@@ -229,7 +229,6 @@ Route::get('accounts/create/{id}', 'AccountsController@create');
 
 });
 
-
 /*
 * journals routes
 */
@@ -238,41 +237,6 @@ Route::post('journals/update/{id}', 'JournalsController@update');
 Route::get('journals/delete/{id}', 'JournalsController@destroy');
 Route::get('journals/edit/{id}', 'JournalsController@edit');
 Route::get('journals/show/{id}', 'JournalsController@show');
-
-
-Route::resource('expenses', 'ExpensesController');
-Route::get('expenses/edit/{id}', 'ExpensesController@edit');
-Route::post('expenses/update/{id}', 'ExpensesController@update');
-Route::get('expenses/delete/{id}', 'ExpensesController@destroy');
-
-
-
-/**
- * Bank Account Routes &
- * Bank Reconciliation Routes
- */
-Route::resource('bankAccounts', 'BankAccountController');
-Route::get('bankAccounts/reconcile/{id}', 'BankAccountController@showReconcile');
-Route::post('bankAccounts/uploadStatement', 'BankAccountController@uploadBankStatement');
-Route::post('bankAccount/reconcile', 'BankAccountController@reconcileStatement');
-
-Route::get('bankAccount/reconcile/add/{id}/{id2}/{id3}', 'BankAccountController@addStatementTransaction');
-Route::post('bankAccount/reconcile/add', 'BankAccountController@saveStatementTransaction');
-
-Route::get('bankReconciliation/report', 'ErpReportsController@displayRecOptions');
-Route::post('bankReconciliartion/generateReport', 'ErpReportsController@showRecReport');
-
-
-/* PETTY CASH ROUTES */
-Route::resource('petty_cash', 'PettyCashController');
-Route::post('petty_cash/addMoney', 'PettyCashController@addMoney');
-Route::post('petty_cash/addContribution', 'PettyCashController@addContribution');
-Route::post('petty_cash/newTransaction', 'PettyCashController@newTransaction');
-Route::post('petty_cash/commitTransaction', 'PettyCashController@commitTransaction');
-Route::get('petty_cash/transaction/{id}', 'PettyCashController@receiptTransactions');
-
-// Edit and delete petty cash items
-Route::get('petty_cash/newTransaction/remove/{count}', 'PettyCashController@removeTransactionItem');
 
 
 
@@ -2649,6 +2613,11 @@ Route::get('checks/checkout', 'ChecksController@checkout');
 
 Route::resource('paymentmethods', 'PaymentmethodsController');
 
+
+
+
+
+Route::resource('expenses', 'ExpensesController');
 
 
 
