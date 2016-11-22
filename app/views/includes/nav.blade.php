@@ -47,7 +47,7 @@
             @if(Confide::user()->hasRole('SUPERADMIN') || Confide::user()->hasRole('ACCOUNTS MANAGER') ||  Confide::user()->hasRole('HR OPERATIONS AND OFFICE MANAGEMENT'))
                 <li  >
                     <a  href="{{ URL::to('dashboard')}}">
-                        <i class="fa fa-home fa-fw"></i>  {{{ Lang::get('messages.nav.dashboard') }}}
+                        <i class="fa fa-home fa-fw"></i>  {{{ Lang::get('messages.nav.home') }}}
                     </a>
                     
                 </li>
@@ -97,7 +97,7 @@
             
                  <li  >
                     <a  href="{{ URL::to('accounts')}}">
-                        <i class="fa fa-file fa-fw"></i>  {{{ Lang::get('messages.nav.accounting') }}} 
+                        <i class="fa fa-calculator fa-fw"></i>  {{{ Lang::get('messages.nav.accounting') }}} 
                     </a>
                     
                 </li>
